@@ -34,6 +34,7 @@ client.on('ready', () => {
 });
 
 if(!bLoggedIn) {
-  client.login(token);
+  console.log(process.env);
+  //client.login(token);
   bLoggedIn = true;
 }
