@@ -7,7 +7,6 @@
     "word-definition": "2.1.6"
   },
   "scripts": {
-    "start": "node index.js",
-    "build": "ng build"
+    "start": "node index.js"
   }
 }
