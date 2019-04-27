@@ -1,4 +1,4 @@
-//const keep_alive = require('./keep_alive.js')
+const keep_alive = require('./keep_alive.js')
 const Discord = require('discord.js');
 
 
@@ -35,6 +35,6 @@ client.on('ready', () => {
 
 if(!bLoggedIn) {
   console.log(process.env);
-  //client.login(token);
+  client.login(token);
   bLoggedIn = true;
 }
