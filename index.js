@@ -1,7 +1,6 @@
 const keep_alive = require('./keep_alive.js')
 const Discord = require('discord.js');
 
-
 const FoyerCopy = require('./FoyerCopy.js')
 const Globals = require('./Globals.js')
 const CommandListener = require('./CommandListener.js')
@@ -19,7 +18,7 @@ client.on('ready', () => {
     console.log("I'm in: --> " + client.user.username);
 
     FoyerCopy.Init(client);
-    CommandListener.Init(client)
+    CommandListener.Init(client);
     Ouija.Init(client);
     Ventriloquist.Init(client);
 
@@ -34,7 +33,6 @@ client.on('ready', () => {
 });
 
 if(!bLoggedIn) {
-  console.log(process.env);
   client.login(token);
   bLoggedIn = true;
 }
