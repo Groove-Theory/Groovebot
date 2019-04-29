@@ -41,6 +41,6 @@ if(exports.bProduction) {
 exports.aGrooveQuotes = null;
 exports.aCompliments = null;
 
-exports.g_GitLink = "https://gist.github.com/Groove-Theory/217fece20c89051c209fc898e6c463a6";
+exports.g_GitLink = "https://github.com/Groove-Theory/Groovebot";
 
 exports.g_GrooveID = "193800300518309888";
