@@ -239,6 +239,7 @@ hr {
 
 img {
   vertical-align: middle;
+  text-align: center;
 }
 
 a {
@@ -1726,4 +1727,134 @@ a {
 
 .w3-border-pale-blue,.w3-hover-border-pale-blue:hover {
   border-color: #e7ffff!important;
+}
+
+.GB_CommandContainer
+{
+  display: table;
+  /* flex-direction: column; */
+  width: 100%;
+  /* flex-flow: column nowrap; */
+}
+
+.GB_CommandContainerRow 
+{display: table-row;width: 100%;flex: 1;/* max-height: 8%; */font-family: 'Arial';border-collapse: collapse;border: 1px solid #eee;border-bottom: 2px solid #ff0101;/* box-shadow: 0px 0px 20px rgba(0,0,0,0.10),       0px 10px 20px rgba(0,0,0,0.05),       0px 20px 20px rgba(0,0,0,0.05),       0px 30px 20px rgba(0,0,0,0.05); */flex-flow: nowrap;}
+
+.GB_CommandContainerCell
+{
+  /* flex: 1; */
+  display: table-cell;
+  align-items: center;
+  /* justify-content: center; */
+  border-right: 2px solid #ff8686;
+  border-bottom: 2px solid #ff8686;
+  padding: 5px 5px 5px 10px;
+  text-align: left;
+  display: fl;
+}
+
+.GB_CommandContainerHeaderCell
+{
+  background: #c81e1e;
+  color: #fff;
+  text-transform: uppercase;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bolder;
+  font-size: 1.4rem;
+  display: table-cell;
+  /* align-items: center; */
+  /* justify-content: center; */
+  padding: 17px 10px 17px 10px;
+}
+
+.GB_CommandContainerRow > .GB_CommandContainerCell:first-child
+{
+  border-left: 2px solid #ff8686;
+}
+
+.GB_CommandContainerCommand
+{
+  width: 17%;
+}
+
+.GB_CommandContainerDescription
+{
+  width: 60%;
+}
+
+.GB_CommandContainerUsage
+{
+  /* flex: 1 */
+}
+
+ol {
+    counter-reset: li; /* Initiate a counter */
+    list-style: none; /* Remove default numbering */
+    *list-style: decimal; /* Keep using default numbering for IE6/7 */
+    font: 15px 'trebuchet MS', 'lucida sans';
+    padding: 0;
+    margin-bottom: 4em;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+
+ol ol {
+    margin: 0 0 0 2em; /* Add some left margin for inner lists */
+}
+
+.rectangle-list span{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    *padding: .4em;
+    margin: .5em 0 .5em 2.5em;
+    background: #ddd;
+    color: #444;
+    text-decoration: none;
+    transition: all .3s ease-out;   
+}
+
+.rectangle-list span:hover{
+    background: #eee;
+}   
+
+.rectangle-list span:before{
+    content: counter(li);
+    counter-increment: li;
+    position: absolute; 
+    left: -2.5em;
+    top: 50%;
+    margin-top: -1em;
+    background: #fa8072;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.rectangle-list span:after{
+    position: absolute; 
+    content: '';
+    border: .5em solid transparent;
+    left: -1em;
+    top: 50%;
+    margin-top: -.5em;
+    transition: all .3s ease-out;               
+}
+
+.rectangle-list span:hover:after{
+    left: -.5em;
+    border-left-color: #fa8072;             
+}   
+
+.GB_CommandContainerHeader
+{
+}
+
+.GB_ContactIcon
+{
+  max-width: 8%;
+  /* margin-bottom: -6px; */
+  /* margin-top: 16px; */
 }
