@@ -29,11 +29,10 @@
          </div>
          <div class="w3-bar-block">
             <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
-            <a href="#showcase" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Commands</a> 
-            <a href="#services" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Wish-list</a> 
-            <a href="#designers" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Designers</a> 
-            <a href="#packages" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">About</a> 
-            <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
+            <a href="#commands" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Commands</a> 
+            <a href="#wishlist" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Wish-list</a> 
+            <a href="#designers" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Developers</a> 
+            <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact/About</a> 
          </div>
       </nav>
       <!-- Top menu on small screens -->
@@ -59,15 +58,10 @@
          </div>
          <!-- Photo grid (modal) -->
          <div class="w3-row-padding">
-            <div class="w3-half">
-               <img src="/w3images/kitchenconcrete.jpg" style="width:100%" onclick="onClick(this)" alt="Lots and Lots of Ouija Fun!">
-               <img src="/w3images/livingroom.jpg" style="width:100%" onclick="onClick(this)" alt="Get Groove Quotes On Demand!">
-               <img src="/w3images/diningroom.jpg" style="width:100%" onclick="onClick(this)" alt="Compliment your Friendos!">
-            </div>
-            <div class="w3-half">
-               <img src="/w3images/atrium.jpg" style="width:100%" onclick="onClick(this)" alt="Get the REAL definitions of stuff">
-               <img src="/w3images/bedroom.jpg" style="width:100%" onclick="onClick(this)" alt="Anonymous Voting Action!!">
-               <img src="/w3images/livingroom2.jpg" style="width:100%" onclick="onClick(this)" alt="And a Bunch of Other Silly Bot Stuff...">
+            <div class="w3-container" style="
+               text-align: center;
+               ">
+               <img src="https://i.etsystatic.com/9356362/r/il/bb8ccf/1791584306/il_fullxfull.1791584306_284x.jpg" style="width: 60%;" onclick="onClick(this)" alt="Lots and Lots of Ouija Fun!">
             </div>
          </div>
          <!-- Modal for full size images on click-->
@@ -78,123 +72,126 @@
                <p id="caption"></p>
             </div>
          </div>
-         <!-- Services -->
-         <div class="w3-container" id="services" style="margin-top:75px">
-            <h1 class="w3-xxxlarge w3-text-red"><b>Services.</b></h1>
+         <!-- Commands -->
+         <div class="w3-container" id="commands" style="margin-top:75px">
+            <h1 class="w3-xxxlarge w3-text-red"><b>Commands</b></h1>
             <hr style="width:50px;border:5px solid red" class="w3-round">
-            <p>We are a interior design service that focus on what's best for your home and what's best for you!</p>
-            <p>Some text about our services - what we do and what we offer. We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-               dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <div class="GB_CommandContainer">
+               <div class="GB_CommandContainerRow GB_CommandContainerHeader">
+                  <div class="GB_CommandContainerCell GB_CommandContainerHeaderCell GB_CommandContainerCommand">Command</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerHeaderCell GB_CommandContainerDescription">Description</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerHeaderCell GB_CommandContainerUsage">Usage</div>
+               </div>
+               <div class="GB_CommandContainerRow ">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!help</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Get Command List for GrooveBot on Discord console.</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!help</div>
+               </div>
+               <div class="GB_CommandContainerRow">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!vote</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Start a Vote Setup to give members anonymous codes for Google Form voting.</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!help</div>
+               </div>
+               <div class="GB_CommandContainerRow">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!getcode</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Get a Link to the Github Repository for GrooveBot</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!getcode</div>
+               </div>
+               <div class="GB_CommandContainerRow">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!quote</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Get a Random Groove Quote</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!quote</div>
+               </div>
+               <div class="GB_CommandContainerRow">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!compliment</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Compliment any user in your guild, or compliment yourself!</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!compliment &lt;user&gt;</div>
+               </div>
+               <div class="GB_CommandContainerRow">
+                  <div class="GB_CommandContainerCell GB_CommandContainerCommand">g!nickname</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerDescription">Change Groove's Nickname!!</div>
+                  <div class="GB_CommandContainerCell GB_CommandContainerUsage">g!nickname &lt;nickname string&gt;</div>
+               </div>
+            </div>
+         </div>
+         <!-- WishList -->
+         <div class="w3-container" id="wishlist" style="margin-top:75px">
+            <h1 class="w3-xxxlarge w3-text-red"><b>Wish-List/Upcoming</b></h1>
+            <hr style="width:50px;border:5px solid red" class="w3-round">
+         </div>
+         <div class="GB_WishlistContainer">
+            <ol class="rectangle-list">
+               <li>
+                  <span href="">Create Database Support with MongoDB</span>
+                  <ol>
+                     <li><span href="">Create scalability by GuildID for future porting to other servers</span></li>
+                     <li><span href="">Removing any instances in code of hard-coded IDs for channels, guilds, etc.</span></li>
+                  </ol>
+               </li>
+               <li><span href="">Create "Debate" module for proper discussion with moderation</span></li>
+               <li><span href="">Allow Quotes to be Uploaded by anyone and retrieved by name per guild</span></li>
+               <li>
+                  <span href="">Create customizable Guild Options</span>
+                  <ol>
+                     <li><span href="">Requires Database implementation</span></li>
+                  </ol>
+               </li>
+               <li><span href="">Clean up this site!! (and make it prettier)</span></li>
+            </ol>
          </div>
          <!-- Designers -->
          <div class="w3-container" id="designers" style="margin-top:75px">
-            <h1 class="w3-xxxlarge w3-text-red"><b>Designers.</b></h1>
+            <h1 class="w3-xxxlarge w3-text-red"><b>Developers</b></h1>
             <hr style="width:50px;border:5px solid red" class="w3-round">
             <p>The best team in the world.</p>
-            <p>We are lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-               dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-               incididunt ut labore et quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-            <p><b>Our designers are thoughtfully chosen</b>:</p>
          </div>
          <!-- The Team -->
          <div class="w3-row-padding w3-grayscale">
             <div class="w3-col m4 w3-margin-bottom">
-               <div class="w3-light-grey">
-                  <img src="/w3images/team2.jpg" alt="John" style="width:100%">
-                  <div class="w3-container">
-                     <h3>John Doe</h3>
-                     <p class="w3-opacity">CEO &amp; Founder</p>
-                     <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-                  </div>
-               </div>
             </div>
-            <div class="w3-col m4 w3-margin-bottom">
-               <div class="w3-light-grey">
-                  <img src="/w3images/team1.jpg" alt="Jane" style="width:100%">
-                  <div class="w3-container">
-                     <h3>Jane Doe</h3>
-                     <p class="w3-opacity">Designer</p>
-                     <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
-                  </div>
-               </div>
-            </div>
-            <div class="w3-col m4 w3-margin-bottom">
-               <div class="w3-light-grey">
-                  <img src="/w3images/team3.jpg" alt="Mike" style="width:100%">
-                  <div class="w3-container">
-                     <h3>Mike Ross</h3>
-                     <p class="w3-opacity">Architect</p>
-                     <p>Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.</p>
+            <div class=" m4 w3-margin-bottom">
+               <div class="w3-light-grey" style="
+                  display: flex;
+                  width: 100%;
+                  ">
+                  <div style="
+                     /* display: inline-block; */
+                     display: flex;
+                     justify-content: center;
+                     "><img src="https://i.etsystatic.com/14457190/r/il/76037a/1620479108/il_794xN.1620479108_b6qk.jpg" alt="Mike" style="width: 62%;display: flex;align-self: center;justify-self: center;"></div>
+                  <div class="w3-container" style="
+                     ">
+                     <h3>Groove</h3>
+                     <p class="w3-opacity">Lead Developer, Founder</p>
+                     <p>Groove is a software engineer with over 5 years of professional experience and has been programming since 2009. He has worked in web development with ASP.Net, C#, Javascript (jQuery/Node.js), and SQL Server, with experience also in Java, C++, and Python as well. He clearly needs lessons in CSS. </p>
                   </div>
                </div>
             </div>
          </div>
          <!-- Packages / Pricing Tables -->
-         <div class="w3-container" id="packages" style="margin-top:75px">
-            <h1 class="w3-xxxlarge w3-text-red"><b>Packages.</b></h1>
+         <div class="w3-container" id="contact" style="margin-top:75px">
+            <h1 class="w3-xxxlarge w3-text-red"><b>Contact/About</b></h1>
             <hr style="width:50px;border:5px solid red" class="w3-round">
-            <p>Some text our prices. Lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure</p>
+            <p>Groovebot is a free-for-use Discord bot. We're looking for some developers who can help out making GrooveBot even better. Please contact us if you want to help out!</p>
          </div>
          <div class="w3-row-padding">
             <div class="w3-half w3-margin-bottom">
                <ul class="w3-ul w3-light-grey w3-center">
-                  <li class="w3-dark-grey w3-xlarge w3-padding-32">Basic</li>
-                  <li class="w3-padding-16">Floorplanning</li>
-                  <li class="w3-padding-16">10 hours support</li>
-                  <li class="w3-padding-16">Photography</li>
-                  <li class="w3-padding-16">20% furniture discount</li>
-                  <li class="w3-padding-16">Good deals</li>
-                  <li class="w3-padding-16">
-                     <h2>$ 199</h2>
-                     <span class="w3-opacity">per room</span>
-                  </li>
-                  <li class="w3-light-grey w3-padding-24">
-                     <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-                  </li>
+                  <li class="w3-dark-grey w3-xlarge w3-padding-32">Who we're looking for</li>
+                  <li class="w3-padding-16">Javascript/Node.js Developers</li>
+                  <li class="w3-padding-16">CSS Designers/ Graphic Designers</li>
+                  <li class="w3-padding-16">SQL/Database Developers</li>
                </ul>
             </div>
             <div class="w3-half">
                <ul class="w3-ul w3-light-grey w3-center">
-                  <li class="w3-red w3-xlarge w3-padding-32">Pro</li>
-                  <li class="w3-padding-16">Floorplanning</li>
-                  <li class="w3-padding-16">50 hours support</li>
-                  <li class="w3-padding-16">Photography</li>
-                  <li class="w3-padding-16">50% furniture discount</li>
-                  <li class="w3-padding-16">GREAT deals</li>
-                  <li class="w3-padding-16">
-                     <h2>$ 249</h2>
-                     <span class="w3-opacity">per room</span>
-                  </li>
-                  <li class="w3-light-grey w3-padding-24">
-                     <button class="w3-button w3-red w3-padding-large w3-hover-black">Sign Up</button>
-                  </li>
+                  <li class="w3-red w3-xlarge w3-padding-32">Contact Us!</li>
+                  <li class="w3-padding-16"><img class="GB_ContactIcon" src="https://banner2.kisspng.com/20180614/lav/kisspng-discord-computer-icons-logo-online-chat-discord-5b22916710dad1.2401255415289921030691.jpg">@GrooveTheory#9579</li>
+                  <li class="w3-padding-16"><img class="GB_ContactIcon" src="https://banner2.kisspng.com/20180320/cfw/kisspng-computer-icons-github-github-logo-save-icon-format-5ab0fad1349631.6791503015215479852154.jpg"><a target="_blank" href="https://github.com/Groove-Theory/Groovebot">GitHub Repository</a></li>
                </ul>
             </div>
          </div>
          <!-- Contact -->
-         <div class="w3-container" id="contact" style="margin-top:75px">
-            <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
-            <hr style="width:50px;border:5px solid red" class="w3-round">
-            <p>Do you want us to style your home? Fill out the form and fill me in with the details :) We love meeting new people!</p>
-            <form action="/action_page.php" target="_blank">
-               <div class="w3-section">
-                  <label>Name</label>
-                  <input class="w3-input w3-border" type="text" name="Name" required="">
-               </div>
-               <div class="w3-section">
-                  <label>Email</label>
-                  <input class="w3-input w3-border" type="text" name="Email" required="">
-               </div>
-               <div class="w3-section">
-                  <label>Message</label>
-                  <input class="w3-input w3-border" type="text" name="Message" required="">
-               </div>
-               <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
-            </form>
-         </div>
          <!-- End page content -->
       </div>
    </body>
