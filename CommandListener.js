@@ -14,7 +14,7 @@ exports.Init = function(client) {
       var msgChannel = client.channels.get(msg.channel.id);
       var msgText = msg.content;
       switch(msgText) {
-        case "g!help2":
+        case "g!help":
           Help.Init(client, msg);
           break;
         case "g!vote":
