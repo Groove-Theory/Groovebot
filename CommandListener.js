@@ -8,6 +8,7 @@ const Dictionary = require('./Dictionary.js')
 const Compliment = require('./Compliment.js')
 const Nickname = require('./Nickname.js')
 const RulesCharter = require('./RulesCharter.js')
+const Idiom = require('./Idiom.js')
 exports.Init = function(client) {
   client.on('message', msg => {
     if(msg.author.id != client.user.id) {
@@ -31,6 +32,9 @@ exports.Init = function(client) {
           break;
         case "g!rules":
           RulesCharter.RulesInit(client, msg);
+          break;
+        case "g!idiom":
+          Idiom.Init(client, msg);
           break;
         default:
           if(msgText.substring(0, 13) == "g!quoteupload")
