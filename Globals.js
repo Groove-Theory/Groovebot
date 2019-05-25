@@ -22,7 +22,7 @@ if(exports.bProduction) {
   exports.g_copyChannelID = "558159040371228683";
 
   exports.g_GuildID = "526080760101470228";
-  exports.g_SparticistRole = "526081028683726888" //"526109092792762368"
+  exports.g_SparticistRole = "526109092792762368" //"526109092792762368"
   exports.g_CodeMasterRoleID = "563903645104603158"
   exports.g_CouncilpersonRoleID = "526081028683726888"
 
