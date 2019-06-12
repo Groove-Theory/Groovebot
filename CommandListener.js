@@ -9,6 +9,7 @@ const Compliment = require('./Compliment.js')
 const Nickname = require('./Nickname.js')
 const RulesCharter = require('./RulesCharter.js')
 const Idiom = require('./Idiom.js')
+
 exports.Init = function(client) {
   client.on('message', msg => {
     if(msg.author.id != client.user.id) {

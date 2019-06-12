@@ -44,3 +44,6 @@ exports.aCompliments = null;
 exports.g_GitLink = "https://github.com/Groove-Theory/Groovebot";
 
 exports.g_GrooveID = "193800300518309888";
+
+exports.Database = null;
+
