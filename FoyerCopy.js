@@ -7,8 +7,6 @@ exports.Init = function(client)
     var mainChannelIDs = Globals.g_mainChannelIDs;
     var copyChannelIDs = Globals.g_copyChannelIDs;
 
-
-
     if (mainChannelIDs.indexOf(msg.channel.id) > -1)
     {
       var iIndex = mainChannelIDs.indexOf(msg.channel.id)
