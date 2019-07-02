@@ -21,8 +21,8 @@ exports.g_RulesChannel2 = "570056315989262346"
 if (exports.bProduction)
 {
   // TODO: We really need to figure out some MongoDB stuff here 
-  exports.g_mainChannelID = "526080760101470230";
-  exports.g_copyChannelID = "558159040371228683";
+  exports.g_mainChannelID = ["526080760101470230", "570056315989262346"];
+  exports.g_copyChannelID = ["558159040371228683", "570056992002015243"];
 
   exports.g_GuildID = "526080760101470228";
   exports.g_SparticistRole = "526109092792762368" //"526109092792762368"
