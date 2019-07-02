@@ -9,7 +9,7 @@ exports.Init = function(client)
 
 
 
-    if (msg.author.id != client.user.id && mainChannelIDs.indexOf(msg.channel.id) > -1)
+    if (mainChannelIDs.indexOf(msg.channel.id) > -1)
     {
       var iIndex = mainChannelIDs.indexOf(msg.channel.id)
       var copyChannel = client.channels.get(copyChannelIDs[iIndex]);
@@ -41,7 +41,7 @@ exports.Init = function(client)
     var mainChannelIDs = Globals.g_mainChannelIDs;
     var copyChannelIDs = Globals.g_copyChannelIDs;
 
-    if (oldMessage.author.id != client.user.id && mainChannelIDs.indexOf(oldMessage.channel.id) > -1)
+    if (mainChannelIDs.indexOf(oldMessage.channel.id) > -1)
     {
       var iIndex = mainChannelIDs.indexOf(oldMessage.channel.id)
       var copyChannel = client.channels.get(copyChannelIDs[iIndex]);

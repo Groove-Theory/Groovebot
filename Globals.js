@@ -11,7 +11,7 @@ exports.g_CouncilpersonRoleID = "563871903203196943"
 
 exports.g_OuijaChannelID = "558156350320803851"
 
-exports.g_VentriloquistInputChannelID = "554769046470656010"
+exports.g_VentriloquistInputChannelID = "595634269599039539"
 exports.g_VentriloquistOutputChannelID = "565734515113328650"
 
 exports.g_RulesChannel1 = "570056315989262346";
