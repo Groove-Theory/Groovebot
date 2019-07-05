@@ -1,23 +1,32 @@
 const Globals = require('./Globals.js')
 const bRecordDelete = true;
-exports.Init = function(client) {
-  client.on('message', msg => {
-    var mainChannelID = Globals.g_mainChannelID;
-    var copyChannelID = Globals.g_copyChannelID;
+exports.Init = function(client)
+{
+  client.on('message', msg =>
+  {
+    var mainChannelIDs = Globals.g_mainChannelIDs;
+    var copyChannelIDs = Globals.g_copyChannelIDs;
 
-    if(msg.author.id != client.user.id && msg.channel.id == mainChannelID) {
-      var copyChannel = client.channels.get(copyChannelID);
-      copyChannel.send({
-        embed: {
+    if (mainChannelIDs.indexOf(msg.channel.id) > -1)
+    {
+      var iIndex = mainChannelIDs.indexOf(msg.channel.id)
+      var oGuild = msg.guild;
+      var copyChannel = oGuild.channels.get(copyChannelIDs[iIndex]);
+      copyChannel.send(
+      {
+        embed:
+        {
           color: 3447003,
-          author: {
+          author:
+          {
             name: msg.author.username,
             icon_url: msg.author.avatarURL
           },
           title: "(New Message)",
           description: msg.content,
           timestamp: new Date(),
-          footer: {
+          footer:
+          {
             icon_url: msg.author.avatarURL,
             text: msg.author.username
           }
@@ -26,16 +35,23 @@ exports.Init = function(client) {
     }
   });
 
-  client.on('messageUpdate', (oldMessage, newMessage) => {
-    var mainChannelID = Globals.g_mainChannelID;
-    var copyChannelID = Globals.g_copyChannelID;
+  client.on('messageUpdate', (oldMessage, newMessage) =>
+  {
+    var mainChannelIDs = Globals.g_mainChannelIDs;
+    var copyChannelIDs = Globals.g_copyChannelIDs;
 
-    if(oldMessage.author.id != client.user.id && oldMessage.channel.id == mainChannelID) {
-      var copyChannel = client.channels.get(copyChannelID);
-      copyChannel.send({
-        embed: {
+    if (mainChannelIDs.indexOf(oldMessage.channel.id) > -1)
+    {
+      var iIndex = mainChannelIDs.indexOf(oldMessage.channel.id)
+      var oGuild = oldMessage.guild;
+      var copyChannel = oGuild.channels.get(copyChannelIDs[iIndex]);
+      copyChannel.send(
+      {
+        embed:
+        {
           color: 3447003,
-          author: {
+          author:
+          {
             name: newMessage.author.username,
             icon_url: newMessage.author.avatarURL
           },
@@ -43,7 +59,8 @@ exports.Init = function(client) {
           description: "__**Old Message:**__ \r\n" + oldMessage.content + "\r\n\r\n" +
             "__**New Message:**__\r\n" + newMessage.content + "\r\n\r\n",
           timestamp: new Date(),
-          footer: {
+          footer:
+          {
             icon_url: newMessage.author.avatarURL,
             text: newMessage.author.username
           }
@@ -52,17 +69,23 @@ exports.Init = function(client) {
     }
   });
 
-  client.on('messageDelete', msg => {
-    var copyChannelID = Globals.g_copyChannelID;
-    var copyChannel = client.channels.get(copyChannelID);
-    if(msg.channel.id == copyChannelID) {
-      copyChannel.send({
-        embed: {
+  client.on('messageDelete', msg =>
+  {
+    var copyChannelIDs = Globals.g_copyChannelIDs;
+    if (copyChannelIDs.indexOf(msg.channel.id) > -1)
+    {
+      var iIndex = copyChannelIDs.indexOf(msg.channel.id);
+      var copyChannel = client.channels.get(copyChannelIDs[iIndex]);
+      copyChannel.send(
+      {
+        embed:
+        {
           color: 3447003,
           title: "(Log Message Deleted)",
           description: "*(a message from me was deleted in this channel)* :frowning2:",
           timestamp: new Date(),
-          footer: {
+          footer:
+          {
             icon_url: client.user.avatarURL
           }
         }
@@ -70,8 +93,11 @@ exports.Init = function(client) {
     }
   });
 
-  client.on('guildMemberAdd', member => {
-    if(Globals.bProduction && member.guild.id == Globals.g_GuildID) {
+  // Should only work for the original guild, not any new ones
+  client.on('guildMemberAdd', member =>
+  {
+    if (Globals.bProduction && member.guild.id == Globals.g_GuildID)
+    {
       console.log("Member Added");
       console.log(member);
 
