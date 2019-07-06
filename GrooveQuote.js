@@ -1,85 +1,29 @@
 const Globals = require('./Globals.js')
 const Discord = require('discord.js');
-const fs = require('fs');
 
-var oUser = null;
 var cLink = null;
 
 exports.Init = function(client, msg)
 
 {
   var msgChannel = client.channels.get(msg.channel.id);
-  var cSearch = msg.content.substring(8).trim();
-  console.log(cSearch + "--");
   var iID = Globals.g_GrooveID;
-  var oQuoteUser = null;
-  if (cSearch.length > 0)
-    oQuoteUser = FindUser(client, cSearch);
 
-  var bError = false;
-  var cErrorMessage = "";
-  if (oQuoteUser)
-
-  {
-    iID = oQuoteUser.id;
-  }
-
-  else if (cSearch.length > 0)
-
-  {
-    var oMentionedUsers = msg.mentions.users;
-    if (oMentionedUsers && oMentionedUsers.size > 0)
-
-    {
-      oQuoteUser = oMentionedUsers.first();
-      iID = oQuoteUser.id;
-    }
-
-    else
-
-    {
-      bError = true;
-      cErrorMessage = "Sorry, couldn't find any user for a quote, so here's groove";
-    }
-  }
-
-  var oQueryObj = {
-    "QuoteUser": parseInt(iID)
-  };
-  Globals.Database.QueryRandom("Quotes", oQueryObj).then(function(oResult)
+  Globals.Database.QueryRandom("Quotes",
+  {}).then(function(oResult)
   {
     var cQuoteLink = oResult && oResult.length > 0 && oResult[0].cLink ? oResult[0].cLink : "";
-    console.log(oResult);
 
-    if (!cQuoteLink)
-
+    if (cQuoteLink)
     {
-      bError = true;
-      cErrorMessage = "Sorry, no quotes for " + oQuoteUser.username + ", so here's groove";
-      oQueryObj.QuoteUser = Globals.g_GrooveID;
-      Globals.Database.QueryRandom("Quotes", oQueryObj).then(function(oResult)
-      {
-        console.log(oResult)
-        var cQuoteLink = oResult && oResult.length > 0 && oResult.cLink ? oResult.cLink : "";
-        if (cQuoteLink)
-        {
-          msgChannel.send(bError ? cErrorMessage : "",
-          {
-            files: [
-              cQuoteLink
-            ]
-          });
-        }
-      });
-    }
-
-    msgChannel.send(bError ? cErrorMessage : "",
-
+      msgChannel.send(
       {
         files: [
           cQuoteLink
         ]
       });
+    }
+
   });
 
 }
@@ -87,37 +31,21 @@ exports.Init = function(client, msg)
 exports.Upload = function(client, msg)
 
 {
-  console.log(1111);
+  var iAuthorID = msg.author.id;
+  if (iAuthorID != Globals.g_GrooveID)
+    return;
+
   var cMsgContent = msg.content;
   var aArgs = cMsgContent.split(" ");
-  if (aArgs.length >= 3)
+  var cLink = aArgs[aArgs.length - 1];
+  ConfirmAll(client, msg, cLink);
 
-  {
-    var cLink = aArgs[aArgs.length - 1];
-    var cUser = ""
-    for (var i = 1; i < aArgs.length - 1; i++)
-
-    {
-      cUser += aArgs[i] + " ";
-    }
-    cUser = cUser.substring(0, cUser.length - 1);
-    console.log(cUser + "$$");
-    if (cUser.length > 0 && cLink.length > 0)
-      FindQuick(client, msg, cUser, cLink);
-  }
-
-  else
-
-  {
-    AskUser(client, msg);
-  }
 }
 
 
-function AskUser(client, msg, bRetry = false)
-
+function ConfirmAll(client, msg, cLinkQuickSearch)
 {
-  console.log(2222);
+  cLinkQuickSearch = cLinkQuickSearch.trim();
   msg.channel.send(
 
     {
@@ -125,281 +53,49 @@ function AskUser(client, msg, bRetry = false)
 
       {
         color: 3447003,
-        title: (bRetry ? "Sorry I couldn't find a user like that." : "") + "Who's screenshot quote is this? (please **__don't__** use a mention)",
+        title: "So THIS is the screenshot? (Y/N)\r\n",
+        file: cLinkQuickSearch,
         description: "(type 'EXIT' to end)",
       }
-    });
-  var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
+    }).then(function()
 
     {
-
-      time: 120000
-
-    });
-  collector.on('collect', newmsg =>
-
-    {
-      if (newmsg.content == "EXIT")
-
-      {
-        collector.stop();
-        newmsg.channel.send("Ok, terminating upload process then... :sob:");
-      }
-
-      else
-
-      {
-        collector.stop();
-        ConfirmUser(client, newmsg)
-      }
-
-    });
-}
-
-function FindUser(client, cSearch)
-
-{
-  console.log(3333);
-  console.log(cSearch + "--");
-  var oUsers = client.users;
-  var oUserMaybe = null;
-  oUsers.forEach(function(guildMember)
-
-    {
-      if (!oUserMaybe && (guildMember.username.toUpperCase().indexOf(cSearch.toUpperCase()) > -1))
-
-      {
-        oUserMaybe = guildMember;
-      }
-    });
-
-  return oUserMaybe;
-}
-
-function ConfirmUser(client, msg)
-
-{
-  console.log(4444);
-  var oUserMaybe = FindUser(client, msg.content);
-  if (oUserMaybe)
-
-  {
-    msg.channel.send(
-
-      {
-        embed:
+      var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
 
         {
-          color: 3447003,
-          author:
+
+          time: 120000
+
+        });
+      collector.on('collect', newmsg =>
+
+        {
+          if (newmsg.content.toUpperCase() == "N")
 
           {
-            name: oUserMaybe.username,
-            icon_url: oUserMaybe.avatarURL
-          },
-          title: "Is it " + oUserMaybe.username + "? (Y/N)",
-          description: "(type 'EXIT' to end)",
-        }
-      });
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
-
-      {
-
-        time: 120000
-
-      });
-    collector.on('collect', newmsg =>
-
-      {
-        if (newmsg.content == "EXIT")
-
-        {
-          collector.stop();
-          newmsg.channel.send("Ok, terminating upload process then... :sob:");
-        }
-
-        else if (newmsg.content == "N")
-
-        {
-          collector.stop();
-          AskUser(client, newmsg, false)
-        }
-
-        else if (newmsg.content == "Y")
-
-        {
-          collector.stop();
-          oUser = oUserMaybe;
-          AskLink(client, newmsg)
-        }
-
-      });
-
-  }
-
-  else
-    AskUser(client, msg, true)
-
-}
-
-function AskLink(client, msg, bRetry = false)
-
-{
-  console.log(5555);
-  msg.channel.send(
-
-    {
-      embed:
-
-      {
-        color: 3447003,
-        title: (bRetry ? "Sorry I couldn't understand the link, let's try it again..... " : "") + "What's the link to " + oUser.username + "'s screenshot?",
-        description: "(type 'EXIT' to end)",
-      }
-    });
-  var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
-
-    {
-
-      time: 120000
-
-    });
-  collector.on('collect', newmsg =>
-
-    {
-      if (newmsg.content == "EXIT")
-
-      {
-        collector.stop();
-        newmsg.channel.send("Ok, terminating upload process then... :sob:");
-      }
-
-      else
-
-      {
-        collector.stop();
-        ConfirmAll(client, newmsg)
-      }
-
-    });
-}
-
-function ConfirmAll(client, msg, bQuick, cLinkQuickSearch)
-
-{
-  console.log(6666);
-  var cLinkMaybe = "";
-  if (bQuick)
-    var cLinkMaybe = cLinkQuickSearch
-  else
-    cLinkMaybe = msg.content;
-  if (oUser && cLinkMaybe)
-
-  {
-    msg.channel.send(
-
-      {
-        embed:
-
-        {
-          color: 3447003,
-          author:
+            collector.stop();
+            newmsg.channel.send("Ok, terminating upload process then... :sob:");
+          }
+          else if (newmsg.content == "Y")
 
           {
-            name: oUser.username,
-            icon_url: oUser.avatarURL
-          },
-          title: "So THIS is the screenshot from " + oUser.username + "? (Y/N)\r\n",
-          file: cLinkMaybe,
-          description: "(type 'EXIT' to end)",
-        }
-      }).then(function()
+            collector.stop();
+            cLink = cLinkQuickSearch;
+            AddToDB(client, msg);
+          }
 
-      {
-        var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
+        });
+    }).catch(function(err)
 
-          {
-
-            time: 120000
-
-          });
-        collector.on('collect', newmsg =>
-
-          {
-            if (newmsg.content == "EXIT")
-
-            {
-              collector.stop();
-              newmsg.channel.send("Ok, terminating upload process then... :sob:");
-            }
-
-            else if (newmsg.content == "N")
-
-            {
-              collector.stop();
-              AskLink(client, newmsg)
-            }
-
-            else if (newmsg.content == "Y")
-
-            {
-              collector.stop();
-              cLink = cLinkMaybe;
-              AddToDB(client, msg);
-            }
-
-          });
-      }).catch(function(err)
-
-      {
-        if (bQuick)
-          AskUser(client, msg, true);
-        else
-          AskLink(client, msg, true)
-
-      });;
-
-  }
-
-  else
-
-  {
-    if (!oUser)
-      FindUser(client, msg, true)
-    else
-      FindLink(client, msg, true);
-  }
-}
-
-function FindQuick(client, msg, cUserSearch, cLinkSearch)
-
-{
-  console.log(7777);
-  cLinkSearch = cLinkSearch.trim();
-  cUserSearch = cUserSearch.trim();
-  var oUserMaybe = FindUser(client, cUserSearch);
-  console.log(oUserMaybe);
-  if (oUserMaybe)
-
-  {
-    oUser = oUserMaybe;
-    ConfirmAll(client, msg, true, cLinkSearch)
-  }
-
-  else
-
-  {
-    AskUser(client, msg, true);
-  }
-
-
+    {
+      msg.channel.send("Uh oh, I goofed (is that actually an image file?)" + err);
+    });;
 }
 
 function AddToDB(client, msg)
 
 {
   var oInsertObj = {};
-  oInsertObj.QuoteUser = oUser.id;
   oInsertObj.cLink = cLink
   oInsertObj.DateUploaded = new Date();
 

@@ -16,10 +16,14 @@ var bLoggedIn = false;
 var bReady = false;
 
 
-client.on('ready', () => {
-  if (!bReady) {
-    Database.Init().then(function(bSuccess) {
-      if (bSuccess) {
+client.on('ready', () =>
+{
+  if (!bReady)
+  {
+    Database.Init().then(function(bSuccess)
+    {
+      if (bSuccess)
+      {
         Globals.Database = Database;
         console.log("I'm in: --> " + client.user.username);
 
@@ -32,6 +36,7 @@ client.on('ready', () => {
         if (compliment_obj)
           Globals.aCompliments = compliment_obj.Compliments;
 
+
         bReady = true;
       }
     });
@@ -40,7 +45,8 @@ client.on('ready', () => {
 
 });
 
-if (!bLoggedIn) {
+if (!bLoggedIn)
+{
   client.login(token);
   bLoggedIn = true;
 }

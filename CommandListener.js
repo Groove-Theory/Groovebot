@@ -1,13 +1,11 @@
 const Globals = require('./Globals.js')
 const Vote = require('./Vote.js')
 const GrooveQuote = require('./GrooveQuote.js')
-const Stuff = require('./Stuff.js')
 const Help = require('./Help.js')
 const Ventriloquist = require('./Ventriloquist.js')
 const Dictionary = require('./Dictionary.js')
 const Compliment = require('./Compliment.js')
 const Nickname = require('./Nickname.js')
-const RulesCharter = require('./RulesCharter.js')
 const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
 exports.Init = function(client)
@@ -26,17 +24,8 @@ exports.Init = function(client)
         case "g!vote":
           Vote.VoteSetup(client, msg);
           break;
-        case "g!getquotefile":
-          GrooveQuote.GetFile(client, msg);
-          break;
         case "g!getcode":
           msg.channel.send(Globals.g_GitLink);
-          break;
-        case "g!stuff":
-          Stuff.Init(client, msg);
-          break;
-        case "g!rules":
-          RulesCharter.RulesInit(client, msg);
           break;
         case "g!idiom":
           Idiom.Init(client, msg);

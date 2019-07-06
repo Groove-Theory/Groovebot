@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var Globals = require('./Globals.js')
-const uri = "";
+const uri = process.env.DB_URI;
 var MDBlient = new MongoClient(uri,
 {
   useNewUrlParser: true
@@ -26,7 +26,6 @@ exports.Init = function()
       console.log('[mongo] connected');
 
       resolve(true);
-
     });
   });
   return conn;
@@ -72,7 +71,6 @@ exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
     }
   }]).toArray(function(err, docs)
   {
-    console.log(docs);
     if (err) console.log(err)
   });
 
@@ -92,7 +90,6 @@ exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
       }
     }]).toArray(function(err, result)
     {
-      console.log(result)
       if (err)
         reject(err);
       else
