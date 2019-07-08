@@ -25,12 +25,20 @@ exports.Init = function(client, msg)
         description: "Here's a list of options that you can set on your server (case insensitive)",
         fields: [
         {
+          name: "g!options **ToggleChannelCopy** <on/off>",
+          value: "Turn on or off the Copy functionality (type 'on' or 'off' without the quotes)"
+        },
+        {
           name: "g!options **CopyInputChannel** <channelid>",
           value: "Sets the channel that you want to copy FROM"
         },
         {
           name: "g!options **CopyOutputChannel** <channelid>",
           value: "Sets the channel that you want to copy TO"
+        },
+        {
+          name: "g!options **ToggleOuija** <on/off>",
+          value: "Turn on or off the Ouija functionality (type 'on' or 'off' without the quotes)"
         },
         {
           name: "g!options **OuijaChannel** <channelid>",
@@ -51,14 +59,20 @@ exports.Init = function(client, msg)
     var cCommand = aMsgDetails[1];
     switch (cCommand.toLowerCase())
     {
+      case "togglechannelcopy":
+        ToggleChannelCopy(client, msg, aMsgDetails);
+        break;
       case "copyinputchannel":
-        ToggleCopyInputChannel(client, msg, aMsgDetails);
+        SetCopyInputChannel(client, msg, aMsgDetails);
         break;
       case "copyoutputchannel":
-        ToggleCopyOutputChannel(client, msg, aMsgDetails)
+        SetCopyOutputChannel(client, msg, aMsgDetails)
+        break;
+      case "toggleouija":
+        ToggleOuija(client, msg, aMsgDetails);
         break;
       case "ouijachannel":
-        ToggleOuijaChannel(client, msg, aMsgDetails)
+        SetOuijaChannel(client, msg, aMsgDetails)
         break;
       default:
         msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
@@ -82,7 +96,7 @@ function CheckServerOptionsExist(client, msg)
   Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject);
 }
 
-function ToggleCopyInputChannel(client, msg, aMsgDetails)
+function ToggleChannelCopy(client, msg, aMsgDetails)
 {
   if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2]))
   {
@@ -103,7 +117,28 @@ function ToggleCopyInputChannel(client, msg, aMsgDetails)
   Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendSuccessMessage(client, msg, "CopyInputChannel successfully updated to " + iCopyInputChannel));
 }
 
-function ToggleCopyOutputChannel(client, msg, aMsgDetails)
+function SetCopyInputChannel(client, msg, aMsgDetails)
+{
+  if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2]))
+  {
+    SendErrorMessage(client, msg)
+    return;
+  }
+  var iCopyInputChannel = aMsgDetails[2]
+  var oGuild = msg.guild;
+
+  var oKeyObject = {
+    guildID: oGuild.id,
+    production: Globals.bProduction
+  }
+  var oInsertObject = {
+    copyinputchannel: iCopyInputChannel
+  };
+
+  Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendSuccessMessage(client, msg, "CopyInputChannel successfully updated to " + iCopyInputChannel));
+}
+
+function SetCopyOutputChannel(client, msg, aMsgDetails)
 {
   if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2]))
   {
@@ -124,7 +159,28 @@ function ToggleCopyOutputChannel(client, msg, aMsgDetails)
   Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendSuccessMessage(client, msg, "CopyOutputChannel successfully updated to " + iCopyOutputChannel));
 }
 
-function ToggleOuijaChannel(client, msg, aMsgDetails)
+function ToggleOuija(client, msg, aMsgDetails)
+{
+  if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2]))
+  {
+    SendErrorMessage(client, msg)
+    return;
+  }
+  var iCopyInputChannel = aMsgDetails[2]
+  var oGuild = msg.guild;
+
+  var oKeyObject = {
+    guildID: oGuild.id,
+    production: Globals.bProduction
+  }
+  var oInsertObject = {
+    copyinputchannel: iCopyInputChannel
+  };
+
+  Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendSuccessMessage(client, msg, "CopyInputChannel successfully updated to " + iCopyInputChannel));
+}
+
+function SetOuijaChannel(client, msg, aMsgDetails)
 {
   if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2]))
   {
