@@ -8,6 +8,7 @@ const Compliment = require('./Compliment.js')
 const Nickname = require('./Nickname.js')
 const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
+const Options = require('./Options.js')
 exports.Init = function(client)
 {
   client.on('message', msg =>
@@ -44,6 +45,8 @@ exports.Init = function(client)
             Compliment.Init(client, msg);
           else if (msgText.substring(0, 10) == "g!nickname")
             Nickname.Init(client, msg);
+          else if (msgText.substring(0, 9) == "g!options")
+            Options.Init(client, msg);
           else if (msgText.substring(0, 6) == "t!wiki")
             Dictionary.Init(client, msg);
           else if (msgText.substring(0, 2) == "g!")

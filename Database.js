@@ -42,6 +42,25 @@ exports.Insert = function(cCollectionName, oInsertObj)
   });
 }
 
+exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = null)
+{
+  dbo.collection(cCollectionName).updateOne(oKeyObj,
+  {
+    $set: oUpsertDataObj
+  },
+  {
+    upsert: true,
+    safe: false
+  }, function(err, res)
+  {
+    if (err) throw err;
+    console.log("1 document upserted");
+    if (fCallabck)
+      fCallabck();
+    //MongoDB.close();
+  });
+}
+
 exports.Query = function(cCollectionName, oQueryObj, oSort)
 {
 
