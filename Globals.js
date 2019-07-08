@@ -14,8 +14,6 @@ exports.g_OuijaChannelID = "558156350320803851"
 exports.g_VentriloquistInputChannelID = "595634269599039539"
 exports.g_VentriloquistOutputChannelID = "565734515113328650"
 
-exports.g_RulesChannel1 = "570056315989262346";
-exports.g_RulesChannel2 = "570056315989262346"
 
 ///////////////////PRODUCTION VARS////////////////////////////////////////
 if (exports.bProduction)
@@ -34,8 +32,6 @@ if (exports.bProduction)
   exports.g_VentriloquistInputChannelID = "561403085419839505"
   exports.g_VentriloquistOutputChannelID = "526082151062568960"
 
-  exports.g_RulesChannelID1 = "570056315989262346"
-  exports.g_RulesChannelID2 = "526084321220493314"
 }
 
 
@@ -49,4 +45,3 @@ exports.g_GitLink = "https://github.com/Groove-Theory/Groovebot";
 exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
-
