@@ -5,22 +5,25 @@ exports.Init = function(client, msg)
 {
 
   var oAuthorUser = msg.author;
-  var oGuildMembers = msg.guild.members;
-
-  var oAuthorGuildMember = oGuildMembers.find(m => m.id == oAuthorUser.id);
-
-
-  if (!oAuthorGuildMember)
+  if (oAuthorUser.id != Globals.g_GrooveID) // Groove override
   {
-    console.log("the fuck, where's the user?");
-    return;
-  }
-  else
-  {
-    if (!oAuthorGuildMember.hasPermission('MANAGE_GUILD'))
+    var oGuildMembers = msg.guild.members;
+
+    var oAuthorGuildMember = oGuildMembers.find(m => m.id == oAuthorUser.id);
+
+
+    if (!oAuthorGuildMember)
     {
-      SendReplyMessage(client, msg, "Sorry, you need the 'Manage Server' permission to use this command :sob: ")
+      console.log("the fuck, where's the user?");
       return;
+    }
+    else
+    {
+      if (!oAuthorGuildMember.hasPermission('MANAGE_GUILD'))
+      {
+        SendReplyMessage(client, msg, "Sorry, you need the 'Manage Server' permission to use this command :sob: ")
+        return;
+      }
     }
   }
 
