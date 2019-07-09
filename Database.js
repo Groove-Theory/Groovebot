@@ -61,13 +61,13 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
-exports.Query = function(cCollectionName, oQueryObj, oSort)
+exports.Query = function(cCollectionName, oQueryObj, oSort = {}, fCallabck = null)
 {
 
   var query = new Promise((resolve, reject) =>
   {
     dbo.collection(cCollectionName).find(
-    {}, oQueryObj).sort(oSort).toArray(function(err, result)
+      oQueryObj).sort(oSort).toArray(function(err, result)
     {
       if (err)
         reject(err);
