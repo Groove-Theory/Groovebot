@@ -19,6 +19,9 @@ function makeRandomTime() {
 
 exports.MakeQuote = async function(client, msg) {
 
+    if (msg.author.id == 299248686565687296)
+        return;
+
     var member = msg.member;
     var cContent = msg.content.substring(12);
     var aContent = cContent.split("\\r\\n");
