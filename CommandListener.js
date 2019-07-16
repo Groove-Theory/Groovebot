@@ -47,7 +47,9 @@ exports.Init = function(client)
             Nickname.Init(client, msg);
           else if (msgText.substring(0, 9) == "g!options")
             Options.Init(client, msg);
-          else if (msgText.substring(0, 6) == "t!wiki")
+          else if (msgText.substring(0, 11) == "g!makequote")
+            GrooveQuote.MakeQuote(client, msg);
+        else if (msgText.substring(0, 6) == "t!wiki")
             Dictionary.Init(client, msg);
           else if (msgText.substring(0, 2) == "g!")
             msgChannel.send("The fuck is that shit?");
