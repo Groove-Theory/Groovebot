@@ -1,0 +1,22 @@
+- Fix Ouija Functionality to be multi-channel
+- Commenting code.... like a lot
+- Make embedded messages on Foyer Copy look nicer (fix fonts, color coding, who deleted if mod, etc)
+- Make options command look nicer (and more descriptive as well)
+- Make entering options more dynamic (e.g mentioning channel name for channelID, etc)
+- Fix Idiom to not give bad results
+- Make sure we don't need keep-alive.js
+- Turn Github site to dashboard any channel can use (BIG BIG BIG wish, probably overkill)
+- Tic Tac Toe (probably per channel, not per user)
+- Automated Testing (Groove-only command)
+- Update Help command (and make it look prettier)
+- Support Markdown/Emoji/Mentions for g!makequote (might not be possible)
+- Dictionary command on demand without Tatsumaki + wait (g!define <word> vs t!wiki <word>)
+- Look into finding a better way to struncture CommandListener.js (seems sloppy rn)
+- Universalize Vote.js (more DB options), also check for code collisions (though unlikely), remove global variables
+- Clean up Globals.js, should only be global objects and not hardcoded values (port as new DB options if necessary)
+- Bot admins (Groove + others in case this expands)
+- Split DB cluster to two production and testing databases (may impact automated testing)
+- Revisit "GrooveQuote" uploading to be more abstract (probably won't do this one);
+- Foyer Copy welcome message should be channel-editable and abstract
+- Tidy up Compliments.js (maybe not init on index.js?)
+- Fix code formatting (figure out preferences, go through files to universalize)
