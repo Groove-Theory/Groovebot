@@ -12,13 +12,13 @@ exports.g_CouncilpersonRoleID = "563871903203196943"
 exports.g_OuijaChannelID = "558156350320803851"
 
 exports.g_VentriloquistInputChannelID = "595634269599039539"
-exports.g_VentriloquistOutputChannelID = "565734515113328650"
+exports.g_VentriloquistOutputChannelID = "570056315989262346"
 
 
 ///////////////////PRODUCTION VARS////////////////////////////////////////
 if (exports.bProduction)
 {
-  // TODO: We really need to figure out some MongoDB stuff here 
+  // TODO: We really need to figure out some MongoDB stuff here
   exports.g_mainChannelIDs = ["526080760101470230", "570056315989262346"];
   exports.g_copyChannelIDs = ["558159040371228683", "570056992002015243"];
 
