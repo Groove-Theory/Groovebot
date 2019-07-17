@@ -20,3 +20,4 @@
 - Foyer Copy welcome message should be channel-editable and abstract
 - Tidy up Compliments.js (maybe not init on index.js?)
 - Fix code formatting (figure out preferences, go through files to universalize)
+- Move js code files to it's own folder (maybe)
