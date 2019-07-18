@@ -21,7 +21,7 @@ exports.Init = function()
         console.error('[mongo] client err', err);
         return reject(false);
       }
-      dbo = db.db("GrooveDB");
+      dbo = db.db(Globals.bProduction ? "GrooveDB" : "TestingDB");
       MongoDB = db;
       console.log('[mongo] connected');
 

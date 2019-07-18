@@ -27,7 +27,8 @@ exports.Init = function(client, msg)
     }
   }
 
-  CheckServerOptionsExist(client, msg);
+  exports.CheckServerOptionsExist(client, msg.guild);
+
   var aMsgDetails = msg.content.split(" ").filter(function(el)
   {
     return el != null && el.length > 0;
@@ -112,10 +113,8 @@ exports.Init = function(client, msg)
   }
 }
 
-function CheckServerOptionsExist(client, msg)
+exports.CheckServerOptionsExist = function(client, oGuild)
 {
-  var oGuild = msg.guild;
-
   var oKeyObject = {
     guildID: oGuild.id,
     production: Globals.bProduction

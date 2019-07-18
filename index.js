@@ -3,9 +3,7 @@ const Discord = require('discord.js');
 
 //const FoyerCopy = require('./FoyerCopy.js')
 const Globals = require('./Globals.js')
-//const CommandListener = require('./CommandListener.js')
-//const Ouija = require('./Ouija.js')
-//const Ventriloquist = require('./Ventriloquist.js')
+const Options = require('./Options.js')
 const Database = require('./Database.js')
 const ChannelListener = require('./ChannelListener.js')
 
@@ -27,12 +25,11 @@ client.on('ready', () =>
       {
         Globals.Database = Database;
         console.log("I'm in: --> " + client.user.username);
+        client.guilds.forEach(function(oGuild){
+            Options.CheckServerOptionsExist(client, oGuild)
+        });
 
         ChannelListener.Init(client);
-        //FoyerCopy.Init(client);
-        //CommandListener.Init(client);
-        //Ouija.Init(client);
-        //Ventriloquist.Init(client);
 
         var compliment_obj = JSON.parse(fs.readFileSync('./Compliments.json', 'utf8'));
         if (compliment_obj)
