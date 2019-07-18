@@ -15,8 +15,11 @@ exports.Init = function(client) {
 
         Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
             var oResult = aResult.length > 0 ? aResult[0] : null;
-            if (!oResult)
+            if (!oResult) {
+                Options.CheckServerOptionsExist(client, oGuild)
+                msg.channel.send("Sorry just had a bit of a hiccup, can you try again please?")
                 return;
+            }
 
             var iCopyInputChannelID = oResult["copyinputchannel"];
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
@@ -38,8 +41,11 @@ exports.Init = function(client) {
 
         Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
             var oResult = aResult.length > 0 ? aResult[0] : null;
-            if (!oResult)
+            if (!oResult) {
+                Options.CheckServerOptionsExist(client, oGuild)
+                msg.channel.send("Sorry just had a bit of a hiccup, can you try again please?")
                 return;
+            }
 
             var iCopyInputChannelID = oResult["copyinputchannel"];
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
@@ -59,8 +65,11 @@ exports.Init = function(client) {
 
         Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
             var oResult = aResult.length > 0 ? aResult[0] : null;
-            if (!oResult)
+            if (!oResult) {
+                Options.CheckServerOptionsExist(client, oGuild)
+                msg.channel.send("Sorry just had a bit of a hiccup, can you try again please?")
                 return;
+            }
 
             var iCopyInputChannelID = oResult["copyinputchannel"];
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
