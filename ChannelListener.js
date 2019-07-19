@@ -1,5 +1,6 @@
 const Globals = require('./Globals.js');
 const FoyerCopy = require('./FoyerCopy.js')
+const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
 
@@ -25,6 +26,11 @@ exports.Init = function(client) {
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
             var bToggleChannelCopy = oResult["togglechannelcopy"];
             FoyerCopy.OnMessage(client, msg, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
+
+            var iOuijaChannelID = oResult["ouijachannel"];
+            var bToggleOuija = oResult["toggleouija"];
+            Ouija.ProcessMessage(client, msg, iOuijaChannelID, bToggleOuija);
+
             CommandListener.ProcessMessage(client, msg);
             Ventriloquist.ProcessMessage(client, msg);
         });
