@@ -89,7 +89,7 @@ exports.ProcessMessage = function(client, msg, iOuijaChannelID, bToggleOuija) {
             var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
             var paramObject = { "client": client, "oResult": oResult, "msg": msg, "oOuijaChannel": oOuijaChannel, "iGuildID": iGuildID };
             if (!oResult) {
-                UpsertOuijaData(client, iGuildID, HandleOuijaContentCallback.bind(paramObject));
+                UpsertOuijaData(client, iGuildID, null, null, null, HandleOuijaContentCallback.bind(paramObject));
             }
             else {
                 HandleOuijaContent(client, oResult, msg, oOuijaChannel, iGuildID);
@@ -112,29 +112,28 @@ function HandleOuijaContentCallback() {
 }
 
 function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
-    var aNewMsgIDs = oResult.aMsgIDs ? oResult.aMsgIDs : [];
-    var bNewAskType = oResult.bAskType ? oResult.bAskType : 0;
-    var bNewCurrentlyInQuestion = oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
-    var iNewQuestionMessageID = oResult.iQuestionMessageID ? oResult.iQuestionMessageID : msg.id;
-    if (!oResult.bCurrentlyInQuestion) {
+    var bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
+    var bNewCurrentlyInQuestion = oResult && oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
+    var iNewQuestionMessageID = oResult && oResult.iQuestionMessageID ? oResult.iQuestionMessageID : msg.id;
+    if (!oResult || !oResult.bCurrentlyInQuestion) {
         if (hasValidOuijaCommand(msg.content)) {
             bNewAskType = 1;
             bNewCurrentlyInQuestion = true;
             iNewQuestionMessageID = msg.id;
-            UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
+            UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
         }
         else if (hasValidAskGroovebotCommand(msg.content)) {
             bNewAskType = 2;
             bNewCurrentlyInQuestion = true;
             iNewQuestionMessageID = msg.id;
-            UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
+            UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
         }
 
     }
 
     //TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
     else if (oResult.bCurrentlyInQuestion && msg.content.toUpperCase() == "GOODBYE") {
-        assembleFinalMessage(oResult.aMsgIDs, oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "").then(function(oReturnObj) {
+        assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "").then(function(oReturnObj) {
             var oQuestionMsg = oReturnObj.questionMsg
             var cOuijaResultString = oReturnObj.cResult
             ouijaChannel.send({
@@ -152,15 +151,8 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
             });
 
             UpsertOuijaData(client, iGuildID, [], 0, false, null)
-        });;
-
+        });
     }
-    else if (oResult.bCurrentlyInQuestion) {
-        aNewMsgIDs.push(msg.id);
-        UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, oResult.iQuestionMessageID)
-    }
-
-
 }
 
 function hasValidOuijaCommand(cString) {
@@ -179,35 +171,40 @@ function hasValidAskGroovebotCommand(cString) {
     return false;
 }
 
-function assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, iQuestionMessageID, cResult) {
+function assembleFinalMessage(bAskType, ouijaChannel, iQuestionMessageID, cResult) {
     var promise = new Promise(function(resolve, reject) {
-        if (aMsgIDs.length == 0) {
-            ouijaChannel.fetchMessage(iQuestionMessageID).then(function(questionMsg) {
-                var oReturnObj = {"cResult": cResult, "questionMsg": questionMsg}
-                resolve(oReturnObj);
-            }).catch(console.error)
-        }
-        else {
-            var iMsgID = aMsgIDs[0];
-
-            ouijaChannel.fetchMessage(iMsgID).then(function(msg) {
-                if (aMsgIDs.length == 0) {
-                    ouijaChannel.fetchMessage(iQuestionMessageID).then(function(msg) {
-                        resolve(cResult, msg);
-                    }).catch(console.error)
+        var oQuestionMsg = null;
+        ouijaChannel.fetchMessages({ limit: 100 }).then(function(messages) {
+            var bPastFirstMessage = false;
+            for (let aMsg of messages) {
+                msg = aMsg[1];
+                if (msg.id == iQuestionMessageID) {
+                    oQuestionMsg = msg;
+                    break;
                 }
-                else {
-                    if (!msg.deleted) {
-                        if (bAskType == 1 && msg.content.length == 1)
-                            cResult += msg.content.toUpperCase();
-                        else if (bAskType == 2 && msg.content.indexOf(" ") == -1)
-                            cResult += msg.content.toUpperCase() + " ";
-                    }
-                    aMsgIDs.shift();
-                    resolve(assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, iQuestionMessageID, cResult));
+                if(!bPastFirstMessage)
+                {
+                    bPastFirstMessage = true;
+                    continue;
                 }
-            }).catch(console.error);
-        }
+                if (!msg.deleted) {
+                    if (bAskType == 1 && msg.content.length == 1)
+                        cResult = msg.content.toUpperCase() + cResult;
+                    else if (bAskType == 2 && msg.content.indexOf(" ") == -1)
+                        cResult = msg.content.toUpperCase() + " " + cResult;
+                }
+            };
+            if (oQuestionMsg) {
+                var oReturnObj = { "cResult": cResult, "questionMsg": oQuestionMsg };
+                resolve(oReturnObj)
+            }
+            else {
+                ouijaChannel.fetchMessage(iQuestionMessageID).then(function(questionMsg) {
+                    var oReturnObj = { "cResult": cResult, "questionMsg": questionMsg }
+                    resolve(oReturnObj);
+                }).catch(console.error)
+            }
+        }).catch(console.error);
     });
     return promise;
 }
@@ -219,9 +216,7 @@ function resetVars() {
     bAskType = 0;
 }
 
-function UpsertOuijaData(client, iGuildID, aMsgIDs, bOuijaAskType, bCurrentlyInQuestion, iQuestionMessageID) {
-
-    aMsgIDs = aMsgIDs ? aMsgIDs : [];
+function UpsertOuijaData(client, iGuildID, bOuijaAskType, bCurrentlyInQuestion, iQuestionMessageID, cFunc = null) {
     bOuijaAskType = bOuijaAskType ? bOuijaAskType : 0;
     bCurrentlyInQuestion = bCurrentlyInQuestion ? bCurrentlyInQuestion : false;
     iQuestionMessageID = iQuestionMessageID ? iQuestionMessageID : 0;
@@ -232,11 +227,10 @@ function UpsertOuijaData(client, iGuildID, aMsgIDs, bOuijaAskType, bCurrentlyInQ
     }
 
     var oInsertObject = {
-        "aMsgIDs": aMsgIDs,
         "bAskType": bOuijaAskType,
         "bCurrentlyInQuestion": bCurrentlyInQuestion,
         "iQuestionMessageID": iQuestionMessageID
     };
 
-    Globals.Database.Upsert("GameData", oKeyObject, oInsertObject);
+    Globals.Database.Upsert("GameData", oKeyObject, oInsertObject, cFunc);
 }
