@@ -70,26 +70,29 @@ const aValidAskGrooveBotCommandStrings = [
 ];
 
 var bAskType = 0;
-exports.ProcessMessage = function(client, ouijaChannelID, bToggleOuija) {
+exports.ProcessMessage = function(client, msg, iOuijaChannelID, bToggleOuija) {
     if (!bToggleOuija)
         return;
 
-    if (msg.author.id != client.user.id && msg.channel.id == ouijaChannelID) {
+    if (msg.author.id != client.user.id && msg.channel.id == iOuijaChannelID) {
         var oGuild = msg.channel.guild;
+        var iGuildID = oGuild.id;
+
+        var oOuijaChannel = msg.channel;
         var oQueryObject = {
-            guildID: oGuild.id,
+            guildID: iGuildID,
             production: Globals.bProduction,
-            gametype = "ouija"
+            gametype: "ouija"
         }
 
         Globals.Database.Query("GameData", oQueryObject).then(function(aResult) {
             var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
-            var paramObject = { "oResult": oResult, "msg": msg, "ouijaChannelID": ouijaChannelID };
+            var paramObject = { "client": client, "oResult": oResult, "msg": msg, "oOuijaChannel": oOuijaChannel, "iGuildID": iGuildID };
             if (!oResult) {
-                UpsertOuijaData(client, ouijaChannelID, HandleOuijaContentCallabck.bind(paramObject));
+                UpsertOuijaData(client, iGuildID, HandleOuijaContentCallback.bind(paramObject));
             }
             else {
-                HandleOuijaContentCallabck(oResult, ouijaChannelID);
+                HandleOuijaContent(client, oResult, msg, oOuijaChannel, iGuildID);
             }
 
         });
@@ -100,54 +103,61 @@ exports.ProcessMessage = function(client, ouijaChannelID, bToggleOuija) {
 }
 
 function HandleOuijaContentCallback() {
+    var client = this.client;
     var oResult = this.oResult;
     var msg = this.msg
     var ouijaChannel = this.ouijaChannel
-    HandleOuijaContent(oResult, msg, ouijaChannel)
+    var iGuildID = this.iGuildID
+    HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID)
 }
 
-function HandleOuijaContent(oResult, msg, ouijaChannel) {
-    var aNewMsgIDs = oResult.aMsgIDs;
-    var bNewAskType = oResult.bAskType;
-    var bNewCurrentlyInQuestion = oResult.bCurrentlyInQuestion;
-
+function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
+    var aNewMsgIDs = oResult.aMsgIDs ? oResult.aMsgIDs : [];
+    var bNewAskType = oResult.bAskType ? oResult.bAskType : 0;
+    var bNewCurrentlyInQuestion = oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
+    var iNewQuestionMessageID = oResult.iQuestionMessageID ? oResult.iQuestionMessageID : msg.id;
     if (!oResult.bCurrentlyInQuestion) {
         if (hasValidOuijaCommand(msg.content)) {
             bNewAskType = 1;
             bNewCurrentlyInQuestion = true;
-            aNewMsgIDs.push(msg.id);
+            iNewQuestionMessageID = msg.id;
+            UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
         }
         else if (hasValidAskGroovebotCommand(msg.content)) {
             bNewAskType = 2;
             bNewCurrentlyInQuestion = true;
-            aNewMsgIDs.push(msg.id);
+            iNewQuestionMessageID = msg.id;
+            UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
         }
-        UpsertOuijaData(client, ouijaChannelID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, oResult.iQuestionMessageID)
+
     }
 
-//TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
+    //TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
     else if (oResult.bCurrentlyInQuestion && msg.content.toUpperCase() == "GOODBYE") {
-        var cFinalMessage = assembleAndSendFinalMessage(oResult.aMsgIDs, oResult.bAskType, ouijaChannel, "");
-        copyChannel.send({
-            embed:
-            {
-                color: 3447003,
-                author:
+        assembleFinalMessage(oResult.aMsgIDs, oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "").then(function(oReturnObj) {
+            var oQuestionMsg = oReturnObj.questionMsg
+            var cOuijaResultString = oReturnObj.cResult
+            ouijaChannel.send({
+                embed:
                 {
-                    icon_url: client.user.avatarURL
-                },
-                title: oQuestionMessage.content,
-                description: cOuijaResultString.length > 0 ? cOuijaResultString : "(no answer given)",
-                timestamp: new Date()
-            }
-        });
+                    color: 3447003,
+                    author:
+                    {
+                        icon_url: oQuestionMsg.author.avatarURL
+                    },
+                    title: oQuestionMsg.content,
+                    description: cOuijaResultString.length > 0 ? cOuijaResultString : "(no answer given)",
+                    timestamp: new Date()
+                }
+            });
 
-        UpsertOuijaData(client, ouijaChannelID, [], 0, false, null)
+            UpsertOuijaData(client, iGuildID, [], 0, false, null)
+        });;
 
     }
     else if (oResult.bCurrentlyInQuestion) {
         aNewMsgIDs.push(msg.id);
-        UpsertOuijaData(client, ouijaChannelID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, oResult.iQuestionMessageID)
+        UpsertOuijaData(client, iGuildID, aNewMsgIDs, bNewAskType, bNewCurrentlyInQuestion, oResult.iQuestionMessageID)
     }
 
 
@@ -169,19 +179,37 @@ function hasValidAskGroovebotCommand(cString) {
     return false;
 }
 
-function assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, cResult) {
-    var iMsgID = aMsgIDs[0];
-    ouijaChannel.fetchMessage(iMsgID).then(function(msg) {
-        if (!msg.deleted) {
-            if (bAskType == 1 && msg.content.length == 1)
-                cResult += msg.content.toUpperCase();
-            else if (bAskType == 2 && msg.content.indexOf(" ") == -1)
-                cResult += msg.content.toUpperCase() + " ";
+function assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, iQuestionMessageID, cResult) {
+    var promise = new Promise(function(resolve, reject) {
+        if (aMsgIDs.length == 0) {
+            ouijaChannel.fetchMessage(iQuestionMessageID).then(function(questionMsg) {
+                var oReturnObj = {"cResult": cResult, "questionMsg": questionMsg}
+                resolve(oReturnObj);
+            }).catch(console.error)
         }
-        aMsgIDs.shift();
-        return assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, cResult)
-    }).catch(console.error);
+        else {
+            var iMsgID = aMsgIDs[0];
 
+            ouijaChannel.fetchMessage(iMsgID).then(function(msg) {
+                if (aMsgIDs.length == 0) {
+                    ouijaChannel.fetchMessage(iQuestionMessageID).then(function(msg) {
+                        resolve(cResult, msg);
+                    }).catch(console.error)
+                }
+                else {
+                    if (!msg.deleted) {
+                        if (bAskType == 1 && msg.content.length == 1)
+                            cResult += msg.content.toUpperCase();
+                        else if (bAskType == 2 && msg.content.indexOf(" ") == -1)
+                            cResult += msg.content.toUpperCase() + " ";
+                    }
+                    aMsgIDs.shift();
+                    resolve(assembleFinalMessage(aMsgIDs, bAskType, ouijaChannel, iQuestionMessageID, cResult));
+                }
+            }).catch(console.error);
+        }
+    });
+    return promise;
 }
 
 function resetVars() {
@@ -191,16 +219,16 @@ function resetVars() {
     bAskType = 0;
 }
 
-function UpsertOuijaData(client, ouijaChannelID, aMsgIDs, bOuijaAskType, bCurrentlyInQuestion, iQuestionMessageID) {
+function UpsertOuijaData(client, iGuildID, aMsgIDs, bOuijaAskType, bCurrentlyInQuestion, iQuestionMessageID) {
 
     aMsgIDs = aMsgIDs ? aMsgIDs : [];
     bOuijaAskType = bOuijaAskType ? bOuijaAskType : 0;
     bCurrentlyInQuestion = bCurrentlyInQuestion ? bCurrentlyInQuestion : false;
     iQuestionMessageID = iQuestionMessageID ? iQuestionMessageID : 0;
     var oKeyObject = {
-        guildID: ouijaChannelID,
+        guildID: iGuildID,
         production: Globals.bProduction,
-        gametype = "ouija"
+        gametype: "ouija"
     }
 
     var oInsertObject = {
