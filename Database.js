@@ -61,6 +61,23 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
+// Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
+exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck = null)
+{
+  dbo.collection(cCollectionName).updateOne(oKeyObj, oUpdateObj,
+  {
+    upsert: true,
+    safe: false
+  }, function(err, res)
+  {
+    if (err) throw err;
+    console.log("1 document upserted");
+    if (fCallabck)
+      fCallabck();
+    //MongoDB.close();
+  });
+}
+
 exports.Query = function(cCollectionName, oQueryObj, oSort = {}, fCallabck = null)
 {
 
