@@ -3,6 +3,7 @@ const FoyerCopy = require('./FoyerCopy.js')
 const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
+const SilenceChannel = require('./SilenceChannel.js')
 
 exports.Init = function(client) {
     client.on('message', msg => {
@@ -22,17 +23,22 @@ exports.Init = function(client) {
                 return;
             }
 
-            var iCopyInputChannelID = oResult["copyinputchannel"];
-            var iCopyOutputChannelID = oResult["copyoutputchannel"];
-            var bToggleChannelCopy = oResult["togglechannelcopy"];
-            FoyerCopy.OnMessage(client, msg, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
+            var aSilenceChannelIDs = oResult["silencechannels"];
+            var bSilenced = SilenceChannel.ProcessMessage(client, msg, aSilenceChannelIDs);
 
-            var iOuijaChannelID = oResult["ouijachannel"];
-            var bToggleOuija = oResult["toggleouija"];
-            Ouija.ProcessMessage(client, msg, iOuijaChannelID, bToggleOuija);
+            if (!bSilenced) {
+                var iCopyInputChannelID = oResult["copyinputchannel"];
+                var iCopyOutputChannelID = oResult["copyoutputchannel"];
+                var bToggleChannelCopy = oResult["togglechannelcopy"];
+                FoyerCopy.OnMessage(client, msg, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
 
-            CommandListener.ProcessMessage(client, msg);
-            Ventriloquist.ProcessMessage(client, msg);
+                var iOuijaChannelID = oResult["ouijachannel"];
+                var bToggleOuija = oResult["toggleouija"];
+                Ouija.ProcessMessage(client, msg, iOuijaChannelID, bToggleOuija);
+
+                CommandListener.ProcessMessage(client, msg);
+                Ventriloquist.ProcessMessage(client, msg);
+            }
         });
     });
 
