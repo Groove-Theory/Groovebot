@@ -45,3 +45,12 @@ exports.g_GitLink = "https://github.com/Groove-Theory/Groovebot";
 exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
+
+exports.OptionTypes = {
+    "guildid": {"optiontype": "channel"},
+    "production": {"optiontype": "boolean"},
+    "guildname": {"optiontype": "string"},
+    "toggleouija": {"optiontype": "boolean"},
+    "ouijachannel": {"optiontype": "channel"},
+    "silencechannels": {"optiontype": "channelarray"},
+}
