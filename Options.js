@@ -1,6 +1,7 @@
 const Globals = require('./Globals.js')
 
 
+
 exports.Init = function(client, msg) {
 
     var oAuthorUser = msg.author;
@@ -147,20 +148,23 @@ function ShowOption(client, msg, aMsgDetails) {
             SendReplyMessage(client, msg, "Sorry, something went wrong (try again though, maybe this was your first time setting up options and I couldn't find anything) ");
             return;
         }
-
+        var cMessage = "";
         var aDontShowProps = ["_id", "production"];
         if (cOptionToQuery.toLowerCase() == "all") {
-            var cMessage = "";
             for (var key in oResult) {
                 if (oResult.hasOwnProperty(key) && aDontShowProps.indexOf(key.toLowerCase()) == -1) {
-                    cMessage += "**" + key.toLowerCase() + "** = " + oResult[key] + "\r\n"
+                    cMessage += "**" + key.toLowerCase() + "** = " + oResult[key]
+                    cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, key)
+                    cMessage += "\r\n"
 
                 }
             }
             SendReplyMessage(client, msg, cMessage);
         }
         else {
-            SendReplyMessage(client, msg, "**" + cOptionToQuery.toLowerCase() + "** = " + oResult[cOptionToQuery.toLowerCase()]);
+            cMessage = "**" + cOptionToQuery.toLowerCase() + "** = " + oResult[cOptionToQuery.toLowerCase()]
+            cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, cOptionToQuery.toLowerCase())
+            SendReplyMessage(client, msg, cMessage);
         }
     });
 }
@@ -296,7 +300,7 @@ function ToggleSilenceChannel(client, msg, aMsgDetails) {
 
 
         Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, oSilenceChannel, cMessage));
-        if(oSilenceChannel.id != msg.channel.id)
+        if (oSilenceChannel.id != msg.channel.id)
             SendReplyMessage(client, msg, cMessage)
     }
 }
@@ -311,4 +315,30 @@ function SendReplyMessage(client, msg, cContent) {
 
 function SendReplyMessageInCustomChannel(client, oChannel, cContent) {
     oChannel.send(cContent);
+}
+
+function AddDetailsToShowOptionsMessage(client, cMessage, oResult, key) {
+    var oOptionType = Globals.OptionTypes[key];
+    if (oOptionType && oOptionType.optiontype == "channel") {
+        var oChannel = client.channels.find(c => c.id == oResult[key])
+        if (oChannel)
+            cMessage += " *(" + oChannel.name + ")*";
+    }
+    else if (oOptionType && oOptionType.optiontype == "channelarray") {
+        var aChannels = oResult && oResult[key] ? oResult[key] : [];
+        if (aChannels && aChannels.length > 0) {
+            cMessage += " *("
+            for (var i = 0; i < aChannels.length; i++) {
+                var oChannel = client.channels.find(c => c.id == oResult[key][i])
+                if (oChannel) {
+                    if (i != 0)
+                        cMessage += ", "
+                    cMessage += oChannel.name;
+                }
+            }
+            cMessage += ")*";
+        }
+    }
+
+    return cMessage;
 }
