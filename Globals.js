@@ -52,5 +52,8 @@ exports.OptionTypes = {
     "guildname": {"optiontype": "string"},
     "toggleouija": {"optiontype": "boolean"},
     "ouijachannel": {"optiontype": "channel"},
+    "copyinputchannel": {"optiontype": "channel"},
+    "copyoutputchannel": {"optiontype": "channel"},
+    "togglechannelcopy": {"optiontype": "boolean"},
     "silencechannels": {"optiontype": "channelarray"},
 }
