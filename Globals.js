@@ -1,5 +1,5 @@
 exports.bProduction = (process.env.PRODUCTION == 1 || process.env.PRODUCTION == "1");
-///////////////////TEST VARS////////////////////////////////////////
+///////////////////TEST VARS///////////////testing new ide/////////////////////////
 
 exports.g_mainChannelIDs = ["595643528760262686", "570056315989262346"];
 exports.g_copyChannelIDs = ["595643579867856917", "570056992002015243"];
