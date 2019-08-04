@@ -1,12 +1,16 @@
 const Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js')
 const Translate = require('translate-google')
-exports.Init = function(client, msg) {
-    var cWordToBeTranslated = createTextToBeTranslated();
-    Translate(cWordToBeTranslated, { from: 'ig', to: 'en' }).then(res => {
+exports.Init = async function(client, msg) {
+    try{
+        var cWordToBeTranslated = createTextToBeTranslated();
+        var res = await Translate(cWordToBeTranslated, { from: 'ig', to: 'en' });
         msg.channel.send("**\"" + res + "\"**")
-    }).catch(err => {
-        msg.channel.send("uh..... shit")
-    })
+    }
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err);
+    }
 }
 
 
@@ -63,8 +67,7 @@ function createTextToBeTranslated() {
                 g_aWordTypes.splice(iRandomIndex, 1);
             }
         } catch (e) {
-            console.log("broke");
-            break;
+            ErrorHandler.HandleError(client, err);
 
         }
     }

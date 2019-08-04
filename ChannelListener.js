@@ -1,21 +1,25 @@
 const Globals = require('./Globals.js');
+const ErrorHandler = require('./ErrorHandler.js')
 const FoyerCopy = require('./FoyerCopy.js')
 const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
 const SilenceChannel = require('./SilenceChannel.js')
 
-exports.Init = function(client) {
-    client.on('message', msg => {
-        var iMsgChannelID = msg.channel.id;
-        var oGuild = msg.guild;
+exports.Init = function (client) {
+    client.on('message', async msg => {
+        try {
+            var iMsgChannelID = msg.channel.id;
+            var oGuild = msg.guild;
+            if (!oGuild)
+                return;
 
-        var oQueryObject = {
-            guildID: oGuild.id,
-            production: Globals.bProduction
-        }
+            var oQueryObject = {
+                guildID: oGuild.id,
+                production: Globals.bProduction
+            }
 
-        Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
+            let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
             var oResult = aResult.length > 0 ? aResult[0] : null;
             if (!oResult) {
                 Options.CheckServerOptionsExist(client, oGuild)
@@ -39,19 +43,27 @@ exports.Init = function(client) {
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
             }
-        });
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
     });
 
-    client.on('messageUpdate', (oldMessage, newMessage) => {
-        var iMsgChannelID = oldMessage.channel.id;
-        var oGuild = oldMessage.guild;
 
-        var oQueryObject = {
-            guildID: oGuild.id,
-            production: Globals.bProduction
-        }
+    client.on('messageUpdate', async (oldMessage, newMessage) => {
+        try {
+            var iMsgChannelID = oldMessage.channel.id;
+            var oGuild = oldMessage.guild;
+            if (!oGuild)
+                return;
 
-        Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
+
+            var oQueryObject = {
+                guildID: oGuild.id,
+                production: Globals.bProduction
+            }
+
+            let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
             var oResult = aResult.length > 0 ? aResult[0] : null;
             if (!oResult) {
                 Options.CheckServerOptionsExist(client, oGuild)
@@ -63,19 +75,27 @@ exports.Init = function(client) {
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
             var bToggleChannelCopy = oResult["togglechannelcopy"];
             FoyerCopy.OnMessageUpdate(client, oldMessage, newMessage, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
-        });
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
     });
 
-    client.on('messageDelete', msg => {
-        var iMsgChannelID = msg.channel.id;
-        var oGuild = msg.guild;
+    client.on('messageDelete', async msg => {
+        try {
+            var iMsgChannelID = msg.channel.id;
+            var oGuild = msg.guild;
+            if (!oGuild)
+                return;
 
-        var oQueryObject = {
-            guildID: oGuild.id,
-            production: Globals.bProduction
-        }
 
-        Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
+            var oQueryObject = {
+                guildID: oGuild.id,
+                production: Globals.bProduction
+            }
+
+            let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
+
             var oResult = aResult.length > 0 ? aResult[0] : null;
             if (!oResult) {
                 Options.CheckServerOptionsExist(client, oGuild)
@@ -87,27 +107,20 @@ exports.Init = function(client) {
             var iCopyOutputChannelID = oResult["copyoutputchannel"];
             var bToggleChannelCopy = oResult["togglechannelcopy"];
             FoyerCopy.OnMessageDelete(client, msg, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
-        });
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
     });
 
-    client.on('guildMemberAdd', member => {
+    client.on('guildMemberAdd', async member => {
         // Don't need to query stuff yet for this event
-        FoyerCopy.OnGuildMemberAdd(member);
-
-        // var iMsgChannelID = msg.channel.id;
-        // var oGuild = msg.guild;
-
-        // var oQueryObject = {
-        //     guildID: oGuild.id,
-        //     production: Globals.bProduction
-        // }
-
-        // Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
-        //     var iCopyInputChannelID = oResult["copyinputchannel"];
-        //     var iCopyOutputChannelID = oResult["copyoutputchannel"];
-        //     var bToggleChannelCopy = oResult["togglechannelcopy"];
-        //     FoyerCopy.OnMessage(client, msg, iCopyInputChannelID, iCopyOutputChannelID, bToggleChannelCopy);
-        // });
+        try {
+            FoyerCopy.OnGuildMemberAdd(member);
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
     });
 }
 

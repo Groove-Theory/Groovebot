@@ -1,6 +1,7 @@
 const RandomWord = require('random-word');
 const WordDefinition = require('word-definition');
 const Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js')
 var iTries = 0;
 exports.Init = function(client, msg)
 {      
@@ -14,24 +15,31 @@ exports.Init = function(client, msg)
 
     var cRandomWord = RandomWord();
     console.log(cRandomWord);
-    getDefinition(cRandomWord, cQueried, msgChannel)
+    getDefinition(client, cRandomWord, cQueried, msgChannel)
   }
 }
 
-function getDefinition(cWord, cQueried, msgChannel)
+function getDefinition(client, cWord, cQueried, msgChannel)
 {
   WordDefinition.getDef(cWord, "en", null, function(definition) {
-    var oJSON = definition;
-    if(oJSON.err)
+    try
     {
-      console.log("it worked")
-      iTries++;
-      if(iTries < 10)
-        getDefinition(RandomWord(), cQueried, msgChannel);
+      var oJSON = definition;
+      if(oJSON.err)
+      {
+        console.log("it worked")
+        iTries++;
+        if(iTries < 10)
+          getDefinition(client, RandomWord(), cQueried, msgChannel);
+      }
+      else
+      {
+        printDefinition(oJSON, cQueried, msgChannel)
+      }
     }
-    else
+    catch(err)
     {
-      printDefinition(oJSON, cQueried, msgChannel)
+      ErrorHandler.HandleError(client, err);
     }
   });
 }
