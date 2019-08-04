@@ -1,5 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js');
+
 const uri = process.env.DB_URI;
 var MDBlient = new MongoClient(uri,
 {
@@ -8,7 +10,7 @@ var MDBlient = new MongoClient(uri,
 var MongoDB = null;
 var dbo = null;
 
-exports.Init = function()
+exports.Init = async function(client)
 {
   console.log("DB INIT....")
   var conn = new Promise((resolve, reject) =>
@@ -19,6 +21,7 @@ exports.Init = function()
       {
         MDBlient = null;
         console.error('[mongo] client err', err);
+        ErrorHandler.HandleError(client, err);
         return reject(false);
       }
       dbo = db.db(Globals.bProduction ? "GrooveDB" : "TestingDB");
@@ -56,7 +59,16 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
     if (err) throw err;
     console.log("1 document upserted");
     if (fCallabck)
-      fCallabck();
+    {
+      try
+      {
+        fCallabck();
+      }
+      catch(err)
+      {
+        ErrorHandler.HandleError(client, err);
+      }
+    }
     //MongoDB.close();
   });
 }
@@ -73,7 +85,16 @@ exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck 
     if (err) throw err;
     console.log("1 document upserted");
     if (fCallabck)
-      fCallabck();
+    {
+      try
+      {
+        fCallabck();
+      }
+      catch(err)
+      {
+        ErrorHandler.HandleError(client, err);
+      }
+    }
     //MongoDB.close();
   });
 }

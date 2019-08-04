@@ -1,7 +1,6 @@
-const keep_alive = require('./keep_alive.js')
 const Discord = require('discord.js');
 
-//const FoyerCopy = require('./FoyerCopy.js')
+const ErrorHandler = require('./ErrorHandler.js')
 const Globals = require('./Globals.js')
 const Options = require('./Options.js')
 const Database = require('./Database.js')
@@ -11,41 +10,47 @@ const fs = require('fs');
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_SECRET;
 
-var bLoggedIn = false;
-var bReady = false;
+/*
+const ErrorHandler = require('./ErrorHandler.js');
 
+ErrorHandler.HandleError(client, err);
 
-client.on('ready', () =>
-{
-  if (!bReady)
-  {
-    Database.Init().then(function(bSuccess)
-    {
-      if (bSuccess)
-      {
-        Globals.Database = Database;
-        console.log("I'm in: --> " + client.user.username);
-        client.guilds.forEach(function(oGuild){
-            Options.CheckServerOptionsExist(client, oGuild)
-        });
+        var x = null;
+        var y = x.f;
+*/
 
-        ChannelListener.Init(client);
-
-        var compliment_obj = JSON.parse(fs.readFileSync('./Compliments.json', 'utf8'));
-        if (compliment_obj)
-          Globals.aCompliments = compliment_obj.Compliments;
-
-
-        bReady = true;
-      }
-    });
-
-  }
-
+process.on('uncaughtException', function (err) {
+  console.log("here");
+  ErrorHandler.HandleError(client, err)
 });
 
-if (!bLoggedIn)
-{
-  client.login(token);
-  bLoggedIn = true;
-}
+process.on('unhandledRejection', (reason, promise) => {
+  console.log("here");
+  ErrorHandler.HandleError(client, reason)
+})
+
+
+client.on('ready', async () => {
+  try {
+    let bSuccess = await Database.Init(client);
+    if (bSuccess) {
+      Globals.Database = Database;
+      console.log("I'm in: --> " + client.user.username);
+      client.guilds.forEach(function (oGuild) {
+        Options.CheckServerOptionsExist(client, oGuild)
+      });
+
+      ChannelListener.Init(client);
+
+      var compliment_obj = JSON.parse(fs.readFileSync('./Compliments.json', 'utf8'));
+      if (compliment_obj)
+        Globals.aCompliments = compliment_obj.Compliments;
+    }
+  }
+  catch (err) {
+    ErrorHandler.HandleError(client, err)
+  }
+});
+
+
+client.login(token);

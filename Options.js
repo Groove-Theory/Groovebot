@@ -2,7 +2,7 @@ const Globals = require('./Globals.js')
 
 
 
-exports.Init = function(client, msg) {
+exports.Init = function (client, msg) {
 
     var oAuthorUser = msg.author;
     if (oAuthorUser.id != Globals.g_GrooveID) // Groove override
@@ -26,7 +26,7 @@ exports.Init = function(client, msg) {
 
     exports.CheckServerOptionsExist(client, msg.guild);
 
-    var aMsgDetails = msg.content.split(" ").filter(function(el) {
+    var aMsgDetails = msg.content.split(" ").filter(function (el) {
         return el != null && el.length > 0;
     });
     console.log(aMsgDetails);
@@ -113,7 +113,7 @@ exports.Init = function(client, msg) {
     }
 }
 
-exports.CheckServerOptionsExist = function(client, oGuild) {
+exports.CheckServerOptionsExist = function (client, oGuild) {
     var oKeyObject = {
         guildID: oGuild.id,
         production: Globals.bProduction
@@ -125,7 +125,7 @@ exports.CheckServerOptionsExist = function(client, oGuild) {
     Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject);
 }
 
-function ShowOption(client, msg, aMsgDetails) {
+async function ShowOption(client, msg, aMsgDetails) {
     if (aMsgDetails.length != 3 || !aMsgDetails[2]) {
         SendErrorMessage(client, msg)
         return;
@@ -140,33 +140,31 @@ function ShowOption(client, msg, aMsgDetails) {
         production: Globals.bProduction
     }
 
+    var aResult = await Globals.Database.Query("ServerOptions", oQueryObject)
+    console.log(aResult)
+    var oResult = aResult.length > 0 ? aResult[0] : null
+    if (!oResult) {
+        SendReplyMessage(client, msg, "Sorry, something went wrong (try again though, maybe this was your first time setting up options and I couldn't find anything) ");
+        return;
+    }
+    var cMessage = "";
+    var aDontShowProps = ["_id", "production"];
+    if (cOptionToQuery.toLowerCase() == "all") {
+        for (var key in oResult) {
+            if (oResult.hasOwnProperty(key) && aDontShowProps.indexOf(key.toLowerCase()) == -1) {
+                cMessage += "**" + key.toLowerCase() + "** = " + oResult[key]
+                cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, key)
+                cMessage += "\r\n"
 
-    Globals.Database.Query("ServerOptions", oQueryObject).then(function(aResult) {
-        console.log(aResult)
-        var oResult = aResult.length > 0 ? aResult[0] : null
-        if (!oResult) {
-            SendReplyMessage(client, msg, "Sorry, something went wrong (try again though, maybe this was your first time setting up options and I couldn't find anything) ");
-            return;
-        }
-        var cMessage = "";
-        var aDontShowProps = ["_id", "production"];
-        if (cOptionToQuery.toLowerCase() == "all") {
-            for (var key in oResult) {
-                if (oResult.hasOwnProperty(key) && aDontShowProps.indexOf(key.toLowerCase()) == -1) {
-                    cMessage += "**" + key.toLowerCase() + "** = " + oResult[key]
-                    cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, key)
-                    cMessage += "\r\n"
-
-                }
             }
-            SendReplyMessage(client, msg, cMessage);
         }
-        else {
-            cMessage = "**" + cOptionToQuery.toLowerCase() + "** = " + oResult[cOptionToQuery.toLowerCase()]
-            cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, cOptionToQuery.toLowerCase())
-            SendReplyMessage(client, msg, cMessage);
-        }
-    });
+        SendReplyMessage(client, msg, cMessage);
+    }
+    else {
+        cMessage = "**" + cOptionToQuery.toLowerCase() + "** = " + oResult[cOptionToQuery.toLowerCase()]
+        cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, cOptionToQuery.toLowerCase())
+        SendReplyMessage(client, msg, cMessage);
+    }
 }
 
 function ToggleChannelCopy(client, msg, aMsgDetails) {

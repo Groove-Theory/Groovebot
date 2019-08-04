@@ -1,4 +1,6 @@
 const Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js');
+
 var cOuijaResultString = "";
 var aAnswerInputMessages = [];
 var oQuestionMessage = null;
@@ -70,22 +72,24 @@ const aValidAskGrooveBotCommandStrings = [
 ];
 
 var bAskType = 0;
-exports.ProcessMessage = function(client, msg, iOuijaChannelID, bToggleOuija) {
-    if (!bToggleOuija)
-        return;
+exports.ProcessMessage = async function(client, msg, iOuijaChannelID, bToggleOuija) {
+    try {
+     
+        if (!bToggleOuija)
+            return;
 
-    if (msg.author.id != client.user.id && msg.channel.id == iOuijaChannelID) {
-        var oGuild = msg.channel.guild;
-        var iGuildID = oGuild.id;
+        if (msg.author.id != client.user.id && msg.channel.id == iOuijaChannelID) {
+            var oGuild = msg.channel.guild;
+            var iGuildID = oGuild.id;
 
-        var oOuijaChannel = msg.channel;
-        var oQueryObject = {
-            guildID: iGuildID,
-            production: Globals.bProduction,
-            gametype: "ouija"
-        }
+            var oOuijaChannel = msg.channel;
+            var oQueryObject = {
+                guildID: iGuildID,
+                production: Globals.bProduction,
+                gametype: "ouija"
+            }
 
-        Globals.Database.Query("GameData", oQueryObject).then(function(aResult) {
+            var aResult = await Globals.Database.Query("GameData", oQueryObject);
             var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
             var paramObject = { "client": client, "oResult": oResult, "msg": msg, "oOuijaChannel": oOuijaChannel, "iGuildID": iGuildID };
             if (!oResult) {
@@ -94,46 +98,54 @@ exports.ProcessMessage = function(client, msg, iOuijaChannelID, bToggleOuija) {
             else {
                 HandleOuijaContent(client, oResult, msg, oOuijaChannel, iGuildID);
             }
-
-        });
-
-
+        }
+    }
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err);
     }
 
 }
 
 function HandleOuijaContentCallback() {
-    var client = this.client;
-    var oResult = this.oResult;
-    var msg = this.msg
-    var ouijaChannel = this.ouijaChannel
-    var iGuildID = this.iGuildID
-    HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID)
+    try {
+        var client = this.client;
+        var oResult = this.oResult;
+        var msg = this.msg
+        var ouijaChannel = this.ouijaChannel
+        var iGuildID = this.iGuildID
+        HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID)
+    }
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err);
+    }
 }
 
 function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
-    var bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
-    var bNewCurrentlyInQuestion = oResult && oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
-    var iNewQuestionMessageID = oResult && oResult.iQuestionMessageID ? oResult.iQuestionMessageID : msg.id;
-    if (!oResult || !oResult.bCurrentlyInQuestion) {
-        if (hasValidOuijaCommand(msg.content)) {
-            bNewAskType = 1;
-            bNewCurrentlyInQuestion = true;
-            iNewQuestionMessageID = msg.id;
-            UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
-        }
-        else if (hasValidAskGroovebotCommand(msg.content)) {
-            bNewAskType = 2;
-            bNewCurrentlyInQuestion = true;
-            iNewQuestionMessageID = msg.id;
-            UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
+    try{
+        var bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
+        var bNewCurrentlyInQuestion = oResult && oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
+        var iNewQuestionMessageID = oResult && oResult.iQuestionMessageID ? oResult.iQuestionMessageID : msg.id;
+        if (!oResult || !oResult.bCurrentlyInQuestion) {
+            if (hasValidOuijaCommand(msg.content)) {
+                bNewAskType = 1;
+                bNewCurrentlyInQuestion = true;
+                iNewQuestionMessageID = msg.id;
+                UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
+            }
+            else if (hasValidAskGroovebotCommand(msg.content)) {
+                bNewAskType = 2;
+                bNewCurrentlyInQuestion = true;
+                iNewQuestionMessageID = msg.id;
+                UpsertOuijaData(client, iGuildID, bNewAskType, bNewCurrentlyInQuestion, iNewQuestionMessageID)
+            }
+
         }
 
-    }
-
-    //TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
-    else if (oResult.bCurrentlyInQuestion && msg.content.toUpperCase() == "GOODBYE") {
-        assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "").then(function(oReturnObj) {
+        //TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
+        else if (oResult.bCurrentlyInQuestion && msg.content.toUpperCase() == "GOODBYE") {
+            var oReturnObj = assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "")
             var oQuestionMsg = oReturnObj.questionMsg
             var cOuijaResultString = oReturnObj.cResult
             ouijaChannel.send({
@@ -151,7 +163,11 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
             });
 
             UpsertOuijaData(client, iGuildID, [], 0, false, null)
-        });
+        }
+    }
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err);
     }
 }
 
@@ -202,9 +218,9 @@ function assembleFinalMessage(bAskType, ouijaChannel, iQuestionMessageID, cResul
                 ouijaChannel.fetchMessage(iQuestionMessageID).then(function(questionMsg) {
                     var oReturnObj = { "cResult": cResult, "questionMsg": questionMsg }
                     resolve(oReturnObj);
-                }).catch(console.error)
+                }).catch(err => ErrorHandler.HandleError(client, err))
             }
-        }).catch(console.error);
+        }).catch(err => ErrorHandler.HandleError(client, err));
     });
     return promise;
 }
@@ -217,20 +233,26 @@ function resetVars() {
 }
 
 function UpsertOuijaData(client, iGuildID, bOuijaAskType, bCurrentlyInQuestion, iQuestionMessageID, cFunc = null) {
-    bOuijaAskType = bOuijaAskType ? bOuijaAskType : 0;
-    bCurrentlyInQuestion = bCurrentlyInQuestion ? bCurrentlyInQuestion : false;
-    iQuestionMessageID = iQuestionMessageID ? iQuestionMessageID : 0;
-    var oKeyObject = {
-        guildID: iGuildID,
-        production: Globals.bProduction,
-        gametype: "ouija"
+    try{
+        bOuijaAskType = bOuijaAskType ? bOuijaAskType : 0;
+        bCurrentlyInQuestion = bCurrentlyInQuestion ? bCurrentlyInQuestion : false;
+        iQuestionMessageID = iQuestionMessageID ? iQuestionMessageID : 0;
+        var oKeyObject = {
+            guildID: iGuildID,
+            production: Globals.bProduction,
+            gametype: "ouija"
+        }
+
+        var oInsertObject = {
+            "bAskType": bOuijaAskType,
+            "bCurrentlyInQuestion": bCurrentlyInQuestion,
+            "iQuestionMessageID": iQuestionMessageID
+        };
+
+        Globals.Database.Upsert("GameData", oKeyObject, oInsertObject, cFunc);
     }
-
-    var oInsertObject = {
-        "bAskType": bOuijaAskType,
-        "bCurrentlyInQuestion": bCurrentlyInQuestion,
-        "iQuestionMessageID": iQuestionMessageID
-    };
-
-    Globals.Database.Upsert("GameData", oKeyObject, oInsertObject, cFunc);
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err);
+    }
 }

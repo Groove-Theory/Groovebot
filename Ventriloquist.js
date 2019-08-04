@@ -15,7 +15,6 @@ exports.Change = function(client, msg) {
         msg.channel.send("LOL nope, this only for Groove");
     else {
         var gData = msg.content.split(" ")
-
         var iChannelID = gData[1];
         if (iChannelID) {
             Globals.g_VentriloquistOutputChannelID = iChannelID;
