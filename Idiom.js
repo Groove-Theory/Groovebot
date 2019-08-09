@@ -1,75 +1,71 @@
-const Globals = require('./Globals.js')
-const ErrorHandler = require('./ErrorHandler.js')
-const Translate = require('translate-google')
-exports.Init = async function(client, msg) {
-    try{
-        var cWordToBeTranslated = createTextToBeTranslated();
-        var res = await Translate(cWordToBeTranslated, { from: 'ig', to: 'en' });
-        msg.channel.send("**\"" + res + "\"**")
-    }
-    catch(err)
-    {
-        ErrorHandler.HandleError(client, err);
-    }
-}
-
+const Translate = require("translate-google");
+const ErrorHandler = require("./ErrorHandler.js");
 
 function WordType(cString) {
-    this.cString = cString.toLowerCase(),
-        this.iNum = 0
+  (this.cString = cString.toLowerCase()), (this.iNum = 0);
 }
 
 function randomizeWord(cString) {
-    return cString.split('').map(function(v) {
-        var chance = Math.round(Math.random() / 1.8);
-        return v = chance ? v.toUpperCase() : v.toLowerCase();
-    }).join('')
+  return cString
+    .split("")
+    .map(function RandomizeWordMap(v) {
+      const chance = Math.round(Math.random() / 1.8);
+      const cRandomizedWord = chance ? v.toUpperCase() : v.toLowerCase();
+      return cRandomizedWord;
+    })
+    .join("");
 }
 
 function randomChance(iProbDenominator) {
-    var fProb = (iProbDenominator - 1) / iProbDenominator;
-    return fProb > Math.random();
+  const fProb = (iProbDenominator - 1) / iProbDenominator;
+  return fProb > Math.random();
 }
 
-function createTextToBeTranslated() {
-    var g_aWordTypes = [];
-    g_aWordTypes.push(new WordType("uwu"));
-    g_aWordTypes.push(new WordType("nani"));
-    g_aWordTypes.push(new WordType("owo"));
-    g_aWordTypes.push(new WordType("uh"));
-    g_aWordTypes.push(new WordType("ag"));
+function createTextToBeTranslated(client) {
+  const aWordTypes = [];
+  aWordTypes.push(new WordType("uwu"));
+  aWordTypes.push(new WordType("nani"));
+  aWordTypes.push(new WordType("owo"));
+  aWordTypes.push(new WordType("uh"));
+  aWordTypes.push(new WordType("ag"));
 
+  for (let i = 0; i < aWordTypes.length; i += 1) {
+    aWordTypes[i].iNum = parseInt(Math.random() * 10, 10);
+  }
 
-    for (var i = 0; i < g_aWordTypes.length; i++) {
-        g_aWordTypes[i].iNum = parseInt(Math.random() * 10)
+  let iNoSpaceChance = 6;
+  let cStringToBeTranslated = "";
+
+  while (aWordTypes.length > 0) {
+    try {
+      const iRandomIndex = Math.floor(Math.random() * aWordTypes.length);
+      const oRandomWordType = aWordTypes[iRandomIndex];
+      const cRandomString = randomizeWord(oRandomWordType.cString);
+      cStringToBeTranslated += cRandomString;
+
+      if (randomChance(iNoSpaceChance)) {
+        cStringToBeTranslated += " ";
+        iNoSpaceChance = 6;
+      } else {
+        iNoSpaceChance += 1;
+      }
+      oRandomWordType.iNum -= 1;
+      if (oRandomWordType.iNum <= 0) {
+        aWordTypes.splice(iRandomIndex, 1);
+      }
+    } catch (err) {
+      ErrorHandler.HandleError(client, err);
     }
-
-
-    var bCompleted = false;
-    var iNoSpaceChance = 6;
-    var cStringToBeTranslated = "";
-
-    while (g_aWordTypes.length > 0) {
-        try {
-            var iRandomIndex = Math.floor(Math.random() * g_aWordTypes.length);
-            var oRandomWordType = g_aWordTypes[iRandomIndex];
-            var cRandomString = randomizeWord(oRandomWordType.cString)
-            cStringToBeTranslated += cRandomString;
-
-            if (randomChance(iNoSpaceChance)) {
-                cStringToBeTranslated += " "
-                iNoSpaceChance = 6
-            } else {
-                iNoSpaceChance++;
-            }
-            oRandomWordType.iNum--;
-            if (oRandomWordType.iNum <= 0) {
-                g_aWordTypes.splice(iRandomIndex, 1);
-            }
-        } catch (e) {
-            ErrorHandler.HandleError(client, err);
-
-        }
-    }
-    return cStringToBeTranslated;
+  }
+  return cStringToBeTranslated;
 }
+
+exports.Init = async function Init(client, msg) {
+  try {
+    const cWordToBeTranslated = createTextToBeTranslated();
+    const res = await Translate(cWordToBeTranslated, { from: "ig", to: "en" });
+    msg.channel.send(`**"${res}"**`);
+  } catch (err) {
+    ErrorHandler.HandleError(client, err);
+  }
+};

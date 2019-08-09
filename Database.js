@@ -1,32 +1,26 @@
-var MongoClient = require('mongodb').MongoClient;
-var Globals = require('./Globals.js')
-const ErrorHandler = require('./ErrorHandler.js');
+/* eslint-disable no-console */
+import { MongoClient } from "mongodb";
+import { bProduction } from "./Globals";
+import { HandleError } from "./ErrorHandler";
 
 const uri = process.env.DB_URI;
-var MDBlient = new MongoClient(uri,
-{
+let MDBlient = new MongoClient(uri, {
   useNewUrlParser: true
 });
-var MongoDB = null;
-var dbo = null;
+let dbo = null;
 
-exports.Init = async function(client)
-{
-  console.log("DB INIT....")
-  var conn = new Promise((resolve, reject) =>
-  {
-    MDBlient.connect(function(err, db)
-    {
-      if (err)
-      {
+export async function Init(client) {
+  console.log("DB INIT....");
+  const conn = new Promise((resolve, reject) => {
+    MDBlient.connect(function MDBlientConnect(err, db) {
+      if (err) {
         MDBlient = null;
-        console.error('[mongo] client err', err);
-        ErrorHandler.HandleError(client, err);
-        return reject(false);
+        console.error("[mongo] client err", err);
+        HandleError(client, err);
+        return reject(err);
       }
-      dbo = db.db(Globals.bProduction ? "GrooveDB" : "TestingDB");
-      MongoDB = db;
-      console.log('[mongo] connected');
+      dbo = db.db(bProduction ? "GrooveDB" : "TestingDB");
+      console.log("[mongo] connected");
 
       resolve(true);
     });
@@ -34,148 +28,122 @@ exports.Init = async function(client)
   return conn;
 }
 
-exports.Insert = function(cCollectionName, oInsertObj)
-{
-  var myobj = oInsertObj;
-  dbo.collection(cCollectionName).insertOne(myobj, function(err, res)
-  {
-    if (err) throw err;
-    console.log("1 document inserted");
-    //MongoDB.close();
-  });
+export function Insert(client, cCollectionName, oInsertObj) {
+  const myobj = oInsertObj;
+  dbo
+    .collection(cCollectionName)
+    .insertOne(myobj, function InsertCallback(err) {
+      if (err) throw err;
+    });
 }
 
-exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = null)
-{
-  dbo.collection(cCollectionName).updateOne(oKeyObj,
-  {
-    $set: oUpsertDataObj
-  },
-  {
-    upsert: true,
-    safe: false
-  }, function(err, res)
-  {
-    if (err) throw err;
-    console.log("1 document upserted");
-    if (fCallabck)
+export function Upsert(
+  client,
+  cCollectionName,
+  oKeyObj,
+  oUpsertDataObj,
+  fCallabck = null
+) {
+  dbo.collection(cCollectionName).updateOne(
+    oKeyObj,
     {
-      try
-      {
-        fCallabck();
+      $set: oUpsertDataObj
+    },
+    {
+      upsert: true,
+      safe: false
+    },
+    function UpsertCallback(err) {
+      if (err) throw err;
+      if (fCallabck) {
+        try {
+          fCallabck();
+        } catch (callbackErr) {
+          HandleError(client, callbackErr);
+        }
       }
-      catch(err)
-      {
-        ErrorHandler.HandleError(client, err);
-      }
+      // MongoDB.close();
     }
-    //MongoDB.close();
-  });
+  );
 }
 
 // Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
-exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck = null)
-{
-  dbo.collection(cCollectionName).updateOne(oKeyObj, oUpdateObj,
-  {
-    upsert: true,
-    safe: false
-  }, function(err, res)
-  {
-    if (err) throw err;
-    console.log("1 document upserted");
-    if (fCallabck)
+export function UpsertManual(
+  client,
+  cCollectionName,
+  oKeyObj,
+  oUpdateObj,
+  fCallabck = null
+) {
+  dbo.collection(cCollectionName).updateOne(
+    oKeyObj,
+    oUpdateObj,
     {
-      try
-      {
-        fCallabck();
-      }
-      catch(err)
-      {
-        ErrorHandler.HandleError(client, err);
-      }
-    }
-    //MongoDB.close();
-  });
-}
-
-exports.Query = function(cCollectionName, oQueryObj, oSort = {}, fCallabck = null)
-{
-
-  var query = new Promise((resolve, reject) =>
-  {
-    dbo.collection(cCollectionName).find(
-      oQueryObj).sort(oSort).toArray(function(err, result)
-    {
-      if (err)
-        reject(err);
-      else
-        resolve(result)
-    });
-  });
-
-  return query;
-}
-
-exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
-{
-
-  var x = dbo.collection(cCollectionName).aggregate([
-  {
-    $sample:
-    {
-      size: iNumDocs
-    }
-  }]).toArray(function(err, docs)
-  {
-    if (err) console.log(err)
-  });
-
-
-
-  var query = new Promise((resolve, reject) =>
-  {
-    console.log("made it to the eunction");
-    dbo.collection(cCollectionName).aggregate([
-    {
-      $match: oQueryObj
+      upsert: true,
+      safe: false
     },
-    {
-      $sample:
-      {
-        size: iNumDocs
+    function UpsertManualCallback(err) {
+      if (err) HandleError(client, err);
+      if (fCallabck) {
+        try {
+          fCallabck();
+        } catch (callbackErr) {
+          HandleError(client, callbackErr);
+        }
       }
-    }]).toArray(function(err, result)
-    {
-      if (err)
-        reject(err);
-      else
-        resolve(result);
-    });
+    }
+  );
+}
+
+export function Query(client, cCollectionName, oQueryObj, oSort = {}) {
+  const query = new Promise(resolve => {
+    dbo
+      .collection(cCollectionName)
+      .find(oQueryObj)
+      .sort(oSort)
+      .toArray(function QueryToArrayCallback(err, result) {
+        if (err) HandleError(client, err);
+        else resolve(result);
+      });
+  });
+
+  return query;
+}
+
+export function QueryRandom(client, cCollectionName, oQueryObj, iNumDocs = 1) {
+  const query = new Promise(resolve => {
+    dbo
+      .collection(cCollectionName)
+      .aggregate([
+        {
+          $match: oQueryObj
+        },
+        {
+          $sample: {
+            size: iNumDocs
+          }
+        }
+      ])
+      .toArray(function QueryRandomToArrayCallback(err, result) {
+        if (err) HandleError(client, err);
+        else resolve(result);
+      });
   });
   return query;
 }
 
-
-exports.Update = function(cCollectionName, oQueryObj, oNewValuesObj)
-{
-  dbo.collection(cCollectionName).updateOne(oQueryObj, oNewValuesObj, function(err, res)
-  {
-    if (err) throw err;
-    console.log("1 document updated");
-    //MongoDB.close();
-  });
+export function Update(client, cCollectionName, oQueryObj, oNewValuesObj) {
+  dbo
+    .collection(cCollectionName)
+    .updateOne(oQueryObj, oNewValuesObj, function UpdateCallback(err) {
+      if (err) HandleError(client, err);
+    });
 }
 
-exports.Delete = function(cCollectionName, oQueryObj)
-{
-  var myquery = {
-    Address: '2'
-  };
-  dbo.collection(cCollectionName).deleteMany(oQueryObj, function(err, obj)
-  {
-    if (err) throw err;
-    console.log("1 document deleted");
-    //MongoDB.close();
-  });
+export function Delete(client, cCollectionName, oQueryObj) {
+  dbo
+    .collection(cCollectionName)
+    .deleteMany(oQueryObj, function DeleteCallback(err) {
+      if (err) HandleError(client, err);
+    });
 }
