@@ -1,32 +1,19 @@
-const Globals = require('./Globals.js')
+function getRandIntFromRange(iLow, iHigh) {
+  if (iHigh < iLow) return 0;
+  return Math.round((iHigh - iLow) * Math.random() + iLow);
+}
 
-exports.Init = function(client, msg)
-{
-  var length = getRandIntFromRange(10, 20)
-  var smash = [];
+exports.Init = function Init(client, msg) {
+  const length = getRandIntFromRange(10, 20);
+  const smash = [];
 
-  while (smash.length < length)
-  {
-    var tierchoose = getRandIntFromRange(32, 126)
-    smash.push(String.fromCharCode(tierchoose))
+  while (smash.length < length) {
+    const tierchoose = getRandIntFromRange(32, 126);
+    smash.push(String.fromCharCode(tierchoose));
   }
 
-  var keysmash = smash.join("")
+  const keysmash = smash.join("");
 
-  var msgChannel = client.channels.get(msg.channel.id);
+  const msgChannel = client.channels.get(msg.channel.id);
   msgChannel.send(keysmash);
-
-}
-
-function getRandItemFromArray(aArray)
-{
-  return aArray[Math.floor(Math.random() * aArray.length)];
-}
-
-function getRandIntFromRange(iLow, iHigh)
-{
-  if (iHigh < iLow)
-    return 0;
-  else
-    return Math.round(((iHigh - iLow) * Math.random()) + iLow)
-}
+};

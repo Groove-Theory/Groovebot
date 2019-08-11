@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
-import { MongoClient } from "mongodb";
-import { bProduction } from "./Globals";
-import { HandleError } from "./ErrorHandler";
+const MongoClient = require("mongodb").MongoClient;
+const Globals = require("./Globals.js");
+const ErrorHandler = require("./ErrorHandler.js");
 
 const uri = process.env.DB_URI;
 let MDBlient = new MongoClient(uri, {
@@ -9,35 +8,35 @@ let MDBlient = new MongoClient(uri, {
 });
 let dbo = null;
 
-export async function Init(client) {
+exports.Init = async function Init(client) {
   console.log("DB INIT....");
   const conn = new Promise((resolve, reject) => {
     MDBlient.connect(function MDBlientConnect(err, db) {
       if (err) {
         MDBlient = null;
         console.error("[mongo] client err", err);
-        HandleError(client, err);
+        ErrorHandler.HandleError(client, err);
         return reject(err);
       }
-      dbo = db.db(bProduction ? "GrooveDB" : "TestingDB");
+      dbo = db.db(Globals.bProduction ? "GrooveDB" : "TestingDB");
       console.log("[mongo] connected");
 
       resolve(true);
     });
   });
   return conn;
-}
+};
 
-export function Insert(client, cCollectionName, oInsertObj) {
+exports.Insert = function Insert(client, cCollectionName, oInsertObj) {
   const myobj = oInsertObj;
   dbo
     .collection(cCollectionName)
     .insertOne(myobj, function InsertCallback(err) {
       if (err) throw err;
     });
-}
+};
 
-export function Upsert(
+exports.Insert = function Upsert(
   client,
   cCollectionName,
   oKeyObj,
@@ -59,16 +58,16 @@ export function Upsert(
         try {
           fCallabck();
         } catch (callbackErr) {
-          HandleError(client, callbackErr);
+          ErrorHandler.HandleError(client, callbackErr);
         }
       }
       // MongoDB.close();
     }
   );
-}
+};
 
 // Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
-export function UpsertManual(
+exports.Insert = function UpsertManual(
   client,
   cCollectionName,
   oKeyObj,
@@ -83,34 +82,39 @@ export function UpsertManual(
       safe: false
     },
     function UpsertManualCallback(err) {
-      if (err) HandleError(client, err);
+      if (err) ErrorHandler.HandleError(client, err);
       if (fCallabck) {
         try {
           fCallabck();
         } catch (callbackErr) {
-          HandleError(client, callbackErr);
+          ErrorHandler.HandleError(client, callbackErr);
         }
       }
     }
   );
-}
+};
 
-export function Query(client, cCollectionName, oQueryObj, oSort = {}) {
+exports.Query = function Query(client, cCollectionName, oQueryObj, oSort = {}) {
   const query = new Promise(resolve => {
     dbo
       .collection(cCollectionName)
       .find(oQueryObj)
       .sort(oSort)
       .toArray(function QueryToArrayCallback(err, result) {
-        if (err) HandleError(client, err);
+        if (err) ErrorHandler.HandleError(client, err);
         else resolve(result);
       });
   });
 
   return query;
-}
+};
 
-export function QueryRandom(client, cCollectionName, oQueryObj, iNumDocs = 1) {
+exports.QueryRandom = function QueryRandom(
+  client,
+  cCollectionName,
+  oQueryObj,
+  iNumDocs = 1
+) {
   const query = new Promise(resolve => {
     dbo
       .collection(cCollectionName)
@@ -125,25 +129,30 @@ export function QueryRandom(client, cCollectionName, oQueryObj, iNumDocs = 1) {
         }
       ])
       .toArray(function QueryRandomToArrayCallback(err, result) {
-        if (err) HandleError(client, err);
+        if (err) ErrorHandler.HandleError(client, err);
         else resolve(result);
       });
   });
   return query;
-}
+};
 
-export function Update(client, cCollectionName, oQueryObj, oNewValuesObj) {
+exports.Update = function Update(
+  client,
+  cCollectionName,
+  oQueryObj,
+  oNewValuesObj
+) {
   dbo
     .collection(cCollectionName)
     .updateOne(oQueryObj, oNewValuesObj, function UpdateCallback(err) {
-      if (err) HandleError(client, err);
+      if (err) ErrorHandler.HandleError(client, err);
     });
-}
+};
 
-export function Delete(client, cCollectionName, oQueryObj) {
+exports.Delete = function Delete(client, cCollectionName, oQueryObj) {
   dbo
     .collection(cCollectionName)
     .deleteMany(oQueryObj, function DeleteCallback(err) {
-      if (err) HandleError(client, err);
+      if (err) ErrorHandler.HandleError(client, err);
     });
-}
+};

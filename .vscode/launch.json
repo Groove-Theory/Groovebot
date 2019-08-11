@@ -9,8 +9,8 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}/index.js",
-            "runtimeExecutable": "/usr/local/bin/node",
-            "envFile": "${workspaceRoot}/.env",
+            
+            "envFile": "${workspaceRoot}/.env", 
         }
     ]
 }

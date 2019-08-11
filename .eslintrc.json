@@ -18,6 +18,9 @@
     
     "plugins": ["prettier"],
     "rules": {
-        "prettier/prettier": ["error"]
+        "prettier/prettier": ["error"],
+        "no-console":0,
+        "radix": ["error", "as-needed"],
+        "prefer-destructuring": ["error", {"object": false, "array": false}]
     }
 }

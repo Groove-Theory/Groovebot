@@ -6,8 +6,8 @@ const ErrorHandler = require("./ErrorHandler.js");
 const wrap = s => s.replace(/(?![^\n]{1,40}$)([^\n]{1,40})\s/g, "$1\n");
 
 function makeRandomTime() {
-  const cHour = parseInt(12 * Math.random(), 10) + 1;
-  let cMinute = parseInt(60 * Math.random(), 10);
+  const cHour = parseInt(12 * Math.random()) + 1;
+  let cMinute = parseInt(60 * Math.random());
   cMinute = cMinute < 10 ? `0${cMinute}` : cMinute;
   return `${cHour}:${cMinute}${Math.random() > 0.5 ? " A" : " P"}M`;
 }

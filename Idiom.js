@@ -2,7 +2,8 @@ const Translate = require("translate-google");
 const ErrorHandler = require("./ErrorHandler.js");
 
 function WordType(cString) {
-  (this.cString = cString.toLowerCase()), (this.iNum = 0);
+  this.cString = cString.toLowerCase();
+  this.iNum = 0;
 }
 
 function randomizeWord(cString) {
