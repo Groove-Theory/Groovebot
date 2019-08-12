@@ -36,7 +36,7 @@ exports.Insert = function Insert(client, cCollectionName, oInsertObj) {
     });
 };
 
-exports.Insert = function Upsert(
+exports.Upsert = function Upsert(
   client,
   cCollectionName,
   oKeyObj,
@@ -67,7 +67,7 @@ exports.Insert = function Upsert(
 };
 
 // Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
-exports.Insert = function UpsertManual(
+exports.UpsertManual = function UpsertManual(
   client,
   cCollectionName,
   oKeyObj,

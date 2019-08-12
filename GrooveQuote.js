@@ -16,7 +16,7 @@ function AddToDB(client, msg, cLink) {
   const oInsertObj = {};
   oInsertObj.cLink = cLink;
   oInsertObj.DateUploaded = new Date();
-  Globals.Database.Insert("Quotes", oInsertObj);
+  Globals.Database.Insert(client, "Quotes", oInsertObj);
   msg.channel.send("**FILE UPLOADED!!!**");
 }
 
@@ -123,7 +123,7 @@ exports.Init = async function Init(client, msg) {
   try {
     const msgChannel = client.channels.get(msg.channel.id);
 
-    const oResult = await Globals.Database.QueryRandom("Quotes", {});
+    const oResult = await Globals.Database.QueryRandom(client, "Quotes", {});
 
     const cQuoteLink =
       oResult && oResult.length > 0 && oResult[0].cLink ? oResult[0].cLink : "";

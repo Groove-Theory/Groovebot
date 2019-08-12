@@ -68,24 +68,23 @@ const aValidAskGrooveBotCommandStrings = [
 ];
 
 function hasValidOuijaCommand(cString) {
-  aValidOuijaCommandStrings.forEach(function hasValidOuijaCommandForEach(
-    element
-  ) {
-    if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
-    return false;
-  });
+  for(var i = 0; i < aValidOuijaCommandStrings.length; i++)
+  {
+      let element = aValidOuijaCommandStrings[i];
+      if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
+  }
   return false;
 }
 
 function hasValidAskGroovebotCommand(cString) {
-  aValidAskGrooveBotCommandStrings.forEach(function hasValidOuijaCommandForEach(
-    element
-  ) {
-    if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
-    return false;
-  });
+  for(var i = 0; i < aValidAskGrooveBotCommandStrings.length; i++)
+  {
+      let element = aValidAskGrooveBotCommandStrings[i];
+      if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
+  }
   return false;
 }
+
 
 function UpsertOuijaData(
   client,
@@ -107,11 +106,11 @@ function UpsertOuijaData(
 
     const oInsertObject = {
       bAskType: bOuijaAskTypeSanatizedInput,
-      bCurrentlyInQuestionSanatizedInput,
-      iQuestionMessageIDSanatizedInput
+      bCurrentlyInQuestion: bCurrentlyInQuestionSanatizedInput,
+      iQuestionMessageID: iQuestionMessageIDSanatizedInput
     };
 
-    Globals.Database.Upsert("GameData", oKeyObject, oInsertObject, cFunc);
+    Globals.Database.Upsert(client, "GameData", oKeyObject, oInsertObject, cFunc);
   } catch (err) {
     ErrorHandler.HandleError(client, err);
   }
@@ -131,10 +130,12 @@ function assembleFinalMessage(
       .fetchMessages({ limit: 100 })
       .then(function assembleFinalMessagePromiseMessagesFetched(messages) {
         let bPastFirstMessage = false;
-        Object.keys(messages).map(aMsg => {
-          const msg = aMsg[1];
+        for (const [k, v] of messages)
+        {
+          const msg = v;
           if (msg.id === iQuestionMessageID) {
             oQuestionMsg = msg;
+            break;
           } else if (!bPastFirstMessage) {
             bPastFirstMessage = true;
           } else if (!msg.deleted) {
@@ -143,8 +144,10 @@ function assembleFinalMessage(
             else if (bAskType === 2 && msg.content.indexOf(" ") === -1)
               cResultReturn = `${msg.content.toUpperCase()} ${cResultReturn}`;
           }
-          return cResultReturn;
-        });
+        }
+
+
+
         if (oQuestionMsg) {
           const oReturnObj = { cResultReturn, questionMsg: oQuestionMsg };
           resolve(oReturnObj);
@@ -152,7 +155,7 @@ function assembleFinalMessage(
           ouijaChannel
             .fetchMessage(iQuestionMessageID)
             .then(function assembleFinalQuestionFetched(questionMsg) {
-              const oReturnObj = { cResult, questionMsg };
+              const oReturnObj = { cResultReturn, questionMsg };
               resolve(oReturnObj);
             })
             .catch(err => ErrorHandler.HandleError(client, err));
@@ -163,7 +166,7 @@ function assembleFinalMessage(
   return promise;
 }
 
-function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
+async function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
   try {
     let bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
     let bNewCurrentlyInQuestion =
@@ -205,7 +208,7 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
       oResult.bCurrentlyInQuestion &&
       msg.content.toUpperCase() === "GOODBYE"
     ) {
-      const oReturnObj = assembleFinalMessage(
+      const oReturnObj = await assembleFinalMessage(
         client,
         oResult.bAskType,
         ouijaChannel,
@@ -213,7 +216,7 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
         ""
       );
       const oQuestionMsg = oReturnObj.questionMsg;
-      const cOuijaResultString = oReturnObj.cResult;
+      const cOuijaResultString = oReturnObj.cResultReturn;
       ouijaChannel.send({
         embed: {
           color: 3447003,
@@ -271,7 +274,7 @@ exports.ProcessMessage = async function ProcessMessage(
         gametype: "ouija"
       };
 
-      const aResult = await Globals.Database.Query("GameData", oQueryObject);
+      const aResult = await Globals.Database.Query(client, "GameData", oQueryObject);
       const oResult = aResult && aResult.length > 0 ? aResult[0] : null;
       const paramObject = {
         client,

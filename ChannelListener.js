@@ -21,6 +21,7 @@ exports.Init = function Init(client) {
       };
 
       const aResult = await Globals.Database.Query(
+        client,
         "ServerOptions",
         oQueryObject
       );
@@ -77,6 +78,7 @@ exports.Init = function Init(client) {
       };
 
       const aResult = await Globals.Database.Query(
+        client,
         "ServerOptions",
         oQueryObject
       );
@@ -118,6 +120,7 @@ exports.Init = function Init(client) {
       };
 
       const aResult = await Globals.Database.Query(
+        client,
         "ServerOptions",
         oQueryObject
       );

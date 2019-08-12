@@ -55,7 +55,7 @@ async function ShowOption(client, msg, aMsgDetails) {
     production: Globals.bProduction
   };
 
-  const aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
+  const aResult = await Globals.Database.Query(client, "ServerOptions", oQueryObject);
   console.log(aResult);
   const oResult = aResult.length > 0 ? aResult[0] : null;
   if (!oResult) {
@@ -119,6 +119,7 @@ function ToggleChannelCopy(client, msg, aMsgDetails) {
   };
 
   Globals.Database.Upsert(
+    client,
     "ServerOptions",
     oKeyObject,
     oInsertObject,
@@ -151,6 +152,7 @@ function SetCopyInputChannel(client, msg, aMsgDetails) {
   };
 
   Globals.Database.Upsert(
+    client,
     "ServerOptions",
     oKeyObject,
     oInsertObject,
@@ -183,6 +185,7 @@ function SetCopyOutputChannel(client, msg, aMsgDetails) {
   };
 
   Globals.Database.Upsert(
+    client,
     "ServerOptions",
     oKeyObject,
     oInsertObject,
@@ -216,6 +219,7 @@ function ToggleOuija(client, msg, aMsgDetails) {
   };
 
   Globals.Database.Upsert(
+    client,
     "ServerOptions",
     oKeyObject,
     oInsertObject,
@@ -248,6 +252,7 @@ function SetOuijaChannel(client, msg, aMsgDetails) {
   };
 
   Globals.Database.Upsert(
+    client,
     "ServerOptions",
     oKeyObject,
     oInsertObject,
@@ -297,6 +302,7 @@ function ToggleSilenceChannel(client, msg, aMsgDetails) {
     }
 
     Globals.Database.UpsertManual(
+      client,
       "ServerOptions",
       oKeyObject,
       oInsertObject,
@@ -434,5 +440,5 @@ exports.CheckServerOptionsExist = function CheckServerOptionsExist(
     guildName: oGuild.name
   };
 
-  Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject);
+  Globals.Database.Upsert(client, "ServerOptions", oKeyObject, oInsertObject);
 };
