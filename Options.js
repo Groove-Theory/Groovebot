@@ -55,7 +55,11 @@ async function ShowOption(client, msg, aMsgDetails) {
     production: Globals.bProduction
   };
 
-  const aResult = await Globals.Database.Query(client, "ServerOptions", oQueryObject);
+  const aResult = await Globals.Database.Query(
+    client,
+    "ServerOptions",
+    oQueryObject
+  );
   console.log(aResult);
   const oResult = aResult.length > 0 ? aResult[0] : null;
   if (!oResult) {

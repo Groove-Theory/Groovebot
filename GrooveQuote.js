@@ -1,8 +1,18 @@
 const Discord = require("discord.js");
-const { registerFont, createCanvas, loadImage } = require("canvas");
 const Globals = require("./Globals.js");
 const ErrorHandler = require("./ErrorHandler.js");
 
+let registerFont;
+let createCanvas;
+let loadImage;
+if (!Globals.bWindowsMachine) {
+  /*eslint-disable */
+  const Canvas = require("canvas"); // This sucks trying to install on Windows
+  /*eslint-ensable */
+  registerFont = Canvas.registerFont;
+  createCanvas = Canvas.createCanvas;
+  loadImage = Canvas.loadImage;
+}
 const wrap = s => s.replace(/(?![^\n]{1,40}$)([^\n]{1,40})\s/g, "$1\n");
 
 function makeRandomTime() {
@@ -62,7 +72,14 @@ async function ConfirmAll(client, msg, cLinkQuickSearch) {
 
 exports.MakeQuote = async function MakeQuote(client, msg) {
   try {
-    if (msg.author.id === 299248686565687296) return;
+    if (Globals.bWindowsMachine) {
+      msg.channel.send(
+        "Sorry, can't do this while you're testing on a windows machine"
+      );
+      return true;
+    }
+
+    if (msg.author.id === 299248686565687296) return true;
 
     const cContent = msg.content.substring(12);
     const aContent = cContent.split("\\r\\n");

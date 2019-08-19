@@ -1,5 +1,7 @@
 exports.bProduction =
   process.env.PRODUCTION === 1 || process.env.PRODUCTION === "1";
+exports.bWindowsMachine =
+  process.env.WINDOWS_MACHINE === 1 || process.env.WINDOWS_MACHINE === "1"; // Can't get this to work on windows.
 // /////////////////TEST VARS///////////////testing new ide/////////////////////////
 
 exports.g_mainChannelIDs = ["595643528760262686", "570056315989262346"];

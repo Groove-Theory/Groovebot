@@ -68,23 +68,20 @@ const aValidAskGrooveBotCommandStrings = [
 ];
 
 function hasValidOuijaCommand(cString) {
-  for(var i = 0; i < aValidOuijaCommandStrings.length; i++)
-  {
-      let element = aValidOuijaCommandStrings[i];
-      if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
+  for (let i = 0; i < aValidOuijaCommandStrings.length; i += 1) {
+    const element = aValidOuijaCommandStrings[i];
+    if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
   }
   return false;
 }
 
 function hasValidAskGroovebotCommand(cString) {
-  for(var i = 0; i < aValidAskGrooveBotCommandStrings.length; i++)
-  {
-      let element = aValidAskGrooveBotCommandStrings[i];
-      if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
+  for (let i = 0; i < aValidAskGrooveBotCommandStrings.length; i += 1) {
+    const element = aValidAskGrooveBotCommandStrings[i];
+    if (cString.toUpperCase().startsWith(element.toUpperCase())) return true;
   }
   return false;
 }
-
 
 function UpsertOuijaData(
   client,
@@ -110,7 +107,13 @@ function UpsertOuijaData(
       iQuestionMessageID: iQuestionMessageIDSanatizedInput
     };
 
-    Globals.Database.Upsert(client, "GameData", oKeyObject, oInsertObject, cFunc);
+    Globals.Database.Upsert(
+      client,
+      "GameData",
+      oKeyObject,
+      oInsertObject,
+      cFunc
+    );
   } catch (err) {
     ErrorHandler.HandleError(client, err);
   }
@@ -130,8 +133,9 @@ function assembleFinalMessage(
       .fetchMessages({ limit: 100 })
       .then(function assembleFinalMessagePromiseMessagesFetched(messages) {
         let bPastFirstMessage = false;
-        for (const [k, v] of messages)
-        {
+        // eslint-disable-next-line no-unused-vars, no-restricted-syntax
+        for (const [k, v] of messages) {
+          // whatever if I want a for-in loop, I'll have me a for-in loop
           const msg = v;
           if (msg.id === iQuestionMessageID) {
             oQuestionMsg = msg;
@@ -145,8 +149,6 @@ function assembleFinalMessage(
               cResultReturn = `${msg.content.toUpperCase()} ${cResultReturn}`;
           }
         }
-
-
 
         if (oQuestionMsg) {
           const oReturnObj = { cResultReturn, questionMsg: oQuestionMsg };
@@ -166,7 +168,13 @@ function assembleFinalMessage(
   return promise;
 }
 
-async function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
+async function HandleOuijaContent(
+  client,
+  oResult,
+  msg,
+  ouijaChannel,
+  iGuildID
+) {
   try {
     let bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
     let bNewCurrentlyInQuestion =
@@ -274,7 +282,11 @@ exports.ProcessMessage = async function ProcessMessage(
         gametype: "ouija"
       };
 
-      const aResult = await Globals.Database.Query(client, "GameData", oQueryObject);
+      const aResult = await Globals.Database.Query(
+        client,
+        "GameData",
+        oQueryObject
+      );
       const oResult = aResult && aResult.length > 0 ? aResult[0] : null;
       const paramObject = {
         client,
