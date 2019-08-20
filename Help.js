@@ -44,6 +44,10 @@ exports.Init = function (client, msg) {
             value: " Change Groove's nickname with a new nickname of your choosing! "
           },
           {
+            name: "g!define <word> </t>",
+            value: "Let Groovebot try to define a word for you! (Type '/t' at the end to get the actual definition)"
+          },
+          {
             name: "\"AskOuija:\"",
             value: " Starts a ouija question (must set up in Options). Inputs are only one letter messages. Type \"goodbye\" to end. "
           },
