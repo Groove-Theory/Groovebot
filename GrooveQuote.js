@@ -29,7 +29,8 @@ exports.MakeQuote = async function (client, msg) {
         }
 
         var member = msg.member;
-        var cContent = msg.content.substring(12);
+
+        var cContent = msg.substring(cContent.indexOf(" ")).trim(); // this should get rid of the first "word" i.e command
         var aContent = cContent.split("\\r\\n");
         var aFixedContent = [];
         aContent.forEach(function (part, index, theArray) {
