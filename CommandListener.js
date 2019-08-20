@@ -68,8 +68,9 @@ exports.ProcessMessage = async function(client, msg) {
                 case cCommandPrefix + "define":
                     Dictionary.Init(client, msg);
                     break;
-                case cCommandPrefix:
-                    msgChannel.send("The fuck is that shit?");
+                default:
+                    if(cMsgCommand.indexOf(cCommandPrefix) == 0)
+                        msgChannel.send("The fuck is that shit?");
                     break;
             }
         }
