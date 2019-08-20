@@ -2,25 +2,47 @@ const RandomWord = require('random-word');
 const WordDefinition = require('word-definition');
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js')
-var iTries = 0;
+
 exports.Init = function(client, msg)
 {      
+  let iTries = 0;
+  let bTrueDefinition = false;  // default is a joke def
+  let bDelay = false;
+
   var msgChannel = client.channels.get(msg.channel.id); 
   var aMsgContent = msg.content.split(" ")
-  var cMsgData = aMsgContent && aMsgContent.length > 0 ? aMsgContent[1] : "";
-  var cQueried = cMsgData.replace(/\b\w/g, l => l.toUpperCase())
+  if(aMsgContent && aMsgContent.length > 0 && aMsgContent[aMsgContent.length - 1] == "/t")
+  {
+    bTrueDefinition = true;
+    aMsgContent.splice(aMsgContent.length - 1, 1);
+  }
+
+  if(aMsgContent[0] == "t!wiki") // needs to come after Tatsu
+  {
+    bDelay = true;
+  }
+
+  aMsgContent.splice(0, 1);
+  var cMsgData = aMsgContent.join(" ").trim();
+  var cQueried = cMsgData.replace(/\b\w/g, l => l.toUpperCase());
 
   
   if(cQueried && cQueried.length > 0)
   {
-
-    var cRandomWord = RandomWord();
-    console.log(cRandomWord);
-    getDefinition(client, cRandomWord, cQueried, msgChannel)
+    if(bTrueDefinition)
+    {
+      getDefinition(client, cQueried, cQueried, msgChannel, iTries, bTrueDefinition, bDelay)
+    }
+    else
+    {
+      var cRandomWord = RandomWord();
+      console.log(cRandomWord);
+      getDefinition(client, cRandomWord, cQueried, msgChannel, iTries, bTrueDefinition, bDelay)
+    }
   }
 }
 
-function getDefinition(client, cWord, cQueried, msgChannel)
+function getDefinition(client, cWord, cQueried, msgChannel, iTries, bTrueDefinition, bDelay)
 {
   WordDefinition.getDef(cWord, "en", null, function(definition) {
     try
@@ -28,14 +50,22 @@ function getDefinition(client, cWord, cQueried, msgChannel)
       var oJSON = definition;
       if(oJSON.err)
       {
-        console.log("it worked")
-        iTries++;
-        if(iTries < 10)
-          getDefinition(client, RandomWord(), cQueried, msgChannel);
+        if(!bTrueDefinition)
+        {
+          console.log("it worked")
+          iTries++;
+          if(iTries < 10)
+            getDefinition(client, RandomWord(), cQueried, msgChannel, iTries, bTrueDefinition, bDelay);
+        }
+        else
+        {
+          msgChannel.send("Sorry, don't know that word");
+        }
       }
       else
       {
-        printDefinition(oJSON, cQueried, msgChannel)
+        iTries = 0;
+        printDefinition(oJSON, cQueried, msgChannel, bDelay)
       }
     }
     catch(err)
@@ -45,7 +75,7 @@ function getDefinition(client, cWord, cQueried, msgChannel)
   });
 }
 
-function printDefinition(oDefinition, cQueried, msgChannel)
+function printDefinition(oDefinition, cQueried, msgChannel, bDelay)
 {
   setTimeout(function(){ 
         var cRetMsg = "";
@@ -53,7 +83,7 @@ function printDefinition(oDefinition, cQueried, msgChannel)
         cRetMsg += " *(" + oDefinition.category + ")* - "
         cRetMsg += oDefinition.definition
         msgChannel.send(cRetMsg);
-      }, 2000);
+      }, bDelay ? 2000 : 0);
 }
 
 
