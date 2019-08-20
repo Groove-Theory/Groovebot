@@ -5,8 +5,9 @@ const ErrorHandler = require('./ErrorHandler.js')
 var iTries = 0;
 exports.Init = function(client, msg)
 {      
-  var msgChannel = client.channels.get(msg.channel.id);    
-  var cMsgData = msg.content.substring(7);
+  var msgChannel = client.channels.get(msg.channel.id); 
+  var aMsgContent = msg.content.split(" ")
+  var cMsgData = aMsgContent && aMsgContent.length > 0 ? aMsgContent[1] : "";
   var cQueried = cMsgData.replace(/\b\w/g, l => l.toUpperCase())
 
   
