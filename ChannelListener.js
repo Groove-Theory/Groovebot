@@ -16,7 +16,7 @@ exports.Init = function (client) {
 
             var oQueryObject = {
                 guildID: oGuild.id,
-                production: Globals.bProduction
+                production: Globals.Environment.PRODUCTION
             }
 
             let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
@@ -60,7 +60,7 @@ exports.Init = function (client) {
 
             var oQueryObject = {
                 guildID: oGuild.id,
-                production: Globals.bProduction
+                production: Globals.Environment.PRODUCTION
             }
 
             let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
@@ -91,7 +91,7 @@ exports.Init = function (client) {
 
             var oQueryObject = {
                 guildID: oGuild.id,
-                production: Globals.bProduction
+                production: Globals.Environment.PRODUCTION
             }
 
             let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);

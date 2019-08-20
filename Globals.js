@@ -1,4 +1,11 @@
-exports.bProduction = (process.env.PRODUCTION == 1 || process.env.PRODUCTION == "1");
+const EnvironmentMode = process.env.ENVIRONMENT_MODE;
+exports.Environment = {
+  TESTING: EnvironmentMode == 0 || EnvironmentMode == "0",
+  STAGE: EnvironmentMode == 1 || EnvironmentMode == "1",
+  PRODUCTION: EnvironmentMode == 2 || EnvironmentMode == "2",
+};
+exports.g_WindowsMachine = process.env.WINDOWS_MACHINE == 1 || process.env.WINDOWS_MACHINE == "1";
+
 ///////////////////TEST VARS///////////////testing new ide/////////////////////////
 
 exports.g_mainChannelIDs = ["595643528760262686", "570056315989262346"];
@@ -16,7 +23,7 @@ exports.g_VentriloquistOutputChannelID = "570056315989262346"
 
 
 ///////////////////PRODUCTION VARS////////////////////////////////////////
-if (exports.bProduction)
+if (exports.Environment.PRODUCTION)
 {
   // TODO: We really need to figure out some MongoDB stuff here
   exports.g_mainChannelIDs = ["526080760101470230", "570056315989262346"];

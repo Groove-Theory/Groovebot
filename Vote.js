@@ -211,7 +211,7 @@ function VoteSetup_ShowOfficers(client, msg)
   {
     cMessage = "Sorry, there's no CodeMaster assigned. Terminating process :sob:"
   }
-  else if(Globals.bProduction && oCodeMaster.user.id == oOwner.user.id)
+  else if(Globals.Environment.PRODUCTION && oCodeMaster.user.id == oOwner.user.id)
   {
     cMessage = "Sorry, the CodeMaster can't be the same person as the Server Owner. Terminating process :sob:"
   }

@@ -24,7 +24,7 @@ exports.Init = async function(client)
         ErrorHandler.HandleError(client, err);
         return reject(false);
       }
-      dbo = db.db(Globals.bProduction ? "GrooveDB" : "TestingDB");
+      dbo = db.db(Globals.Environment.PRODUCTION ? "GrooveDB" : "TestingDB");
       MongoDB = db;
       console.log('[mongo] connected');
 

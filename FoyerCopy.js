@@ -106,7 +106,7 @@ exports.OnMessageDelete = function (client, msg, iMainChannelID, iCopyChannelID,
 // Should only work for the original guild, not any new ones
 exports.OnGuildMemberAdd = function (member) {
     try {
-        if (Globals.bProduction && member.guild.id == Globals.g_GuildID) {
+        if (Globals.Environment.PRODUCTION && member.guild.id == Globals.g_GuildID) {
             console.log("Member Added");
             console.log(member);
 

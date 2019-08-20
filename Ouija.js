@@ -85,7 +85,7 @@ exports.ProcessMessage = async function(client, msg, iOuijaChannelID, bToggleOui
             var oOuijaChannel = msg.channel;
             var oQueryObject = {
                 guildID: iGuildID,
-                production: Globals.bProduction,
+                production: Globals.Environment.PRODUCTION,
                 gametype: "ouija"
             }
 
@@ -239,7 +239,7 @@ function UpsertOuijaData(client, iGuildID, bOuijaAskType, bCurrentlyInQuestion, 
         iQuestionMessageID = iQuestionMessageID ? iQuestionMessageID : 0;
         var oKeyObject = {
             guildID: iGuildID,
-            production: Globals.bProduction,
+            production: Globals.Environment.PRODUCTION,
             gametype: "ouija"
         }
 

@@ -1,7 +1,14 @@
 const Globals = require('./Globals.js')
 const Discord = require('discord.js');
 const ErrorHandler = require('./ErrorHandler.js');
-const { registerFont, createCanvas, loadImage } = require('canvas')
+let registerFont, createCanvas, loadImage;
+if(!Globals.g_WindowsMachine)
+{
+    const Canvas = require('canvas');
+    registerFont = Canvas.registerFont;
+    createCanvas = Canvas.createCanvas;
+    loadImage = Canvas.loadImage;
+}
 
 const wrap = (s, w) => s.replace(
     /(?![^\n]{1,40}$)([^\n]{1,40})\s/g, '$1\n'
@@ -13,7 +20,13 @@ var cLink = null;
 exports.MakeQuote = async function (client, msg) {
     try {
         if (msg.author.id == 299248686565687296)
-            return;
+            return true;
+
+        if(Globals.g_WindowsMachine)
+        {
+            msg.channel.send("Sorry, cant use this while testing on a Windows Machine")
+            return true;
+        }
 
         var member = msg.member;
         var cContent = msg.content.substring(12);
