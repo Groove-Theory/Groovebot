@@ -64,9 +64,6 @@ exports.ProcessMessage = async function(client, msg) {
                 case cCommandPrefix + "makequote":
                     GrooveQuote.MakeQuote(client, msg);
                     break;
-                case "t!wiki":
-                    Dictionary.Init(client, msg);
-                    break;
                 case "t!wiki": //fall-through
                 case cCommandPrefix + "define":
                     Dictionary.Init(client, msg);
