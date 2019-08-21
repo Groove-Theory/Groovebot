@@ -4,7 +4,7 @@ exports.Environment = {
   STAGE: EnvironmentMode == 1 || EnvironmentMode == "1",
   PRODUCTION: EnvironmentMode == 2 || EnvironmentMode == "2",
 };
-exports.g_WindowsMachine = process.env.WINDOWS_MACHINE == 1 || process.env.WINDOWS_MACHINE == "1";
+exports.g_WindowsMachine = process.platform == "win32";
 
 ///////////////////TEST VARS///////////////testing new ide/////////////////////////
 

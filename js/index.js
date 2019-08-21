@@ -28,8 +28,6 @@ process.on('unhandledRejection', (reason, promise) => {
 
 
 client.on('ready', async () => {
-  var oGrooveUser = client.users.get(Globals.g_GrooveID);
-    oGrooveUser.send(process.platform);
   try {
     let bSuccess = await Database.Init(client);
     if (bSuccess) {
