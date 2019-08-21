@@ -1,15 +1,12 @@
 const Discord = require('discord.js');
-
 const ErrorHandler = require('./ErrorHandler.js')
 const Globals = require('./Globals.js')
 const Options = require('./Options.js')
 const Database = require('./Database.js')
 const ChannelListener = require('./ChannelListener.js')
-
 const fs = require('fs');
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_SECRET;
-
 /*
 const ErrorHandler = require('./ErrorHandler.js');
 
