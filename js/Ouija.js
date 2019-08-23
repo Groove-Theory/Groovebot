@@ -122,7 +122,7 @@ function HandleOuijaContentCallback() {
     }
 }
 
-function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
+async function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
     try{
         var bNewAskType = oResult && oResult.bAskType ? oResult.bAskType : 0;
         var bNewCurrentlyInQuestion = oResult && oResult.bCurrentlyInQuestion ? oResult.bCurrentlyInQuestion : false;
@@ -145,7 +145,7 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
 
         //TODO: Finish Recursion here, and make the send promise after the assemble promise recursion is done, then upsert null data
         else if (oResult.bCurrentlyInQuestion && msg.content.toUpperCase() == "GOODBYE") {
-            var oReturnObj = assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "")
+            var oReturnObj = await assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "")
             var oQuestionMsg = oReturnObj.questionMsg
             var cOuijaResultString = oReturnObj.cResult
             if(oQuestionMsg && cOuijaResultString)
