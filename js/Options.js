@@ -116,7 +116,7 @@ exports.Init = function (client, msg) {
 exports.CheckServerOptionsExist = function (client, oGuild) {
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         guildName: oGuild.name,
@@ -137,7 +137,7 @@ async function ShowOption(client, msg, aMsgDetails) {
 
     var oQueryObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
 
     var aResult = await Globals.Database.Query("ServerOptions", oQueryObject)
@@ -177,7 +177,7 @@ function ToggleChannelCopy(client, msg, aMsgDetails) {
 
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         togglechannelcopy: bUseChannelCopy
@@ -196,7 +196,7 @@ function SetCopyInputChannel(client, msg, aMsgDetails) {
 
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         copyinputchannel: iCopyInputChannel
@@ -215,7 +215,7 @@ function SetCopyOutputChannel(client, msg, aMsgDetails) {
 
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         copyoutputchannel: iCopyOutputChannel
@@ -234,7 +234,7 @@ function ToggleOuija(client, msg, aMsgDetails) {
 
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         toggleouija: bUseOuija
@@ -253,7 +253,7 @@ function SetOuijaChannel(client, msg, aMsgDetails) {
 
     var oKeyObject = {
         guildID: oGuild.id,
-        production: Globals.bProduction
+        production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = {
         ouijachannel: iOuijaChannel
@@ -279,7 +279,7 @@ function ToggleSilenceChannel(client, msg, aMsgDetails) {
     else {
         var oKeyObject = {
             guildID: oGuild.id,
-            production: Globals.bProduction
+            production: Globals.Environment.PRODUCTION
         }
         var oInsertObject = {};
         var cMessage = "";
