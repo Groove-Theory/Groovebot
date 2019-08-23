@@ -148,19 +148,22 @@ function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) {
             var oReturnObj = assembleFinalMessage(oResult.bAskType, ouijaChannel, oResult.iQuestionMessageID, "")
             var oQuestionMsg = oReturnObj.questionMsg
             var cOuijaResultString = oReturnObj.cResult
-            ouijaChannel.send({
-                embed:
-                {
-                    color: 3447003,
-                    author:
+            if(oQuestionMsg && cOuijaResultString)
+            {
+                ouijaChannel.send({
+                    embed:
                     {
-                        icon_url: oQuestionMsg.author.avatarURL
-                    },
-                    title: oQuestionMsg.content,
-                    description: cOuijaResultString.length > 0 ? cOuijaResultString : "(no answer given)",
-                    timestamp: new Date()
-                }
-            });
+                        color: 3447003,
+                        author:
+                        {
+                            icon_url: oQuestionMsg.author.avatarURL
+                        },
+                        title: oQuestionMsg.content,
+                        description: cOuijaResultString.length > 0 ? cOuijaResultString : "(no answer given)",
+                        timestamp: new Date()
+                    }
+                });
+            }
 
             UpsertOuijaData(client, iGuildID, [], 0, false, null)
         }
