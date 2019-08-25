@@ -8,7 +8,8 @@ var MDBlient = new MongoClient(uri,
   useNewUrlParser: true
 });
 var MongoDB = null;
-var dbo = null;
+
+dbo = null;
 
 exports.Init = async function(client)
 {
@@ -73,6 +74,30 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
+exports.UpsertCustom = function(cCollectionName, oKeyObj, oOptions, fCallabck = null)
+{
+  dbo.collection(cCollectionName).updateOne(oKeyObj, oOptions,
+  {
+    upsert: true,
+    safe: false
+  }, function(err, res)
+  {
+    if (err) throw err;
+    console.log("1 document upserted");
+    if (fCallabck)
+    {
+      try
+      {
+        fCallabck();
+      }
+      catch(err)
+      {
+        ErrorHandler.HandleError(client, err);
+      }
+    }
+    //MongoDB.close();
+  });
+}
 // Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
 exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck = null)
 {
