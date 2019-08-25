@@ -15,7 +15,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
         return;
     }
 
-    var aMsgContents = msg.content.split(/\s+/); 
+    var aMsgContents = msg.content.split(/\s+/);
     var cCatName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
 
     if(cCatName == "")
@@ -36,16 +36,16 @@ exports.HandleCategory = function(client, msg, iHandleType)
     if(iHandleType == exports.HandleType.ADD)
     {
         oOptions = {
-            $addToSet: { categories: {name: cCatName, ranks:[]} } 
+            $addToSet: { categories: {name: cCatName, ranks:[]} }
         }
-        cMessage = "Category '" + cCatName + "' successfully added";
+        cMessage = "Category **'" + cCatName + "'** successfully added";
     }
     else if(iHandleType == exports.HandleType.DELETE)
     {
         oOptions = {
             $pull: { categories: {name: cCatName } }
         }
-        cMessage = "Category '" + cCatName + "' has been removed";
+        cMessage = "Category **'" + cCatName + "'* has been removed";
     }
     else if(iHandleType == exports.HandleType.EDIT)
     {
@@ -55,7 +55,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
             oOptions = {
                 $rename: { cCatName: cNewCatName}
             }
-            cMessage = "Category '" + cCatName + "' has been renamed to '" + cNewCatName + "'";
+            cMessage = "Category '**" + cCatName + "**' has been renamed to '**" + cNewCatName + "**'";
         }
     }
 
@@ -72,7 +72,7 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
         return;
     }
 
-    var aMsgContents = msg.content.split(/\s+/); 
+    var aMsgContents = msg.content.split(/\s+/);
     var cCatName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
     var cRoleName = aMsgContents && aMsgContents.length > 2 ? aMsgContents[2] : ""
 
@@ -103,8 +103,9 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
     cRoleName = oRole.name;
 
     let oKeyObject = {
-        guildID: oGuild.id,
-        production: Globals.Environment.PRODUCTION,
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+        "categories.name": cCatName
     }
 
     let oOptions = {};
@@ -113,16 +114,16 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
     {
         let cCatIdentifier = "playlists.$[]." + cCatName;
         oOptions = {
-            $addToSet: { categories: {name: cCatName, ranks: {iRoleID}} } 
-        }       
-        cMessage = `Role '${oRole.name}' successfully added to Category '${cCatName}`;
+            $addToSet: { "categories.$.ranks": iRoleID }
+        }
+        cMessage = `Role **'${oRole.name}'** successfully added to category **'${cCatName}'**`;
     }
     else if(iHandleType == 2)
     {
         oOptions = {
-            $pull: { ranks: iRoleID } 
+            $pull: { "categories.$.ranks": iRoleID }
         }
-        cMessage = `Role '${oRole.name}' has been removed from Category '${cCatName}`;
+        cMessage = `Role **'${oRole.name}'** has been removed from category **'${cCatName}'**`;
     }
 
 
@@ -130,11 +131,142 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
 
 }
 
-
-
-exports.RemoveCategory = function(client, msg)
+exports.ShowCategorysRanks = function(client, msg)
 {
-  var length = getRandIntFromR
+    var aMsgContents = msg.content.split(/\s+/);
+    var cCatName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
+
+    var iMode = cCatName == "" ? 1 : 2; //1 = Categories, 2 = Ranks for a Category
+    if(iMode == 1)
+    {
+        ShowCategories(client, msg)
+    }
+    else if(iMode == 2)
+    {
+        ShowRanks(client, msg, cCatName)
+    }
+}
+
+async function ShowCategories(client, msg)
+{
+    let oGuild = msg.guild;
+
+    let oKeyObject = {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+    }
+    let oReturn = {
+        projection: { "categories":1, _id:0 }
+    }
+
+    var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+    { $match: {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+    }},
+    { $unwind: "$categories"},
+    { $project: {
+            name: "$categories.name",
+            _id: 0
+        }},
+    ]).toArray();
+    if (!aResult || aResult.length == 0) {
+        msg.channel.send("Sorry I can't find any categories for this server")
+        return;
+    }
+    else
+    {
+        var cReturn = "**LIST OF RANK CATEGORIES** \r\n```\r\n";
+        for(var i = 0; i < aResult.length; i++)
+        {
+            cReturn += aResult[i].name + "\r\n";
+        }
+        cReturn += "```"
+        console.log(cReturn);
+        msg.channel.send(cReturn)
+    }
+
+}
+
+async function ShowRanks(client, msg, cCatName)
+{
+    let oGuild = msg.guild;
+
+    var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+    { $match: {
+        "guildID": "470626956946309144",
+        "production": Globals.Environment.PRODUCTION
+    }},
+    { $unwind: "$categories"},
+    { $match: {
+        "categories.name": "colors"
+        }
+    },
+    { $project: {
+            ranks: "$categories.ranks",
+            _id: 0
+        }},
+    ]).toArray();
+    var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
+    if (!oResult) {
+        msg.channel.send("Sorry I can't find any categories for this server")
+        return;
+    }
+    else
+    {
+        let aRanks = oResult.ranks;
+        var cReturn = "**LIST OF RANKS FOR CATEGORY: " + cCatName.toUpperCase() + "** \r\n```\r\n";
+        for(var i = 0; i < aRanks.length; i++)
+        {
+            console.log(aRanks[i])
+            oRole = oGuild.roles.find("id", aRanks[i]);
+            if(oRole)
+            {
+                cReturn += oRole.name + "\r\n";
+            }
+        }
+        cReturn += "```"
+        console.log(cReturn);
+        msg.channel.send(cReturn)
+    }
+
+}
+
+exports.ToggleUserRank = function(client, msg)
+{
+    var oMember = msg.member;
+
+    var aMsgContents = msg.content.split(/\s+/);
+    var cRankName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
+
+    if(cRankName == "")
+    {
+        SendReplyMessage(client, msg, "Please enter a rank name");
+        return;
+    }
+
+    let oGuild = msg.guild;
+    var oRole = oGuild.roles.find("name", cRankName);
+    if(!oRole)
+    {
+        SendReplyMessage(client, msg, "Sorry, I can't rind that rank");
+        return;
+    }
+
+    var iRoleID = oRole.id;
+    cRankName = oRole.name;
+
+    let x2 = Globals.Database.db0.collection("Ranks").aggregate([
+    { $match: {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+        "categories.name": cCatName
+    }},
+    { $unwind: "$categories"},
+    ]);
+x2.forEach(function(r) { console.log(r); });
+
+
 }
 
 function checkIfMod(member)

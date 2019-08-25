@@ -18,7 +18,7 @@ exports.ProcessMessage = async function(client, msg) {
         let cCommandPrefix = "g!"
         if(Globals.Environment.PRODUCTION)
             cCommandPrefix = "g!"
-        else if(Globals.Environment.TESTING)
+        else if(true)
             cCommandPrefix = "gt!"
         else if(Globals.Environment.STAGE)
             cCommandPrefix = "gs!"
@@ -83,6 +83,12 @@ exports.ProcessMessage = async function(client, msg) {
                     break;
                 case cCommandPrefix + "removerank":
                     Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "rankcategory":
+                    Ranks.ShowCategorysRanks(client, msg);
+                    break;
+                case cCommandPrefix + "rank":
+                    Ranks.ToggleUserRank(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)
