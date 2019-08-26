@@ -42,20 +42,6 @@ client.on('ready', async () => {
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
         Globals.aCompliments = compliment_obj.Compliments;
-
-    var x2 = await Globals.Database.dbo.collection("Ranks").find(
-        {
-        "guildID": "470626956946309144",
-        "production": Globals.Environment.PRODUCTION,
-        "categories.ranks": 559075046245793823
-    },
-        {
-    "categories.ranks": 559075046245793823
-}).toArray();
-    console.log(x2)
-    console.log('here');
-
-
     }
   }
   catch (err) {

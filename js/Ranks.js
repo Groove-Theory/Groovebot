@@ -88,10 +88,10 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
     }
 
     let oGuild = msg.guild;
-    var oRole = oGuild.roles.find("name", cRoleName);
+    var oRole = oGuild.roles.find(r => r.name == cRoleName);
     if(!oRole)
     {
-        oRole = guild.roles.find("id", cRoleName);
+        oRole = guild.roles.find(r => r.id == cRoleName);
         if(!oRole)
         {
             SendReplyMessage(client, msg, "Sorry, I can't rind that role in this server");
@@ -199,7 +199,7 @@ async function ShowRanks(client, msg, cCatName)
     }},
     { $unwind: "$categories"},
     { $match: {
-        "categories.name": "colors"
+        "categories.name": cCatName
         }
     },
     { $project: {
@@ -209,7 +209,7 @@ async function ShowRanks(client, msg, cCatName)
     ]).toArray();
     var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
     if (!oResult) {
-        msg.channel.send("Sorry I can't find any categories for this server")
+        msg.channel.send("Sorry I can't find that category for this server")
         return;
     }
     else
@@ -219,7 +219,7 @@ async function ShowRanks(client, msg, cCatName)
         for(var i = 0; i < aRanks.length; i++)
         {
             console.log(aRanks[i])
-            oRole = oGuild.roles.find("id", aRanks[i]);
+            oRole = oGuild.roles.find(r => r.id == aRanks[i]);
             if(oRole)
             {
                 cReturn += oRole.name + "\r\n";
@@ -232,7 +232,7 @@ async function ShowRanks(client, msg, cCatName)
 
 }
 
-exports.ToggleUserRank = function(client, msg)
+exports.ToggleUserRank = async function(client, msg)
 {
     var oMember = msg.member;
 
@@ -246,7 +246,7 @@ exports.ToggleUserRank = function(client, msg)
     }
 
     let oGuild = msg.guild;
-    var oRole = oGuild.roles.find("name", cRankName);
+    var oRole = oGuild.roles.find(r => r.name == cRankName);
     if(!oRole)
     {
         SendReplyMessage(client, msg, "Sorry, I can't rind that rank");
@@ -256,17 +256,35 @@ exports.ToggleUserRank = function(client, msg)
     var iRoleID = oRole.id;
     cRankName = oRole.name;
 
-    let x2 = Globals.Database.db0.collection("Ranks").aggregate([
-    { $match: {
-        "guildID": oGuild.id,
-        "production": Globals.Environment.PRODUCTION,
-        "categories.name": cCatName
-    }},
-    { $unwind: "$categories"},
-    ]);
-x2.forEach(function(r) { console.log(r); });
-
-
+    var aResult = await Globals.Database.dbo.collection("Ranks").find(
+        {
+            "guildID": oGuild.id,
+            "production": Globals.Environment.PRODUCTION,
+            "categories.ranks": { $in: [ iRoleID ] }
+        }
+    ).toArray();
+    let bRankFound = aResult && aResult.length > 0;
+    if(!bRankFound)
+    {
+        SendReplyMessage(client, msg, "Sorry, I can't rind that rank");
+        return;
+    }
+    else
+    {
+        var bHasRoleAlready = oMember.roles.find(r => r.id == iRoleID);
+        let cMessage = "Uh oh, there's been an error..."
+        if(bHasRoleAlready)
+        {
+            oMember.removeRole(iRoleID)
+            cMessage = "I've removed the role **" + cRankName + "** from you";
+        }
+        else
+        {
+            oMember.addRole(iRoleID)
+            cMessage = "I've added the role **" + cRankName + "** for you";
+        }
+        SendReplyMessage(client, msg, cMessage);
+    }
 }
 
 function checkIfMod(member)
