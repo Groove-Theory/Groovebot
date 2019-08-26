@@ -18,7 +18,7 @@ exports.ProcessMessage = async function(client, msg) {
         let cCommandPrefix = "g!"
         if(Globals.Environment.PRODUCTION)
             cCommandPrefix = "g!"
-        else if(true)
+        else if(Globals.Environment.TESTING)
             cCommandPrefix = "gt!"
         else if(Globals.Environment.STAGE)
             cCommandPrefix = "gs!"
