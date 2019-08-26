@@ -45,7 +45,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
         oOptions = {
             $pull: { categories: {name: cCatName } }
         }
-        cMessage = "Category **'" + cCatName + "'* has been removed";
+        cMessage = "Category **'" + cCatName + "'** has been removed";
     }
     else if(iHandleType == exports.HandleType.EDIT)
     {
@@ -53,7 +53,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
         if(cNewCatName)
         {
             oOptions = {
-                $rename: { cCatName: cNewCatName}
+                $set: { "categories.name": cNewCatName}
             }
             cMessage = "Category '**" + cCatName + "**' has been renamed to '**" + cNewCatName + "**'";
         }
@@ -194,7 +194,7 @@ async function ShowRanks(client, msg, cCatName)
 
     var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
     { $match: {
-        "guildID": "470626956946309144",
+        "guildID": oGuild.id,
         "production": Globals.Environment.PRODUCTION
     }},
     { $unwind: "$categories"},
@@ -231,6 +231,45 @@ async function ShowRanks(client, msg, cCatName)
     }
 
 }
+
+exports.PrintRanks = async function(client, msg)
+{
+    let oGuild = msg.guild;
+
+    var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+    { $match: {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+    }},
+    ]).toArray();
+    if (!aResult || aResult.length == 0) {
+        msg.channel.send("Sorry I can't find any ranks or categories for this server")
+        return;
+    }
+    else
+    {
+        var oResult = aResult[0];
+        var oCategories = oResult.categories;
+        var cReturn = "**__LIST OF RANKS AND CATEGORIES__** \r\n\r\n";
+        for(var i = 0; i < oCategories.length; i++)
+        {
+            let oCategory = oCategories[i];
+            cReturn += `**${oCategory.name}**\r\n\`\`\`\r\n` ;
+            for(var j = 0; j < oCategory.ranks.length; j++)
+            {
+                let iRank = oCategory.ranks[j];
+                let oRole = oGuild.roles.find(r => r.id == iRank);
+                let cRoleName = oRole.name;
+                cReturn += `${cRoleName}\r\n`
+            }
+            cReturn += "```";
+        }
+        console.log(cReturn);
+        msg.channel.send(cReturn)
+    }
+
+}
+
 
 exports.ToggleUserRank = async function(client, msg)
 {

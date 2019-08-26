@@ -87,6 +87,9 @@ exports.ProcessMessage = async function(client, msg) {
                 case cCommandPrefix + "rankcategory":
                     Ranks.ShowCategorysRanks(client, msg);
                     break;
+                case cCommandPrefix + "printranks":
+                    Ranks.PrintRanks(client, msg);
+                    break;
                 case cCommandPrefix + "rank":
                     Ranks.ToggleUserRank(client, msg);
                     break;
