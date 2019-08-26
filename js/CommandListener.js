@@ -9,6 +9,7 @@ const Nickname = require('./Nickname.js')
 const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
 const Options = require('./Options.js')
+const Ranks = require('./Ranks.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
 exports.ProcessMessage = async function(client, msg) {
@@ -67,6 +68,30 @@ exports.ProcessMessage = async function(client, msg) {
                 case "t!wiki": //fall-through
                 case cCommandPrefix + "define":
                     Dictionary.Init(client, msg);
+                    break;
+                case cCommandPrefix + "addrankcategory":
+                    Ranks.HandleCategory(client, msg, Ranks.HandleType.ADD);
+                    break;
+                case cCommandPrefix + "removerankcategory":
+                    Ranks.HandleCategory(client, msg, Ranks.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "renamerankcategory":
+                    Ranks.HandleCategory(client, msg, Ranks.HandleType.EDIT);
+                    break;
+                case cCommandPrefix + "addrank":
+                    Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.ADD);
+                    break;
+                case cCommandPrefix + "removerank":
+                    Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "rankcategory":
+                    Ranks.ShowCategorysRanks(client, msg);
+                    break;
+                case cCommandPrefix + "printranks":
+                    Ranks.PrintRanks(client, msg);
+                    break;
+                case cCommandPrefix + "rank":
+                    Ranks.ToggleUserRank(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)

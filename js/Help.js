@@ -16,6 +16,10 @@ exports.Init = function (client, msg) {
             value: "Setup options for this server (must have 'Manage Server' permissions)"
           },
           {
+            name: "g!rank <rolename>",
+            value: " Add or remove a role"
+          },
+          {
             name: "g!idiom",
             value: " Let Groovebot try and come up with a wise saying! "
           },
