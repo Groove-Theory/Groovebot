@@ -85,7 +85,7 @@ exports.ProcessMessage = async function(client, msg) {
                 case cCommandPrefix + "removerank":
                     Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.DELETE);
                     break;
-                case cCommandPrefix + "rankcategory":
+                case cCommandPrefix + "printrankcategory":
                     Ranks.ShowCategorysRanks(client, msg);
                     break;
                 case cCommandPrefix + "printranks":
@@ -113,7 +113,7 @@ exports.ProcessMessage = async function(client, msg) {
                     Library.PrintLibrary(client, msg);
                     break;
                 case cCommandPrefix + "getlibraryfile":
-                    Library.GetLibraryFile(client, msg);
+                    Library.GetLibraryFileWizardSetup(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)

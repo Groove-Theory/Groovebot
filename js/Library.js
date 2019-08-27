@@ -83,21 +83,9 @@ exports.LibraryFileAddWizardSetup = async function(client, msg)
             msg.channel.send("Sorry, you need the 'Manage Server' permission to use this command :sob: ");
             return;
         }
-
         let oGuild = msg.guild;
-        let oResult = await Globals.Database.dbo.collection("ServerData").aggregate([
-            { $match: {
-                "guildID": oGuild.id,
-                "production": Globals.Environment.PRODUCTION
-            }},
-            { $unwind: "$librarycategories"},
-            { $project: {
-                name: "$librarycategories.name",
-                    _id: 0
-                }},
-            ]).toArray();
 
-        let aCatNames = oResult.map(obj => obj.name);
+        let aCatNames = await getCategoriesNamesArray(oGuild);
 
         if(!aCatNames || aCatNames.length == 0)
         {
@@ -252,12 +240,12 @@ function LibraryFileAddWizardProcessName(client, newmsg, oArgs)
     }
     else if(cResponse == "")
     {
-        SendReplyMessage(client, newmsg, "Sorry, no name was found. Please try again.");
+        SendReplyMessage(client, newmsg, "Sorry, no title was found. Please try again.");
         LibraryFileAddWizardAskName(client, newmsg, oArgs)
     }
     else
     {
-        oArgs["cName"] = cResponse;
+        oArgs["cTitle"] = cResponse;
         LibraryFileAddWizardConfirmAll(client, newmsg, oArgs);
     }
 }
@@ -265,7 +253,7 @@ function LibraryFileAddWizardProcessName(client, newmsg, oArgs)
 async function LibraryFileAddWizardConfirmAll(client, msg, oArgs)
 {
     var cConfirmString = `Category: ${oArgs["cCatName"]}\r\n`
-                        + `Name: ${oArgs["cName"]}\r\n`
+                        + `Title: ${oArgs["cTitle"]}\r\n`
     await msg.channel.send(
         {
             embed:
@@ -303,7 +291,7 @@ function LibraryFileAddWizardUploadFile(client, msg, oArgs)
     let oGuild = msg.guild;
 
     oInsertObj ={};
-    oInsertObj["cName"] = oArgs["cName"];
+    oInsertObj["cTitle"] = oArgs["cTitle"];
     oInsertObj["cAttachmentID"] = oArgs["cAttachmentID"];
     oInsertObj["cAttachmentURL"] = oArgs["cAttachmentURL"];
 
@@ -325,10 +313,308 @@ function LibraryFileAddWizardUploadFile(client, msg, oArgs)
     Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
 }
 
+exports.PrintLibrary = function (client, msg)
+{
+    try
+    {
+        var aMsgContents = msg.content.split(/\s+/);
+        var cCatName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
+
+        var iMode = cCatName == "" ? 1 : 2; //1 = Categories, 2 = Files for a Category
+        if(iMode == 1)
+        {
+            PrintCategories(client, msg)
+        }
+        else if(iMode == 2)
+        {
+            PrintFiles(client, msg, cCatName)
+        }
+    }
+    catch(err)
+    {
+        SendReplyMessage(client, msg, "Uh oh, there may have been an error...");
+        ErrorHandler.HandleError(client, err)
+    }
+}
+
+async function PrintCategories(client, msg)
+{
+    let oGuild = msg.guild;
+
+    let oKeyObject = {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION,
+    }
+    let oReturn = {
+        projection: { "librarycategories":1, _id:0 }
+    }
+
+    let aCatNames = await getCategoriesNamesArray(oGuild);
+
+    if (!aCatNames || aCatNames.length == 0) {
+        msg.channel.send("Sorry I can't find any categories for this server")
+        return;
+    }
+    else
+    {
+        var cReturn = "**LIST OF LIBRARY CATEGORIES** \r\n```\r\n";
+        let cCatNames = aCatNames.join("\r\n");
+        cReturn += cCatNames;
+        cReturn += "```";
+        msg.channel.send(cReturn)
+    }
+
+}
+
+async function PrintFiles(client, msg, cCatName)
+{
+    let oGuild = msg.guild;
+
+    var aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
+    { $match: {
+        "guildID": oGuild.id,
+        "production": Globals.Environment.PRODUCTION
+    }},
+    { $unwind: "$librarycategories"},
+    { $match: {
+        "librarycategories.name": cCatName
+        }
+    },
+    { $project: {
+            files: "$librarycategories.files",
+            _id: 0
+        }},
+    ]).toArray();
+    var oResult = aResult && aResult.length > 0 ? aResult[0] : null;
+    if (!oResult) {
+        msg.channel.send("Sorry I can't find that category for this server")
+        return;
+    }
+    else
+    {
+        let aFiles = oResult.files;
+        var cReturn = "**LIST OF FILES FOR CATEGORY: " + cCatName.toUpperCase() + "** \r\n```\r\n";
+        for(var i = 0; i < aFiles.length; i++)
+        {
+            let oFile = aFiles[i];
+            cReturn += printFileDescription(oFile) + "\r\n";
+        }
+        cReturn += "```"
+        msg.channel.send(cReturn)
+    }
+
+}
+
+exports.GetLibraryFileWizardSetup = async function(client, msg)
+{
+    let oGuild = msg.guild;
+
+    let aCatNames = await getCategoriesNamesArray(oGuild); 
+
+    if (!aCatNames || aCatNames.length == 0) {
+        msg.channel.send("Sorry I can't find that any categories for this server")
+        return;
+    }
+    else
+    {
+        GetLibraryFileWizardAskCategory(client, msg, oGuild, aCatNames);
+    }
+
+}
+
+async function GetLibraryFileWizardAskCategory(client, msg, oGuild, aCatNames)
+{
+    await msg.channel.send(
+        {
+            embed:
+            {
+                color: 3447003,
+                title: "Please enter the category where you want to checkout from (type 'END' in caps to stop this wizard)\r\n",
+                description: aCatNames.join("\r\n"),
+            }
+        })
+
+    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
+        {
+            time: 120000
+        });
+    collector.on('collect', newmsg => {
+        try {
+            collector.stop();
+            GetLibraryFileWizardProcessCategory(client, newmsg, oGuild, aCatNames)
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
+    });
+}
+
+function GetLibraryFileWizardProcessCategory(client, newmsg, oGuild, aCatNames)
+{
+    let cResponse = newmsg.content;
+    if(cResponse == "END")
+    {
+        SendReplyMessage(client, newmsg, "Okie dokie then, stopping checkout process");
+        return;
+    }
+    var cCatName = aCatNames.find(item => cResponse.toUpperCase() === item.toUpperCase()) 
+    if(!cCatName)
+    {
+        SendReplyMessage(client, newmsg, "Sorry, that's not a valid category");
+        GetLibraryFileWizardAskCategory(client, newmsg, aCatNames)
+    }
+    else
+    {
+        let oArgs = {"aCatNames": aCatNames, "cCatName" : cCatName, "oGuild" : oGuild}
+        GetLibraryFileWizardAskFile(client, newmsg, oArgs);
+    }
+
+}
+
+async function GetLibraryFileWizardAskFile(client, msg, oArgs)
+{
+    let cCatName = oArgs.cCatName
+    let aCatFilesData = await getFilesData(oArgs.oGuild, oArgs.cCatName);
+    if(!aCatFilesData || aCatFilesData.length == 0)
+    {
+        SendReplyMessage(client, msg, "Sorry, there's no files in this category, please choose another");
+        GetLibraryFileWizardAskCategory(client, msg, oArgs.oGuild, oArgs.aCatNames)
+    }
+    else
+    {
+        let cFilesDescriptions = printMultipleFilesDescription(aCatFilesData);
+        await msg.channel.send(
+            {
+                embed:
+                {
+                    color: 3447003,
+                    title: "Please Choose which file you want to checkout (type in the name or the index number on the left-hand side)\r\n",
+                    description: cFilesDescriptions,
+                }
+            })
+
+        var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,
+            {
+                time: 120000
+            });
+        collector.on('collect', newmsg => {
+            try {
+                collector.stop();
+                GetLibraryFileWizardProcessAndSendFile(client, newmsg, oArgs, aCatFilesData)
+            }
+            catch (err) {
+                ErrorHandler.HandleError(client, err);
+            }
+        });
+    }
+}
+
+function GetLibraryFileWizardProcessAndSendFile(client, newmsg, oGuild, aCatFilesData)
+{
+    let cResponse = newmsg.content;
+    if(cResponse == "END")
+    {
+        SendReplyMessage(client, newmsg, "Okie dokie then, stopping checkout process");
+        return;
+    }
+
+    let oChosenFile = null
+    if(Number.isInteger(parseInt(cResponse)))
+    {
+        oChosenFile = aCatFilesData[parseInt(cResponse) - 1];
+    }
+    else
+    {
+        oChosenFile = a.filter(obj => obj.name == "cResponse")[0]
+    }
+
+    if(!oChosenFile)
+    {
+        SendReplyMessage(client, newmsg, "Sorry, that's not a valid file name or index");
+        GetLibraryFileWizardAskFile(client, newmsg, aCatNames)
+    }
+    else
+    {
+        newmsg.channel.send(
+            {
+                files: [
+                    oChosenFile.cAttachmentURL
+                ]
+            });
+    }
+
+}
+
+////////////////////////////////HELPER FUNCTIONS ///////////////
+
+async function getCategoriesNamesArray(oGuild)
+{
+    let aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
+        { $match: {
+            "guildID": oGuild.id,
+            "production": Globals.Environment.PRODUCTION
+        }},
+        { $unwind: "$librarycategories"},
+        { $project: {
+            name: "$librarycategories.name",
+                _id: 0
+            }},
+        ]).toArray();
+
+    let aCatNames = aResult.map(obj => obj.name);
+    return aCatNames;
+}
+
+async function getFilesData(oGuild, cCatName)
+{
+    let aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
+    { 
+        $match: {
+            "guildID": oGuild.id,
+            "production": false
+        }
+    },
+    {
+        $unwind: "$librarycategories"
+    },
+    {
+        $match: {
+            "librarycategories.name": cCatName
+        }
+    },
+    {
+        $project: {
+            files: "$librarycategories.files",
+            _id: 0
+        }
+    },
+    ]).toArray();
+    return aResult && aResult.length > 0 ? aResult[0].files : null
+}
+
+
+
 function getFileType(cPath)
 {
-    var re = /(?:\.([^.]+))?$/;
-    return re.exec(cPath)[1].toUpperCase();
+    return cPath.split('.').pop().toUpperCase();
+}
+
+function printMultipleFilesDescription(aFiles)
+{
+    let cReturn = "";
+    for(var i = 0; i < aFiles.length; i++)
+    {
+        cReturn += `(${i+1}) ${printFileDescription(aFiles[i])}`;
+    }
+
+    return cReturn;
+}
+
+function printFileDescription(oFile)
+{
+    let cPath = oFile.cAttachmentURL
+    let cFileExt = getFileType(cPath);
+    return `${oFile.cTitle} (${cFileExt})`
 }
 
 function checkIfMod(member)
