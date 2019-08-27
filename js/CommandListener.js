@@ -10,6 +10,7 @@ const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
 const Options = require('./Options.js')
 const Ranks = require('./Ranks.js')
+const Library = require('./Library.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
 exports.ProcessMessage = async function(client, msg) {
@@ -92,6 +93,27 @@ exports.ProcessMessage = async function(client, msg) {
                     break;
                 case cCommandPrefix + "rank":
                     Ranks.ToggleUserRank(client, msg);
+                    break;
+                case cCommandPrefix + "addlibrarycategory":
+                    Library.HandleLibraryCategory(client, msg, Library.HandleType.ADD);
+                    break;
+                case cCommandPrefix + "removelibrarycategory":
+                    Library.HandleLibraryCategory(client, msg, Library.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "renamelibrarycategory":
+                    Library.HandleLibraryCategory(client, msg, Library.HandleType.EDIT);
+                    break;
+                case cCommandPrefix + "addlibraryfile":
+                    Library.HandleLibraryFile(client, msg, Library.HandleType.ADD);
+                    break;
+                case cCommandPrefix + "removelibraryfile":
+                    Ranks.PrintRanks(client, msg, Library.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "printlibrarycategory":
+                    Ranks.PrintRanks(client, msg);
+                    break;
+                case cCommandPrefix + "printlibrary":
+                    Ranks.PrintRanks(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)

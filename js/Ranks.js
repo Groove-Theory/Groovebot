@@ -1,4 +1,5 @@
-var Globals = require('./Globals.js');
+const Globals = require('./Globals.js');
+const ErrorHandler = require('./ErrorHandler.js')
 
 exports.HandleType = {
     ADD: 1,
@@ -38,31 +39,31 @@ exports.HandleCategory = function(client, msg, iHandleType)
         if(iHandleType == exports.HandleType.ADD)
         {
             oOptions = {
-                $addToSet: { categories: {name: cCatName, ranks:[]} }
+                $addToSet: { rankcategories: {name: cCatName, ranks:[]} }
             }
             cMessage = "Category **'" + cCatName + "'** successfully added";
         }
         else if(iHandleType == exports.HandleType.DELETE)
         {
             oOptions = {
-                $pull: { categories: {name: cCatName } }
+                $pull: { rankcategories: {name: cCatName } }
             }
             cMessage = "Category **'" + cCatName + "'** has been removed";
         }
         else if(iHandleType == exports.HandleType.EDIT)
         {
             let cNewCatName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[2] : "";
-            oKeyObject["categories.name"] = cCatName
+            oKeyObject["rankcategories.name"] = cCatName
             if(cNewCatName)
             {
                 oOptions = {
-                    $set: { "categories.$.name": cNewCatName}
+                    $set: { "rankcategories.$.name": cNewCatName}
                 }
                 cMessage = "Category '**" + cCatName + "**' has been renamed to '**" + cNewCatName + "**'";
             }
         }
 
-        Globals.Database.UpsertCustom("Ranks", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
+        Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
     }
     catch(err)
     {
@@ -115,7 +116,7 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
         let oKeyObject = {
             "guildID": oGuild.id,
             "production": Globals.Environment.PRODUCTION,
-            "categories.name": cCatName
+            "rankcategories.name": cCatName
         }
 
         let oOptions = {};
@@ -123,20 +124,20 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
         if(iHandleType == 1)
         {
             oOptions = {
-                $addToSet: { "categories.$.ranks": iRoleID }
+                $addToSet: { "rankcategories.$.ranks": iRoleID }
             }
             cMessage = `Role **'${oRole.name}'** successfully added to category **'${cCatName}'**`;
         }
         else if(iHandleType == 2)
         {
             oOptions = {
-                $pull: { "categories.$.ranks": iRoleID }
+                $pull: { "rankcategories.$.ranks": iRoleID }
             }
             cMessage = `Role **'${oRole.name}'** has been removed from category **'${cCatName}'**`;
         }
 
 
-        Globals.Database.UpsertCustom("Ranks", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
+        Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
     }
     catch(err)
     {
@@ -178,17 +179,17 @@ async function ShowCategories(client, msg)
         "production": Globals.Environment.PRODUCTION,
     }
     let oReturn = {
-        projection: { "categories":1, _id:0 }
+        projection: { "rankcategories":1, _id:0 }
     }
 
-    var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+    var aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
     { $match: {
         "guildID": oGuild.id,
         "production": Globals.Environment.PRODUCTION,
     }},
-    { $unwind: "$categories"},
+    { $unwind: "$rankcategories"},
     { $project: {
-            name: "$categories.name",
+            name: "$rankcategories.name",
             _id: 0
         }},
     ]).toArray();
@@ -213,18 +214,18 @@ async function ShowRanks(client, msg, cCatName)
 {
     let oGuild = msg.guild;
 
-    var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+    var aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
     { $match: {
         "guildID": oGuild.id,
         "production": Globals.Environment.PRODUCTION
     }},
-    { $unwind: "$categories"},
+    { $unwind: "$rankcategories"},
     { $match: {
-        "categories.name": cCatName
+        "rankcategories.name": cCatName
         }
     },
     { $project: {
-            ranks: "$categories.ranks",
+            ranks: "$rankcategories.ranks",
             _id: 0
         }},
     ]).toArray();
@@ -257,7 +258,7 @@ exports.PrintRanks = async function(client, msg)
     {
         let oGuild = msg.guild;
 
-        var aResult = await Globals.Database.dbo.collection("Ranks").aggregate([
+        var aResult = await Globals.Database.dbo.collection("ServerData").aggregate([
         { $match: {
             "guildID": oGuild.id,
             "production": Globals.Environment.PRODUCTION,
@@ -270,7 +271,7 @@ exports.PrintRanks = async function(client, msg)
         else
         {
             var oResult = aResult[0];
-            var oCategories = oResult.categories;
+            var oCategories = oResult.rankcategories;
             var aReturnString = [];
             var cReturn = "**__LIST OF RANKS AND CATEGORIES__** \r\n\r\n";
             for(var i = 0; i < oCategories.length; i++)
@@ -297,7 +298,7 @@ exports.PrintRanks = async function(client, msg)
                 if(aReturnString[i] != "")
                 msg.channel.send(aReturnString[i])
             }
-            
+
         }
     }
     catch(err)
@@ -334,11 +335,11 @@ exports.ToggleUserRank = async function(client, msg)
         var iRoleID = oRole.id;
         cRankName = oRole.name;
 
-        var aResult = await Globals.Database.dbo.collection("Ranks").find(
+        var aResult = await Globals.Database.dbo.collection("ServerData").find(
             {
                 "guildID": oGuild.id,
                 "production": Globals.Environment.PRODUCTION,
-                "categories.ranks": { $in: [ iRoleID ] }
+                "rankcategories.ranks": { $in: [ iRoleID ] }
             }
         ).toArray();
         let bRankFound = aResult && aResult.length > 0;
