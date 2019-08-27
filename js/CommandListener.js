@@ -104,16 +104,16 @@ exports.ProcessMessage = async function(client, msg) {
                     Library.HandleLibraryCategory(client, msg, Library.HandleType.EDIT);
                     break;
                 case cCommandPrefix + "addlibraryfile":
-                    Library.HandleLibraryFile(client, msg, Library.HandleType.ADD);
+                    Library.LibraryFileAddWizardSetup(client, msg);
                     break;
                 case cCommandPrefix + "removelibraryfile":
-                    Ranks.PrintRanks(client, msg, Library.HandleType.DELETE);
-                    break;
-                case cCommandPrefix + "printlibrarycategory":
-                    Ranks.PrintRanks(client, msg);
+                    Library.LibraryFileRemoveWizardSetup(client, msg);
                     break;
                 case cCommandPrefix + "printlibrary":
-                    Ranks.PrintRanks(client, msg);
+                    Library.PrintLibrary(client, msg);
+                    break;
+                case cCommandPrefix + "getlibraryfile":
+                    Library.GetLibraryFile(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)
