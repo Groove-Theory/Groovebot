@@ -10,7 +10,11 @@ const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
 const Options = require('./Options.js')
 const Ranks = require('./Ranks.js')
-const Library = require('./Library.js')
+const LibraryCategory = require('./Library/LibraryCategory.js')
+const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
+const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
+const LibraryPrint = require('./Library/LibraryPrint.js')
+const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
 exports.ProcessMessage = async function(client, msg) {
@@ -95,25 +99,25 @@ exports.ProcessMessage = async function(client, msg) {
                     Ranks.ToggleUserRank(client, msg);
                     break;
                 case cCommandPrefix + "addlibrarycategory":
-                    Library.HandleLibraryCategory(client, msg, Library.HandleType.ADD);
+                    LibraryCategory.HandleLibraryCategory(client, msg, Library.HandleType.ADD);
                     break;
                 case cCommandPrefix + "removelibrarycategory":
-                    Library.HandleLibraryCategory(client, msg, Library.HandleType.DELETE);
+                    LibraryCategory.HandleLibraryCategory(client, msg, Library.HandleType.DELETE);
                     break;
                 case cCommandPrefix + "renamelibrarycategory":
-                    Library.HandleLibraryCategory(client, msg, Library.HandleType.EDIT);
+                    LibraryCategory.HandleLibraryCategory(client, msg, Library.HandleType.EDIT);
                     break;
                 case cCommandPrefix + "addlibraryfile":
-                    Library.LibraryFileAddWizardSetup(client, msg);
+                    LibraryAddWizard.LibraryFileAddWizardSetup(client, msg);
                     break;
                 case cCommandPrefix + "removelibraryfile":
-                    Library.LibraryFileRemoveWizardSetup(client, msg);
+                    LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup(client, msg);
                     break;
                 case cCommandPrefix + "printlibrary":
-                    Library.PrintLibrary(client, msg);
+                    LibraryPrint.PrintLibrary(client, msg);
                     break;
                 case cCommandPrefix + "getlibraryfile":
-                    Library.GetLibraryFileWizardSetup(client, msg);
+                    LibraryGetFileWizard.GetLibraryFileWizardSetup(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)

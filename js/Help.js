@@ -20,6 +20,10 @@ exports.Init = function (client, msg) {
             value: " Add or remove a role"
           },
           {
+            name: "g!getlibraryfile",
+            value: " Start a wizard to get a library file"
+          },
+          {
             name: "g!idiom",
             value: " Let Groovebot try and come up with a wise saying! "
           },
