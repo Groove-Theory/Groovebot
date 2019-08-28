@@ -1,6 +1,6 @@
 const Globals = require('../Globals.js');
 const Discord = require('discord.js');
-const ErrorHandler = require('./ErrorHandler.js')
+const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
 exports.LibraryFileRemoveWizardSetup = async function(client, msg)
@@ -93,7 +93,7 @@ async function LibraryFileRemoveWizardAskFile(client, msg, oArgs)
     }
     else
     {
-        let cFilesDescriptions = LibraryUtils.printMultipleFilesDescription(aCatFilesData);
+        let cFilesDescriptions = await LibraryUtils.printMultipleFilesDescription(aCatFilesData);
         await msg.channel.send(
             {
                 embed:
@@ -111,7 +111,7 @@ async function LibraryFileRemoveWizardAskFile(client, msg, oArgs)
         collector.on('collect', newmsg => {
             try {
                 collector.stop();
-                GetLibraryFileWizardProcessAndSendFile(client, newmsg, oArgs, aCatFilesData)
+                LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs, aCatFilesData)
             }
             catch (err) {
                 ErrorHandler.HandleError(client, err);
@@ -120,7 +120,7 @@ async function LibraryFileRemoveWizardAskFile(client, msg, oArgs)
     }
 }
 
-function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs)
+function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs, aCatFilesData)
 {
     let cResponse = newmsg.content;
     if(cResponse == "END")
@@ -136,7 +136,7 @@ function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs)
     }
     else
     {
-        oChosenFile = a.filter(obj => obj.name == "cResponse")[0]
+        oChosenFile = aCatFilesData.filter(obj => obj.name == "cResponse")[0]
     }
 
     if(!oChosenFile)
@@ -155,7 +155,7 @@ function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs)
 async function LibraryFileRemoveWizardConfirmAll(client, msg, oArgs)
 {
     var cConfirmString = `Category: ${oArgs["cCatName"]}\r\n`
-                        + `Title: ${oArgs["cTitle"]}\r\n`
+                        + `Title: ${oArgs["oChosenFile"].cTitle}\r\n`
     await msg.channel.send(
         {
             embed:
@@ -201,10 +201,10 @@ function LibraryFileRemoveWizardRemoveFile(client, msg, oArgs)
     let cMessage = "Uh oh, there may have been an error..."
 
     oOptions = {
-        $pull: { "rankcategories.$.ranks.$.cAttachmentID": oArgs["oChosenFile"].id }
+        $pull: { "librarycategories.files.cAttachmentID": oArgs["oChosenFile"].id }
     }
     cMessage = "File Successfully Removed!!"
 
 
-    Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
+    Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
 }

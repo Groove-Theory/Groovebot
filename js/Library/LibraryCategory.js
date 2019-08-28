@@ -1,7 +1,8 @@
 const Globals = require('../Globals.js');
 const Discord = require('discord.js');
-const ErrorHandler = require('./ErrorHandler.js')
+const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
+
 
 exports.HandleType = {
     ADD: 1,
@@ -9,7 +10,7 @@ exports.HandleType = {
     EDIT: 3
   };
 
-exports.HandleLibraryCategory = function(client, msg, iHandleType)
+exports.HandleLibraryCategory = async function(client, msg, iHandleType)
 {
     try
     {
@@ -44,13 +45,34 @@ exports.HandleLibraryCategory = function(client, msg, iHandleType)
                 $addToSet: { librarycategories: {name: cCatName, files:[]} }
             }
             cMessage = "Category **'" + cCatName + "'** successfully added";
+            Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, function(){ LibraryUtils.SendReplyMessage(client, msg, cMessage) });
         }
         else if(iHandleType == exports.HandleType.DELETE)
         {
-            oOptions = {
-                $pull: { librarycategories: {name: cCatName } }
+            let aExistingFilesForCat = await  Globals.Database.dbo.collection("ServerData").aggregate([
+                { $match: {
+                    "guildID": oGuild.id,
+                    "production": Globals.Environment.PRODUCTION
+                }},
+                { $unwind: "$librarycategories"},
+                { $match: {
+                    "librarycategories.name": cCatName,
+                    "librarycategories.files.0": {$exists: true}
+                }},
+                ]).toArray();
+
+            if(aExistingFilesForCat && aExistingFilesForCat.length > 0)
+            {
+                LibraryUtils.SendReplyMessage(client, msg, "Sorry, I can't delete a category with files already in it. Please remove the files first.")
             }
-            cMessage = "Category **'" + cCatName + "'** has been removed";
+            else
+            {
+                oOptions = {
+                    $pull: { librarycategories: {name: cCatName } }
+                }
+                cMessage = "Category **'" + cCatName + "'** has been removed";
+                Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, function(){ LibraryUtils.SendReplyMessage(client, msg, cMessage) });
+            }
         }
         else if(iHandleType == exports.HandleType.EDIT)
         {
@@ -62,10 +84,10 @@ exports.HandleLibraryCategory = function(client, msg, iHandleType)
                     $set: { "librarycategories.$.name": cNewCatName}
                 }
                 cMessage = "Category '**" + cCatName + "**' has been renamed to '**" + cNewCatName + "**'";
+                Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, function(){ LibraryUtils.SendReplyMessage(client, msg, cMessage) });
             }
         }
 
-        Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
     }
     catch(err)
     {

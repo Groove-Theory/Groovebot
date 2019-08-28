@@ -1,6 +1,13 @@
-const Globals = require('./Globals.js');
+const Globals = require('../Globals.js');
 const Discord = require('discord.js');
-const ErrorHandler = require('./ErrorHandler.js')
+const ErrorHandler = require('../ErrorHandler.js')
+
+exports.getCategoriesNamesArray = getCategoriesNamesArray;
+exports.getFilesData = getFilesData;
+exports.printMultipleFilesDescription = printMultipleFilesDescription;
+exports.printFileDescription = printFileDescription;
+exports.checkIfMod = checkIfMod;
+exports.SendReplyMessage = SendReplyMessage;
 
 async function getCategoriesNamesArray(oGuild)
 {
@@ -54,7 +61,7 @@ function getFileType(cPath)
     return cPath.split('.').pop().toUpperCase();
 }
 
-function printMultipleFilesDescription(aFiles)
+async function printMultipleFilesDescription(aFiles)
 {
     let cReturn = "";
     for(var i = 0; i < aFiles.length; i++)
@@ -72,11 +79,11 @@ function printFileDescription(oFile)
     return `${oFile.cTitle} (${cFileExt})`
 }
 
-function checkIfMod(member)
+async function checkIfMod(member)
 {
     return member && member.hasPermission('MANAGE_GUILD');
 }
 
-function SendReplyMessage(client, msg, cContent) {
+async function SendReplyMessage(client, msg, cContent) {
     msg.channel.send(cContent);
 }

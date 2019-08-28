@@ -63,7 +63,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
             }
         }
 
-        Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
+        Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
     }
     catch(err)
     {
@@ -137,7 +137,7 @@ exports.HandleCategoryRank = function(client, msg, iHandleType)
         }
 
 
-        Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
+        Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, SendReplyMessage(client, msg, cMessage));
     }
     catch(err)
     {
@@ -272,33 +272,40 @@ exports.PrintRanks = async function(client, msg)
         {
             var oResult = aResult[0];
             var oCategories = oResult.rankcategories;
-            var aReturnString = [];
-            var cReturn = "**__LIST OF RANKS AND CATEGORIES__** \r\n\r\n";
-            for(var i = 0; i < oCategories.length; i++)
+            if(!oCategories || oCategories.length == 0)
             {
-                let oCategory = oCategories[i];
-                cReturn += `**${oCategory.name}**\r\n\`\`\`\r\n` ;
-                for(var j = 0; j < oCategory.ranks.length; j++)
+                msg.channel.send("Sorry I can't find any ranks or categories for this server")
+                return;
+            }
+            else
+            {
+                var aReturnString = [];
+                var cReturn = "**__LIST OF RANKS AND CATEGORIES__** \r\n\r\n";
+                for(var i = 0; i < oCategories.length; i++)
                 {
-                    let iRank = oCategory.ranks[j];
-                    let oRole = oGuild.roles.find(r => r.id == iRank);
-                    let cRoleName = oRole.name;
-                    cReturn += `${cRoleName}\r\n`
+                    let oCategory = oCategories[i];
+                    cReturn += `**${oCategory.name}**\r\n\`\`\`\r\n` ;
+                    for(var j = 0; j < oCategory.ranks.length; j++)
+                    {
+                        let iRank = oCategory.ranks[j];
+                        let oRole = oGuild.roles.find(r => r.id == iRank);
+                        let cRoleName = oRole.name;
+                        cReturn += `${cRoleName}\r\n`
+                    }
+                    cReturn += "```";
+                    if(cReturn.length > 1000)
+                    {
+                        aReturnString.push(cReturn)
+                        cReturn = ""
+                    }
                 }
-                cReturn += "```";
-                if(cReturn.length > 1000)
+                aReturnString.push(cReturn);
+                for(var i = 0; i < aReturnString.length; i++)
                 {
-                    aReturnString.push(cReturn)
-                    cReturn = ""
+                    if(aReturnString[i] != "")
+                    msg.channel.send(aReturnString[i])
                 }
             }
-            aReturnString.push(cReturn);
-            for(var i = 0; i < aReturnString.length; i++)
-            {
-                if(aReturnString[i] != "")
-                msg.channel.send(aReturnString[i])
-            }
-
         }
     }
     catch(err)

@@ -1,6 +1,6 @@
 const Globals = require('../Globals.js');
 const Discord = require('discord.js');
-const ErrorHandler = require('./ErrorHandler.js')
+const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
 exports.GetLibraryFileWizardSetup = async function(client, msg)

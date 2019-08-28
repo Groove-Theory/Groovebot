@@ -1,6 +1,6 @@
 const Globals = require('../Globals.js');
 const Discord = require('discord.js');
-const ErrorHandler = require('./ErrorHandler.js')
+const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
 exports.LibraryFileAddWizardSetup = async function(client, msg)
@@ -240,5 +240,5 @@ function LibraryFileAddWizardUploadFile(client, msg, oArgs)
     cMessage = "File Successfully Added!!"
 
 
-    Globals.Database.UpsertCustom("ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
+    Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
 }

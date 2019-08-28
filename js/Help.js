@@ -20,7 +20,7 @@ exports.Init = function (client, msg) {
             value: " Add or remove a role"
           },
           {
-            name: "g!getlibraryfile",
+            name: "g!get-library-file",
             value: " Start a wizard to get a library file"
           },
           {
