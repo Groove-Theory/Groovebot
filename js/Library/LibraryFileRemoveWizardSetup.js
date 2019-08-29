@@ -40,8 +40,8 @@ async function LibraryFileRemoveWizardAskCategory(client, msg, aCatNames)
             embed:
             {
                 color: 3447003,
-                title: "Please enter the category where you want to delete from (type 'END' in caps to stop this wizard)\r\n",
-                description: aCatNames.join("\r\n"),
+                title: "Please enter the category (or index number on the left) where you want to delete from (type 'END' in caps to stop this wizard)\r\n",
+                description: LibraryUtils.printCategoriesWithIndex(aCatNames)
             }
         })
 
@@ -68,7 +68,17 @@ function LibraryFileRemoveWizardProcessCategory(client, newmsg, aCatNames)
         LibraryUtils.SendReplyMessage(client, newmsg, "Okie dokie then, stopping delete process");
         return;
     }
-    var cCatName = aCatNames.find(item => cResponse.toUpperCase() === item.toUpperCase())
+
+    let cCatName = null
+    if(Number.isInteger(parseInt(cResponse)))
+    {
+        cCatName = aCatNames[parseInt(cResponse) - 1];
+    }
+    else
+    {
+        cCatName = aCatNames.find(item => cResponse.toUpperCase() === item.toUpperCase())
+    }
+
     if(!cCatName)
     {
         LibraryUtils.SendReplyMessage(client, newmsg, "Sorry, that's not a valid category");
@@ -201,7 +211,7 @@ function LibraryFileRemoveWizardRemoveFile(client, msg, oArgs)
     let cMessage = "Uh oh, there may have been an error..."
 
     oOptions = {
-        $pull: { "librarycategories.files.cAttachmentID": oArgs["oChosenFile"].id }
+        $pull: { "librarycategories.$.files.cAttachmentID": oArgs["oChosenFile"].cAttachmentID }
     }
     cMessage = "File Successfully Removed!!"
 

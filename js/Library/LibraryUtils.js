@@ -8,6 +8,7 @@ exports.printMultipleFilesDescription = printMultipleFilesDescription;
 exports.printFileDescription = printFileDescription;
 exports.checkIfMod = checkIfMod;
 exports.SendReplyMessage = SendReplyMessage;
+exports.printCategoriesWithIndex = printCategoriesWithIndex;
 
 async function getCategoriesNamesArray(oGuild)
 {
@@ -17,6 +18,7 @@ async function getCategoriesNamesArray(oGuild)
             "production": Globals.Environment.PRODUCTION
         }},
         { $unwind: "$librarycategories"},
+        { $sort : { "librarycategories.name" : 1 } },
         { $project: {
             name: "$librarycategories.name",
                 _id: 0
@@ -44,6 +46,7 @@ async function getFilesData(oGuild, cCatName)
             "librarycategories.name": cCatName
         }
     },
+    { $sort : { "librarycategories.files.cTitle" : 1, } },
     {
         $project: {
             files: "$librarycategories.files",
@@ -66,7 +69,7 @@ async function printMultipleFilesDescription(aFiles)
     let cReturn = "";
     for(var i = 0; i < aFiles.length; i++)
     {
-        cReturn += `(${i+1}) ${printFileDescription(aFiles[i])}`;
+        cReturn += `(${i+1}) ${printFileDescription(aFiles[i])} \r\n`;
     }
 
     return cReturn;
@@ -77,6 +80,13 @@ function printFileDescription(oFile)
     let cPath = oFile.cAttachmentURL
     let cFileExt = getFileType(cPath);
     return `${oFile.cTitle} (${cFileExt})`
+}
+
+function printCategoriesWithIndex(aCatNames)
+{
+    let strRet = "";
+    aCatNames.forEach((elem, index) => strRet += `${index+1}) ${elem}\r\n`)
+    return strRet;
 }
 
 async function checkIfMod(member)
