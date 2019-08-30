@@ -197,24 +197,21 @@ async function LibraryFileRemoveWizardConfirmAll(client, msg, oArgs)
     });
 }
 
-function LibraryFileRemoveWizardRemoveFile(client, msg, oArgs)
+async function LibraryFileRemoveWizardRemoveFile(client, msg, oArgs)
 {
     let oGuild = msg.guild;
 
-    let oKeyObject = {
-        "guildID": oGuild.id,
-        "production": Globals.Environment.PRODUCTION,
-        "librarycategories.name": oArgs["cCatName"]
-    }
-
-    let oOptions = {};
-    let cMessage = "Uh oh, there may have been an error..."
-
-    oOptions = {
-        $pull: { "librarycategories.$.files.cAttachmentID": oArgs["oChosenFile"].cAttachmentID }
-    }
+    await Globals.Database.dbo.collection("ServerData").update(
+        {
+            "guildID": oGuild.id,
+            "production": false,
+            "librarycategories.name": oArgs["cCatName"]
+        },
+        {
+            $pull: { "librarycategories.$.files": {"cAttachmentID" : oArgs["oChosenFile"].cAttachmentID } }
+        }
+        )
     cMessage = "File Successfully Removed!!"
+    LibraryUtils.SendReplyMessage(client, msg, cMessage)
 
-
-    Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
 }
