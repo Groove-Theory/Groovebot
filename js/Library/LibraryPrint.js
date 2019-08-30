@@ -70,6 +70,7 @@ async function PrintFiles(client, msg, cCatName)
         "librarycategories.name": cCatName
         }
     },
+    { $sort : { "librarycategories.files.cTitle" : 1, } },
     { $project: {
             files: "$librarycategories.files",
             _id: 0

@@ -188,6 +188,7 @@ async function ShowCategories(client, msg)
         "production": Globals.Environment.PRODUCTION,
     }},
     { $unwind: "$rankcategories"},
+    { $sort : { "rankcategories.name" : 1 } },
     { $project: {
             name: "$rankcategories.name",
             _id: 0
@@ -237,14 +238,22 @@ async function ShowRanks(client, msg, cCatName)
     else
     {
         let aRanks = oResult.ranks;
+        let aRankNames = [];
         var cReturn = "**LIST OF RANKS FOR CATEGORY: " + cCatName.toUpperCase() + "** \r\n```\r\n";
         for(var i = 0; i < aRanks.length; i++)
         {
             oRole = oGuild.roles.find(r => r.id == aRanks[i]);
             if(oRole)
             {
-                cReturn += oRole.name + "\r\n";
+                aRankNames.push(oRole.name);
             }
+        }
+        if(aRankNames.length == 0)
+            cReturn += " ";
+        else
+        {
+            aRankNames.sort();
+            cReturn += aRankNames.join("\r\n")
         }
         cReturn += "```"
         msg.channel.send(cReturn)
@@ -279,18 +288,27 @@ exports.PrintRanks = async function(client, msg)
             }
             else
             {
+                oCategories.sort((a,b) => a.name > b.name);
                 var aReturnString = [];
                 var cReturn = "**__LIST OF RANKS AND CATEGORIES__** \r\n\r\n";
                 for(var i = 0; i < oCategories.length; i++)
                 {
                     let oCategory = oCategories[i];
                     cReturn += `**${oCategory.name}**\r\n\`\`\`\r\n` ;
+                    let aRankNames = [];
                     for(var j = 0; j < oCategory.ranks.length; j++)
                     {
                         let iRank = oCategory.ranks[j];
                         let oRole = oGuild.roles.find(r => r.id == iRank);
                         let cRoleName = oRole.name;
-                        cReturn += `${cRoleName}\r\n`
+                        aRankNames.push(cRoleName)
+                    }
+                    if(aRankNames.length == 0)
+                        cReturn += " ";
+                    else
+                    {
+                        aRankNames.sort();
+                        cReturn += aRankNames.join("\r\n")
                     }
                     cReturn += "```";
                     if(cReturn.length > 1000)
