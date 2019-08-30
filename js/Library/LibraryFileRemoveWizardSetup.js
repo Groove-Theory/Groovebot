@@ -89,7 +89,7 @@ async function LibraryFileRemoveWizardAskFile(client, msg, oArgs)
     if(!aCatFilesData || aCatFilesData.length == 0)
     {
         LibraryUtils.SendReplyMessage(client, msg, "Sorry, there's no files in this category, please choose another");
-        GetLibraryFileWizardAskCategory(client, msg, oArgs.oGuild, oArgs.aCatNames)
+        LibraryFileRemoveWizardAskCategory(client, msg, oArgs.oGuild, oArgs.aCatNames)
     }
     else
     {
@@ -123,7 +123,7 @@ async function LibraryFileRemoveWizardAskFile(client, msg, oArgs)
 function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs, aCatFilesData)
 {
     let cResponse = newmsg.content;
-    if(cResponse == "END")
+    if(cResponse.toUpperCase() == "END")
     {
         LibraryUtils.SendReplyMessage(client, newmsg, "Okie dokie then, stopping checkout process");
         return;
@@ -142,7 +142,7 @@ function LibraryFileRemoveWizardProcessFile(client, newmsg, oArgs, aCatFilesData
     if(!oChosenFile)
     {
         LibraryUtils.SendReplyMessage(client, newmsg, "Sorry, that's not a valid file name or index");
-        GetLibraryFileWizardAskFile(client, newmsg, aCatNames)
+        LibraryFileRemoveWizardAskFile(client, newmsg, aCatNames)
     }
     else
     {
