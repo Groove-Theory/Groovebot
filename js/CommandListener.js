@@ -10,6 +10,11 @@ const Idiom = require('./Idiom.js')
 const KeySmash = require('./KeySmash.js')
 const Options = require('./Options.js')
 const Ranks = require('./Ranks.js')
+const LibraryCategory = require('./Library/LibraryCategory.js')
+const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
+const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
+const LibraryPrint = require('./Library/LibraryPrint.js')
+const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
 exports.ProcessMessage = async function(client, msg) {
@@ -69,29 +74,50 @@ exports.ProcessMessage = async function(client, msg) {
                 case cCommandPrefix + "define":
                     Dictionary.Init(client, msg);
                     break;
-                case cCommandPrefix + "addrankcategory":
+                case cCommandPrefix + "rank-add-category":
                     Ranks.HandleCategory(client, msg, Ranks.HandleType.ADD);
                     break;
-                case cCommandPrefix + "removerankcategory":
+                case cCommandPrefix + "rank-remove-category":
                     Ranks.HandleCategory(client, msg, Ranks.HandleType.DELETE);
                     break;
-                case cCommandPrefix + "renamerankcategory":
+                case cCommandPrefix + "rank-rename-category":
                     Ranks.HandleCategory(client, msg, Ranks.HandleType.EDIT);
                     break;
-                case cCommandPrefix + "addrank":
+                case cCommandPrefix + "rank-add-role":
                     Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.ADD);
                     break;
-                case cCommandPrefix + "removerank":
+                case cCommandPrefix + "rank-remove-role":
                     Ranks.HandleCategoryRank(client, msg, Ranks.HandleType.DELETE);
                     break;
-                case cCommandPrefix + "rankcategory":
+                case cCommandPrefix + "rank-print-category":
                     Ranks.ShowCategorysRanks(client, msg);
                     break;
-                case cCommandPrefix + "printranks":
+                case cCommandPrefix + "rank-print-all":
                     Ranks.PrintRanks(client, msg);
                     break;
                 case cCommandPrefix + "rank":
                     Ranks.ToggleUserRank(client, msg);
+                    break;
+                case cCommandPrefix + "library-add-category":
+                    LibraryCategory.HandleLibraryCategory(client, msg, LibraryCategory.HandleType.ADD);
+                    break;
+                case cCommandPrefix + "library-remove-category":
+                    LibraryCategory.HandleLibraryCategory(client, msg, LibraryCategory.HandleType.DELETE);
+                    break;
+                case cCommandPrefix + "library-rename-category":
+                    LibraryCategory.HandleLibraryCategory(client, msg, LibraryCategory.HandleType.EDIT);
+                    break;
+                case cCommandPrefix + "library-add-file":
+                    LibraryAddWizard.LibraryFileAddWizardSetup(client, msg);
+                    break;
+                case cCommandPrefix + "library-remove-file":
+                    LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup(client, msg);
+                    break;
+                case cCommandPrefix + "library-print":
+                    LibraryPrint.PrintLibrary(client, msg);
+                    break;
+                case cCommandPrefix + "library-get-file":
+                    LibraryGetFileWizard.GetLibraryFileWizardSetup(client, msg);
                     break;
                 default:
                     if(cMsgCommand.indexOf(cCommandPrefix) == 0)

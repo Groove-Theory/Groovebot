@@ -74,7 +74,7 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
-exports.UpsertCustom = function(cCollectionName, oKeyObj, oOptions, fCallabck = null)
+exports.UpsertCustom = function(client, cCollectionName, oKeyObj, oOptions, fCallabck = null)
 {
   exports.dbo.collection(cCollectionName).updateOne(oKeyObj, oOptions,
   {
@@ -144,7 +144,6 @@ exports.Query = function(cCollectionName, oQueryObj, oReturn = {}, oSort = {}, f
 
 exports.QueryAggregate = function(cCollectionName, oQueryObj, oReturn = {}, oSort = {}, fCallabck = null)
 {
-
   var query = new Promise((resolve, reject) =>
   {
     exports.dbo.collection(cCollectionName).aggregate(
