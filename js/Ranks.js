@@ -7,7 +7,35 @@ exports.HandleType = {
     EDIT: 3
   };
 
-exports.HandleCategory = function(client, msg, iHandleType)
+exports.AddCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.ADD);
+}
+
+exports.RemoveCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.DELETE);
+}
+
+exports.RenameCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.EDIT);
+}
+
+exports.AddCategoryRank = function(client, msg)
+{
+    HandleCategoryRank(client, msg, HandleType.ADD);
+}
+
+exports.RemoveCategoryRank = function(client, msg)
+{
+    HandleCategoryRank(client, msg, HandleType.DELETE);
+}
+
+
+
+
+function HandleCategory(client, msg, iHandleType)
 {
     try
     {
@@ -72,7 +100,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
     }
 }
 
-exports.HandleCategoryRank = function(client, msg, iHandleType)
+function HandleCategoryRank(client, msg, iHandleType)
 {
     try
     {

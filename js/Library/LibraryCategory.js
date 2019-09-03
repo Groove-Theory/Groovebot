@@ -10,7 +10,22 @@ exports.HandleType = {
     EDIT: 3
   };
 
-exports.HandleLibraryCategory = async function(client, msg, iHandleType)
+exports.AddCategory = function(client, msg)
+{
+    HandleLibraryCategory(client, msg, HandleType.ADD);
+}
+
+exports.RemoveCategory = function(client, msg)
+{
+    HandleLibraryCategory(client, msg, HandleType.DELETE);
+}
+
+exports.RenameCategory = function(client, msg)
+{
+    HandleLibraryCategory(client, msg, HandleType.EDIT);
+}
+
+async function HandleLibraryCategory(client, msg, iHandleType)
 {
     try
     {

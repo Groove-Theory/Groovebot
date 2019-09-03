@@ -1,10 +1,37 @@
+const Vote = require('./Vote.js')
+const GrooveQuote = require('./GrooveQuote.js')
+const Help = require('./Help.js')
+const Ventriloquist = require('./Ventriloquist.js')
+const Dictionary = require('./Dictionary.js')
+const Compliment = require('./Compliment.js')
+const Nickname = require('./Nickname.js')
+const Idiom = require('./Idiom.js')
+const KeySmash = require('./KeySmash.js')
+const Options = require('./Options.js')
+const Ranks = require('./Ranks.js')
+const LibraryCategory = require('./Library/LibraryCategory.js')
+const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
+const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
+const LibraryPrint = require('./Library/LibraryPrint.js')
+const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
+
+
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
-exports.Environment = {
+const Environment = {
   TESTING: EnvironmentMode == 0 || EnvironmentMode == "0",
   STAGE: EnvironmentMode == 1 || EnvironmentMode == "1",
   PRODUCTION: EnvironmentMode == 2 || EnvironmentMode == "2",
 };
 exports.g_WindowsMachine = process.platform == "win32";
+
+exports.cCommandPrefix = "g!"
+if(Environment.PRODUCTION)
+  exports.cCommandPrefix = "g!"
+else if(Environment.TESTING)
+  exports.cCommandPrefix = "gt!"
+else if(Environment.STAGE)
+  exports.cCommandPrefix = "gs!"
+exports.Environment = Environment;
 
 ///////////////////TEST VARS///////////////testing new ide/////////////////////////
 
@@ -47,11 +74,150 @@ if (exports.Environment.PRODUCTION)
 exports.aGrooveQuotes = null;
 exports.aCompliments = null;
 
-exports.g_GitLink = "https://github.com/Groove-Theory/Groovebot";
-
 exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
+
+exports.oCommandMap=[{
+	cCommand: "help",
+	fFunc: Help.Init,
+	cLongHelpText: Help.cHelpText
+},
+{
+	cCommand: "vote",
+	fFunc: Vote.VoteSetup,
+	//cLongHelpText: Help.cHelpText
+},
+{
+	cCommand: "getcode",
+	fFunc: SendSource,
+	//cLongHelpText: Globals.cSendSourceHelpText
+},
+{
+	cCommand: "idiom",
+	fFunc: Idiom.Init,
+	//cLongHelpText: Idiom.cHelpText
+},
+{
+	cCommand: "keysmash",
+	fFunc: KeySmash.Init,
+	//cLongHelpText: KeySmash.cHelpText
+},
+{
+	cCommand: "quoteupload",
+	fFunc: GrooveQuote.Upload,
+	//cLongHelpText: GrooveQuote.cUploadHelpText
+},
+{
+	cCommand: "quote",
+	fFunc: GrooveQuote.Init,
+	//cLongHelpText: GrooveQuote.cQuoteHelpText
+},
+{
+	cCommand: "ventriloquist",
+	fFunc: Ventriloquist.Change,
+	//cLongHelpText: ""
+},
+{
+	cCommand: "compliment",
+	fFunc: Compliment.Init,
+	//cLongHelpText: Compliment.cHelpText
+},
+{
+	cCommand: "nickname",
+	fFunc: Nickname.Init,
+	//cLongHelpText: Nickname.cHelpText
+},
+{
+	cCommand: "options",
+	fFunc: Options.Init,
+	//cLongHelpText: Options.cHelpText
+},
+{
+	cCommand: "makequote",
+	fFunc: GrooveQuote.MakeQuote,
+	//cLongHelpText: GrooveQuote.cMakeQuoteHelpText
+},
+{
+	cCommand: "define",
+	fFunc: Dictionary.Init,
+	//cLongHelpText: Dictionary.cHelpText
+},
+{
+	cCommand: "rank-add-category",
+	fFunc: Ranks.AddCategory,
+	//cLongHelpText: Ranks.cAddCategoryHelpText
+},
+{
+	cCommand: "rank-remove-category",
+	fFunc: Ranks.RemoveCategory,
+	//cLongHelpText: Ranks.cRemoveCategoryHelpText
+},
+{
+	cCommand: "rank-rename-category",
+	fFunc: Ranks.RenameCategory,
+	//cLongHelpText: Ranks.cRenameCategoryHelpText
+},
+{
+	cCommand: "rank-add-role",
+	fFunc: Ranks.AddCategoryRank,
+	//cLongHelpText: Ranks.cAddRoleHelpText
+},
+{
+	cCommand: "rank-remove-role",
+	fFunc: Ranks.RemoveCategoryRank,
+	//cLongHelpText: Ranks.cRemoveRoleHelpText
+},
+{
+	cCommand: "rank-print-category",
+	fFunc: Ranks.ShowCategorysRanks,
+	//cLongHelpText: Ranks.cPrintRankCategoryHelpText
+},
+{
+	cCommand: "rank-print-all",
+	fFunc: Ranks.PrintRanks,
+	//cLongHelpText: Ranks.cPrintAllHelpText
+},
+{
+	cCommand: "rank",
+	fFunc: Ranks.ToggleUserRank,
+	//cLongHelpText: Ranks.cToggleRankHelpText
+},
+{
+	cCommand: "library-add-category",
+	fFunc: LibraryCategory.AddCategory,
+	//cLongHelpText: LibraryCategory.cAddCategoryHelpText
+},
+{
+	cCommand: "library-remove-category",
+	fFunc: LibraryCategory.RemoveCategory,
+	//cLongHelpText: LibraryCategory.cRemoveCategoryHelpText
+},
+{
+	cCommand: "library-rename-category",
+	fFunc: LibraryCategory.RenameCategory,
+	//cLongHelpText: LibraryCategory.cRenameCategoryHelpText
+},
+{
+	cCommand: "library-add-file",
+	fFunc: LibraryAddWizard.LibraryFileAddWizardSetup,
+	//cLongHelpText: LibraryAddWizard.cAddFileHelpText
+},
+{
+	cCommand: "library-remove-file",
+	fFunc: LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup,
+	//cLongHelpText: LibraryFileRemoveWizardSetup.cRemoveFileHelpText
+},
+{
+	cCommand: "library-print",
+	fFunc: LibraryPrint.PrintLibrary,
+	//cLongHelpText: LibraryPrint.cPrintHelpText
+},
+{
+	cCommand: "library-get-file",
+	fFunc: LibraryGetFileWizard.GetLibraryFileWizardSetup,
+	//cLongHelpText: LibraryGetFileWizard.cGetFileHelpText
+}]
 
 exports.OptionTypes = {
     "guildid": {"optiontype": "channel"},
@@ -64,3 +230,13 @@ exports.OptionTypes = {
     "togglechannelcopy": {"optiontype": "boolean"},
     "silencechannels": {"optiontype": "channelarray"},
 }
+
+
+
+function SendSource(client, msg)
+{
+  msg.send("https://github.com/Groove-Theory/Groovebot");
+}
+
+
+exports.SendSource = SendSource 

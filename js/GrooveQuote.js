@@ -2,7 +2,7 @@ const Globals = require('./Globals.js')
 const Discord = require('discord.js');
 const ErrorHandler = require('./ErrorHandler.js');
 let registerFont, createCanvas, loadImage;
-if(!Globals.g_WindowsMachine)
+if(false)
 {
     const Canvas = require('canvas');
     registerFont = Canvas.registerFont;
