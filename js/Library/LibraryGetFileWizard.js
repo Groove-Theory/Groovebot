@@ -3,6 +3,14 @@ const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
+exports.oRemoveFileHelpText = new EmbeddedHelpText(
+    "library-get-file",
+    "Starts a wizard to get a file to a category (mod only)",
+     "",
+     "",
+     "``g!library-get-file`` (This will start the wizard)"
+ )
+
 exports.GetLibraryFileWizardSetup = async function(client, msg)
 {
     let oGuild = msg.guild;

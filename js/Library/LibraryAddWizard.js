@@ -3,12 +3,12 @@ const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
-exports.cUploadHelpText = new EmbeddedHelpText(
+exports.oAddFileHelpText = new EmbeddedHelpText(
     "library-add-file",
-    "Uploads a quote for g!quote (GROOVE COMMAND ONLY)",
-     "``<link>`` this is a link to the quote screenshot image",
+    "Starts a wizard to add a file to a category (mod only)",
      "",
-     "``g!quoteupload image.jpg``"
+     "",
+     "``g!library-add-file`` (This will start the wizard)"
  )
 
 

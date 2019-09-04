@@ -3,6 +3,14 @@ const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
+exports.oPrintHelpText = new EmbeddedHelpText(
+    "library-print",
+    "Prints all the files for a given category. If no category is given, it will just print out all the categories",
+     "",
+     "``<catname>`` Name of the category to print files for (if none given, it will just list all categories)",
+     "``g!library-print shoes``  (prints out all the ranks for the category 'shoes') \r\n g!rank-print-category``  (prints out all the categories)"
+ )
+
 exports.PrintLibrary = function (client, msg)
 {
     try
