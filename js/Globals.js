@@ -33,6 +33,14 @@ else if(Environment.STAGE)
   exports.cCommandPrefix = "gs!"
 exports.Environment = Environment;
 
+const oHelpText = new EmbeddedHelpText(
+  "Help",
+  "Gets a list of  help text for command(s) that can be used for Groovebot",
+   "",
+   "``<command-name>``: If this argument is passed, then a more detailed help text will be presented for that command",
+   "``g!help quote`` (get the help text for the ``quote`` command)"
+)
+
 ///////////////////TEST VARS///////////////testing new ide/////////////////////////
 
 exports.g_mainChannelIDs = ["595643528760262686", "570056315989262346"];
@@ -78,145 +86,153 @@ exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
 
+exports.oSendSourceHelpText = new EmbeddedHelpText(
+  "GetCode",
+  "Gets the Github source code for Groovebot",
+   "",
+   "",
+   "``g!getcode``"
+)
+
 exports.oCommandMap=[{
 	cCommand: "help",
 	fFunc: Help.Init,
-	cLongHelpText: Help.cHelpText
+	oLongHelpText: Help.oHelpText
 },
 {
 	cCommand: "vote",
 	fFunc: Vote.VoteSetup,
-	//cLongHelpText: Help.cHelpText
+	oLongHelpText: Vote.oHelpText
 },
 {
 	cCommand: "getcode",
 	fFunc: SendSource,
-	//cLongHelpText: Globals.cSendSourceHelpText
+	oLongHelpText: Globals.oSendSourceHelpText
 },
 {
 	cCommand: "idiom",
 	fFunc: Idiom.Init,
-	//cLongHelpText: Idiom.cHelpText
+	oLongHelpText: Idiom.oHelpText
 },
 {
 	cCommand: "keysmash",
 	fFunc: KeySmash.Init,
-	//cLongHelpText: KeySmash.cHelpText
+	oLongHelpText: KeySmash.oHelpText
 },
 {
 	cCommand: "quoteupload",
 	fFunc: GrooveQuote.Upload,
-	//cLongHelpText: GrooveQuote.cUploadHelpText
+	oLongHelpText: GrooveQuote.oUploadHelpText
 },
 {
 	cCommand: "quote",
 	fFunc: GrooveQuote.Init,
-	//cLongHelpText: GrooveQuote.cQuoteHelpText
+	oLongHelpText: GrooveQuote.oQuoteHelpText
 },
 {
 	cCommand: "ventriloquist",
 	fFunc: Ventriloquist.Change,
-	//cLongHelpText: ""
+	oLongHelpText: ""
 },
 {
 	cCommand: "compliment",
 	fFunc: Compliment.Init,
-	//cLongHelpText: Compliment.cHelpText
+	oLongHelpText: Compliment.oHelpText
 },
 {
 	cCommand: "nickname",
 	fFunc: Nickname.Init,
-	//cLongHelpText: Nickname.cHelpText
+	oLongHelpText: Nickname.oHelpText
 },
 {
 	cCommand: "options",
 	fFunc: Options.Init,
-	//cLongHelpText: Options.cHelpText
+	oLongHelpText: Options.oHelpText
 },
 {
 	cCommand: "makequote",
 	fFunc: GrooveQuote.MakeQuote,
-	//cLongHelpText: GrooveQuote.cMakeQuoteHelpText
+	oLongHelpText: GrooveQuote.oMakeQuoteHelpText
 },
 {
 	cCommand: "define",
 	fFunc: Dictionary.Init,
-	//cLongHelpText: Dictionary.cHelpText
+	oLongHelpText: Dictionary.oHelpText
 },
 {
 	cCommand: "rank-add-category",
 	fFunc: Ranks.AddCategory,
-	//cLongHelpText: Ranks.cAddCategoryHelpText
+	oLongHelpText: Ranks.oAddCategoryHelpText
 },
 {
 	cCommand: "rank-remove-category",
 	fFunc: Ranks.RemoveCategory,
-	//cLongHelpText: Ranks.cRemoveCategoryHelpText
+	oLongHelpText: Ranks.oRemoveCategoryHelpText
 },
 {
 	cCommand: "rank-rename-category",
 	fFunc: Ranks.RenameCategory,
-	//cLongHelpText: Ranks.cRenameCategoryHelpText
+	oLongHelpText: Ranks.oRenameCategoryHelpText
 },
 {
 	cCommand: "rank-add-role",
 	fFunc: Ranks.AddCategoryRank,
-	//cLongHelpText: Ranks.cAddRoleHelpText
+	oLongHelpText: Ranks.oAddRoleHelpText
 },
 {
 	cCommand: "rank-remove-role",
 	fFunc: Ranks.RemoveCategoryRank,
-	//cLongHelpText: Ranks.cRemoveRoleHelpText
+	oLongHelpText: Ranks.oRemoveRoleHelpText
 },
 {
 	cCommand: "rank-print-category",
 	fFunc: Ranks.ShowCategorysRanks,
-	//cLongHelpText: Ranks.cPrintRankCategoryHelpText
+	oLongHelpText: Ranks.oPrintRankCategoryHelpText
 },
 {
 	cCommand: "rank-print-all",
 	fFunc: Ranks.PrintRanks,
-	//cLongHelpText: Ranks.cPrintAllHelpText
+	oLongHelpText: Ranks.oPrintAllHelpText
 },
 {
 	cCommand: "rank",
 	fFunc: Ranks.ToggleUserRank,
-	//cLongHelpText: Ranks.cToggleRankHelpText
+	oLongHelpText: Ranks.oToggleRankHelpText
 },
 {
 	cCommand: "library-add-category",
 	fFunc: LibraryCategory.AddCategory,
-	//cLongHelpText: LibraryCategory.cAddCategoryHelpText
+	oLongHelpText: LibraryCategory.oAddCategoryHelpText
 },
 {
 	cCommand: "library-remove-category",
 	fFunc: LibraryCategory.RemoveCategory,
-	//cLongHelpText: LibraryCategory.cRemoveCategoryHelpText
+	oLongHelpText: LibraryCategory.oRemoveCategoryHelpText
 },
 {
 	cCommand: "library-rename-category",
 	fFunc: LibraryCategory.RenameCategory,
-	//cLongHelpText: LibraryCategory.cRenameCategoryHelpText
+	oLongHelpText: LibraryCategory.oRenameCategoryHelpText
 },
 {
 	cCommand: "library-add-file",
 	fFunc: LibraryAddWizard.LibraryFileAddWizardSetup,
-	//cLongHelpText: LibraryAddWizard.cAddFileHelpText
+	oLongHelpText: LibraryAddWizard.oAddFileHelpText
 },
 {
 	cCommand: "library-remove-file",
 	fFunc: LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup,
-	//cLongHelpText: LibraryFileRemoveWizardSetup.cRemoveFileHelpText
+	oLongHelpText: LibraryFileRemoveWizardSetup.oRemoveFileHelpText
 },
 {
 	cCommand: "library-print",
 	fFunc: LibraryPrint.PrintLibrary,
-	//cLongHelpText: LibraryPrint.cPrintHelpText
+	oLongHelpText: LibraryPrint.oPrintHelpText
 },
 {
 	cCommand: "library-get-file",
 	fFunc: LibraryGetFileWizard.GetLibraryFileWizardSetup,
-	//cLongHelpText: LibraryGetFileWizard.cGetFileHelpText
+	oLongHelpText: LibraryGetFileWizard.oGetFileHelpText
 }]
 
 exports.OptionTypes = {

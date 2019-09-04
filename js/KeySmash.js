@@ -1,5 +1,13 @@
 const Globals = require('./Globals.js')
 
+exports.oHelpText = new EmbeddedHelpText(
+  "Keysmash",
+  "Generates a random length of chatacters, smashes them keys",
+   "",
+   "",
+   "``g!keysmash``"
+)
+
 exports.Init = function(client, msg)
 {
   var length = getRandIntFromRange(10, 20)

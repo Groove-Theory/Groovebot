@@ -4,6 +4,28 @@ const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
 
+exports.oAddCategoryHelpText = new EmbeddedHelpText(
+    "library-add-category",
+    "Add a Library Category for the server to put files in (Mod Command only)",
+     "``<catname>`` Name of the library-category (cannot have spaces)",
+     "",
+     "``g!library-add-category shoes`` (Adds the category 'shoes')"
+ )
+ exports.oRemoveCategoryHelpText = new EmbeddedHelpText(
+    "library-remove-category",
+    "Removes a Library Category for the server to put files in (Mod Command only)",
+     "``<catname>`` Name of the library-category (cannot have spaces)",
+     "",
+     "``g!library-remove-category shoes`` (Removes the category 'shoes')"
+ )
+ exports.oRenameCategoryHelpText = new EmbeddedHelpText(
+    "library-rename-category",
+    "Renames a Library Category for the server to put files in (Mod Command only)",
+     "``<oldname>`` Old name of the library-category \r\n ``<newname>`` New name for the category  (cannot have spaces)",
+     "",
+     "``g!library-rename-category shoes hats`` (Renames the category 'shoes' to 'hats')"
+ )
+
 exports.HandleType = {
     ADD: 1,
     DELETE: 2,

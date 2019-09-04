@@ -1,5 +1,5 @@
 const Globals = require('./Globals.js')
-const EmbeddedHelpText = require("./EmbeddedHelpText.js");
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js/index.js.js");
 
 const oHelpText = new EmbeddedHelpText(
    "Help",
@@ -12,7 +12,6 @@ exports.oHelpText = oHelpText
 
 exports.Init = function (client, msg) {
 
-  var msgChannel = client.channels.get(msg.channel.id);
   var msgText = msg.content;
   var aMsgWords = msgText.split(" ");
   var cCommand = aMsgWords[1]

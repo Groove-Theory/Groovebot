@@ -1,6 +1,15 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js')
 const Translate = require('translate-google')
+
+exports.oHelpText = new EmbeddedHelpText(
+    "Idiom",
+    "Tries to create an idiom for you",
+     "",
+     "",
+     "``g!idiom``"
+ )
+
 exports.Init = async function(client, msg) {
     try{
         var cWordToBeTranslated = createTextToBeTranslated();

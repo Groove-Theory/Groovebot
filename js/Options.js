@@ -31,56 +31,7 @@ exports.Init = function (client, msg) {
     });
     console.log(aMsgDetails);
     if (aMsgDetails.length == 1) {
-        msg.channel.send(
-            {
-                embed:
-                {
-                    color: 3447003,
-                    author:
-                    {
-                        name: client.user.username,
-                        icon_url: client.user.avatarURL
-                    },
-                    title: "Options List",
-                    description: "Here's a list of options that you can set on your server (case insensitive)",
-                    fields: [
-                        {
-                            name: "g!options Show <option>/'all'",
-                            value: "Returns the value of any option type (if already set), or type 'all' to retun all option values (if set)"
-                        },
-                        {
-                            name: "g!options **ToggleChannelCopy** <on/off>",
-                            value: "Turn on or off the Copy functionality (type 'on' or 'off' without the quotes)"
-                        },
-                        {
-                            name: "g!options **CopyInputChannel** <channelid>",
-                            value: "Sets the channel that you want to copy FROM"
-                        },
-                        {
-                            name: "g!options **CopyOutputChannel** <channelid>",
-                            value: "Sets the channel that you want to copy TO"
-                        },
-                        {
-                            name: "g!options **ToggleOuija** <on/off>",
-                            value: "Turn on or off the Ouija functionality (type 'on' or 'off' without the quotes)"
-                        },
-                        {
-                            name: "g!options **OuijaChannel** <channelid>",
-                            value: "Sets the channel that you want to have Groovebot listen to for AskOuija"
-                        },
-                        {
-                            name: "g!options **ToggleSilenceChannel** <channelid> <on/off>",
-                            value: "Toggle Auto-delete all incoming messages from channel (except for g!options commands)"
-                        }],
-                    timestamp: new Date(),
-                    footer:
-                    {
-                        icon_url: client.user.avatarURL,
-                        text: "Groovebot help"
-                    }
-                }
-            });
-
+        msg.channel.send(oHelpText);
     }
     else {
         var cCommand = aMsgDetails[1];
@@ -340,3 +291,55 @@ function AddDetailsToShowOptionsMessage(client, cMessage, oResult, key) {
 
     return cMessage;
 }
+
+
+var oHelpText = {
+    embed:
+    {
+        color: 3447003,
+        author:
+        {
+            name: client.user.username,
+            icon_url: client.user.avatarURL
+        },
+        title: "Options List",
+        description: "Here's a list of options that you can set on your server (case insensitive)",
+        fields: [
+            {
+                name: "g!options Show <option>/'all'",
+                value: "Returns the value of any option type (if already set), or type 'all' to retun all option values (if set)"
+            },
+            {
+                name: "g!options **ToggleChannelCopy** <on/off>",
+                value: "Turn on or off the Copy functionality (type 'on' or 'off' without the quotes)"
+            },
+            {
+                name: "g!options **CopyInputChannel** <channelid>",
+                value: "Sets the channel that you want to copy FROM"
+            },
+            {
+                name: "g!options **CopyOutputChannel** <channelid>",
+                value: "Sets the channel that you want to copy TO"
+            },
+            {
+                name: "g!options **ToggleOuija** <on/off>",
+                value: "Turn on or off the Ouija functionality (type 'on' or 'off' without the quotes)"
+            },
+            {
+                name: "g!options **OuijaChannel** <channelid>",
+                value: "Sets the channel that you want to have Groovebot listen to for AskOuija"
+            },
+            {
+                name: "g!options **ToggleSilenceChannel** <channelid> <on/off>",
+                value: "Toggle Auto-delete all incoming messages from channel (except for g!options commands)"
+            }],
+        timestamp: new Date(),
+        footer:
+        {
+            icon_url: client.user.avatarURL,
+            text: "Groovebot help"
+        }
+    }
+}
+
+exports.oHelpText = oHelpText;

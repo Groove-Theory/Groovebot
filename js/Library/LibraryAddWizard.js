@@ -3,6 +3,15 @@ const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
 
+exports.cUploadHelpText = new EmbeddedHelpText(
+    "library-add-file",
+    "Uploads a quote for g!quote (GROOVE COMMAND ONLY)",
+     "``<link>`` this is a link to the quote screenshot image",
+     "",
+     "``g!quoteupload image.jpg``"
+ )
+
+
 exports.LibraryFileAddWizardSetup = async function(client, msg)
 {
     try

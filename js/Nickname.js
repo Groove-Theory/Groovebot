@@ -1,6 +1,15 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js');
 
+exports.oHelpText = new EmbeddedHelpText(
+  "Nickname",
+  "Change Groove's Nickname on the server! Note: The bot must have higher permissions than Groove",
+   "``<name>`` new nickname written as a string. This must be 32 characters or less",
+   "",
+   "``g!nickname Nicholas Name`` (this will change Groove's name to 'Nicholas Name')"
+)
+
+
 exports.Init = async function (client, msg) {
   try {
     var cMessage = msg.content;

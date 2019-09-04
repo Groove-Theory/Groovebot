@@ -3,6 +3,15 @@ const WordDefinition = require('word-definition');
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
+exports.oHelpText = new EmbeddedHelpText(
+  "Define",
+  "Makes Groovebot try and come up with a definition for any string!",
+   "``<term>`` This is any string after the command, which Groovebot will use to make a defintion for",
+   "``</t>`` Type in /t at the end to get the REAL definition if possible",
+   "``g!define yellow /t`` (This will get the real definition of the word 'yellow')"
+)
+
+
 exports.Init = function(client, msg)
 {      
   let iTries = 0;

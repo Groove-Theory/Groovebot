@@ -17,6 +17,14 @@ var oSparts = null;//oGuild.roles.get(Globals.g_SparticistRole).members;
 var oVoteMessage = null;
 var oResultContent = {"Sent": 0, "Failed": 0}
 
+exports.oHelpText = new EmbeddedHelpText(
+  "Vote",
+  "Starts a wizard to being setting up a vote (SPECIAL MOD COMMAND ONLY)",
+   "",
+   "",
+   "``g!vote``"
+)
+
 
 exports.Init = function(client)
 {
