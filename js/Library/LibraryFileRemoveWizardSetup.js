@@ -2,6 +2,15 @@ const Globals = require('../Globals.js');
 const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
+const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
+
+exports.oRemoveFileHelpText = new EmbeddedHelpText(
+    "library-remove-file",
+    "Starts a wizard to remove a file to a category (mod only)",
+     "",
+     "",
+     "``g!library-remove-file`` (This will start the wizard)"
+ )
 
 exports.LibraryFileRemoveWizardSetup = async function(client, msg)
 {

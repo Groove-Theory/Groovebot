@@ -1,4 +1,13 @@
 const Globals = require('./Globals.js')
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
+
+exports.oHelpText = new EmbeddedHelpText(
+  "Keysmash",
+  "Generates a random length of chatacters, smashes them keys",
+   "",
+   "",
+   "``g!keysmash``"
+)
 
 exports.Init = function(client, msg)
 {

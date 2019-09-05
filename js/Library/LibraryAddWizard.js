@@ -2,6 +2,16 @@ const Globals = require('../Globals.js');
 const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
+const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
+
+exports.oAddFileHelpText = new EmbeddedHelpText(
+    "library-add-file",
+    "Starts a wizard to add a file to a category (mod only)",
+     "",
+     "",
+     "``g!library-add-file`` (This will start the wizard)"
+ )
+
 
 exports.LibraryFileAddWizardSetup = async function(client, msg)
 {
@@ -226,7 +236,7 @@ async function LibraryFileAddWizardConfirmAll(client, msg, oArgs)
     });
 }
 
-function LibraryFileAddWizardUploadFile(client, msg, oArgs)
+async function LibraryFileAddWizardUploadFile(client, msg, oArgs)
 {
     let oGuild = msg.guild;
 
@@ -244,11 +254,18 @@ function LibraryFileAddWizardUploadFile(client, msg, oArgs)
     let oOptions = {};
     let cMessage = "Uh oh, there may have been an error..."
 
-    oOptions = {
-        $addToSet: { "librarycategories.$.files": oInsertObj }
-    }
+
+    await Globals.Database.dbo.collection("ServerData").update(
+        {
+            "guildID": oGuild.id,
+            "production": false,
+            "librarycategories.name": oArgs["cCatName"]
+        },
+        {
+            $addToSet: { "librarycategories.$.files": oInsertObj }
+        }
+        )
     cMessage = "File Successfully Added!!"
+    LibraryUtils.SendReplyMessage(client, msg, cMessage)
 
-
-    Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions, LibraryUtils.SendReplyMessage(client, msg, cMessage));
 }

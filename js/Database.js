@@ -74,13 +74,13 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
-exports.UpsertCustom = function(client, cCollectionName, oKeyObj, oOptions, fCallabck = null)
+exports.UpsertCustom = async function(client, cCollectionName, oKeyObj, oOptions, fCallabck = null)
 {
   exports.dbo.collection(cCollectionName).updateOne(oKeyObj, oOptions,
   {
     upsert: true,
     safe: false
-  }, function(err, res)
+  }, async function(err, res)
   {
     if (err) throw err;
     console.log("1 document upserted");
@@ -88,7 +88,7 @@ exports.UpsertCustom = function(client, cCollectionName, oKeyObj, oOptions, fCal
     {
       try
       {
-        fCallabck();
+        await fCallabck();
       }
       catch(err)
       {

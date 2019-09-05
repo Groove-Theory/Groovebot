@@ -32,16 +32,21 @@ client.on('ready', async () => {
     let bSuccess = await Database.Init(client);
     if (bSuccess) {
       Globals.Database = Database;
+      Globals.g_Client = client;
+
       console.log("I'm in: --> " + client.user.username);
       client.guilds.forEach(function (oGuild) {
         Options.CheckServerOptionsExist(client, oGuild)
       });
-
+      Options.Onload();
       ChannelListener.Init(client);
 
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
         Globals.aCompliments = compliment_obj.Compliments;
+      
+      Globals.InitCommandMap();
+
     }
   }
   catch (err) {

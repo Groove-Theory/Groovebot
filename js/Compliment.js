@@ -1,6 +1,17 @@
 
 const Globals = require('./Globals.js');
 const ErrorHandler = require('./ErrorHandler.js');
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
+
+exports.oHelpText = new EmbeddedHelpText(
+    "Compliment",
+    "Lets Groovebot tells you or someone else compliment!",
+     "",
+     "``<user>`` mention a user to direct a compliment towards them!",
+     "``g!compliment @Groove`` (this will give Groove a compliment)"
+ )
+
+
 exports.Init = async function (client, msg) {
     try {
         var msgChannel = client.channels.get(msg.channel.id);

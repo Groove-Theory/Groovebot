@@ -2,7 +2,31 @@ const Globals = require('./Globals.js')
 const Discord = require('discord.js');
 const ErrorHandler = require('./ErrorHandler.js');
 let registerFont, createCanvas, loadImage;
-if(!Globals.g_WindowsMachine)
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
+
+exports.cUploadHelpText = new EmbeddedHelpText(
+    "QuoteUpload",
+    "Uploads a quote for g!quote (GROOVE COMMAND ONLY)",
+     "``<link>`` this is a link to the quote screenshot image",
+     "",
+     "``g!quoteupload image.jpg``"
+ )
+ exports.oQuoteHelpText = new EmbeddedHelpText(
+    "quote",
+    "Generates a random Groove quote",
+     "",
+     "",
+     "``g!quote``"
+ )
+ exports.oMakeQuoteHelpText = new EmbeddedHelpText(
+    "MakeQuote",
+    "Creates a fake-Groove quote screenshot of whatever text you want. This does NOT work with markdwn, emojis, or mentions.",
+     "``<text>`` A string used to make the screenshot. The text will auto word-rap if necessary",
+     "",
+     "``g!makequote hi my name is groove``"
+ )
+
+if(false)
 {
     const Canvas = require('canvas');
     registerFont = Canvas.registerFont;

@@ -1,13 +1,102 @@
 const Globals = require('./Globals.js');
 const ErrorHandler = require('./ErrorHandler.js')
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
-exports.HandleType = {
+exports.oAddCategoryHelpText = new EmbeddedHelpText(
+    "rank-add-category",
+    "Add a Rank Category for the server to put ranks in (Mod Command only)",
+     "``<catname>`` Name of the rank-category (cannot have spaces)",
+     "",
+     "``g!rank-add-category vegetables`` (Adds the category 'vegetables')"
+ )
+ exports.oRemoveCategoryHelpText = new EmbeddedHelpText(
+    "rank-remove-category",
+    "Removes a Rank Category for the server to put ranks in (Mod Command only)",
+     "``<catname>`` Name of the rank-category (cannot have spaces)",
+     "",
+     "``g!rank-remove-category vegetables`` (Removes the category 'vegetables')"
+ )
+ exports.oRenameCategoryHelpText = new EmbeddedHelpText(
+    "rank-rename-category",
+    "Renames a Rank Category for the server to put ranks in (Mod Command only)",
+     "``<oldname>`` Old name of the rank-category \r\n ``<newname>`` New name for the category  (cannot have spaces)",
+     "",
+     "``g!rank-rename-category vegetables fruits`` (Renames the category 'vegetables' to 'fruits')"
+ )
+ exports.oAddRoleHelpText = new EmbeddedHelpText(
+    "rank-add-role",
+    "Adds a role to a category (Mod Command Only)",
+    "``<catname>`` Name of the Category \r\n ``<role-name>`` Name of the role to add to the category",
+     "",
+     "``g!rank-add-role vegetables corn`` (Adds the 'corn' role to the 'vegetables' category)"
+ )
+ exports.oRemoveRoleHelpText = new EmbeddedHelpText(
+    "rank-remove-role",
+    "Removes a role to a category (Mod Command Only)",
+    "``<catname>`` Name of the Category \r\n ``<role-name>`` Name of the role to remove from the category",
+     "",
+     "``g!rank-remove-role vegetables corn`` (Removes the 'corn' role to the 'vegetables' category)"
+ )
+ exports.oPrintRankCategoryHelpText = new EmbeddedHelpText(
+    "rank-print-category",
+    "Prints all the ranks for a given category. If no category is given, it will just print out all the categories",
+     "",
+     "``<catname>`` Name of the category to print ranks for (if none given, it will just list all categories)",
+     "``g!rank-print-category vegetables``  (prints out all the ranks for the category 'vegetables) \r\n g!rank-print-category``  (prints out all the categories)"
+ )
+ exports.oPrintAllHelpText = new EmbeddedHelpText(
+    "rank-print-all",
+    "Prints all the ranks for a all categories.",
+     "",
+     "",
+     "``g!rank-print-all`` (prints out all the ranks for all categories"
+ )
+ exports.oToggleRankHelpText = new EmbeddedHelpText(
+    "rank",
+    "Assigns a rank to yourself",
+     "``<rankname>`` This is the name of the rank you want to get",
+     "",
+     "``g!rank corn`` (Assigns the 'corn' role to you)"
+ )
+
+
+
+const HandleType = {
     ADD: 1,
     DELETE: 2,
     EDIT: 3
   };
+exports.HandleType = HandleType
 
-exports.HandleCategory = function(client, msg, iHandleType)
+exports.AddCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.ADD);
+}
+
+exports.RemoveCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.DELETE);
+}
+
+exports.RenameCategory = function(client, msg)
+{
+    HandleCategory(client, msg, HandleType.EDIT);
+}
+
+exports.AddCategoryRank = function(client, msg)
+{
+    HandleCategoryRank(client, msg, HandleType.ADD);
+}
+
+exports.RemoveCategoryRank = function(client, msg)
+{
+    HandleCategoryRank(client, msg, HandleType.DELETE);
+}
+
+
+
+
+function HandleCategory(client, msg, iHandleType)
 {
     try
     {
@@ -72,7 +161,7 @@ exports.HandleCategory = function(client, msg, iHandleType)
     }
 }
 
-exports.HandleCategoryRank = function(client, msg, iHandleType)
+function HandleCategoryRank(client, msg, iHandleType)
 {
     try
     {
