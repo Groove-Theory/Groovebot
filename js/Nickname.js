@@ -1,5 +1,6 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js');
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 exports.oHelpText = new EmbeddedHelpText(
   "Nickname",

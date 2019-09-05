@@ -1,5 +1,6 @@
 const Globals = require('./Globals.js');
 const ErrorHandler = require('./ErrorHandler.js')
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 exports.oAddCategoryHelpText = new EmbeddedHelpText(
     "rank-add-category",
@@ -60,11 +61,12 @@ exports.oAddCategoryHelpText = new EmbeddedHelpText(
 
 
 
-exports.HandleType = {
+const HandleType = {
     ADD: 1,
     DELETE: 2,
     EDIT: 3
   };
+exports.HandleType = HandleType
 
 exports.AddCategory = function(client, msg)
 {

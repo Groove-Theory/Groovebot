@@ -1,6 +1,7 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js')
 const Translate = require('translate-google')
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 exports.oHelpText = new EmbeddedHelpText(
     "Idiom",

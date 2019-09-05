@@ -2,6 +2,7 @@ const Globals = require('./Globals.js')
 const Discord = require('discord.js');
 const ErrorHandler = require('./ErrorHandler.js');
 let registerFont, createCanvas, loadImage;
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 exports.cUploadHelpText = new EmbeddedHelpText(
     "QuoteUpload",
@@ -10,7 +11,7 @@ exports.cUploadHelpText = new EmbeddedHelpText(
      "",
      "``g!quoteupload image.jpg``"
  )
- exports.cUploadHelpText = new EmbeddedHelpText(
+ exports.oQuoteHelpText = new EmbeddedHelpText(
     "quote",
     "Generates a random Groove quote",
      "",

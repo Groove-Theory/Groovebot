@@ -14,6 +14,7 @@ const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
 const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
 const LibraryPrint = require('./Library/LibraryPrint.js')
 const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
@@ -56,7 +57,6 @@ exports.g_OuijaChannelID = "558156350320803851"
 exports.g_VentriloquistInputChannelID = "595634269599039539"
 exports.g_VentriloquistOutputChannelID = "570056315989262346"
 
-
 ///////////////////PRODUCTION VARS////////////////////////////////////////
 if (exports.Environment.PRODUCTION)
 {
@@ -78,6 +78,7 @@ if (exports.Environment.PRODUCTION)
 
 
 /////// NOT PRODUCTION DEPENDENT ///////
+exports.g_Client = null;
 
 exports.aGrooveQuotes = null;
 exports.aCompliments = null;
@@ -86,154 +87,158 @@ exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
 
-exports.oSendSourceHelpText = new EmbeddedHelpText(
+const oSendSourceHelpText =  new EmbeddedHelpText(
   "GetCode",
   "Gets the Github source code for Groovebot",
    "",
    "",
    "``g!getcode``"
 )
+exports.oSendSourceHelpText = oSendSourceHelpText
+exports.oCommandMap = [];
 
-exports.oCommandMap=[{
-	cCommand: "help",
-	fFunc: Help.Init,
-	oLongHelpText: Help.oHelpText
-},
-{
-	cCommand: "vote",
-	fFunc: Vote.VoteSetup,
-	oLongHelpText: Vote.oHelpText
-},
-{
-	cCommand: "getcode",
-	fFunc: SendSource,
-	oLongHelpText: Globals.oSendSourceHelpText
-},
-{
-	cCommand: "idiom",
-	fFunc: Idiom.Init,
-	oLongHelpText: Idiom.oHelpText
-},
-{
-	cCommand: "keysmash",
-	fFunc: KeySmash.Init,
-	oLongHelpText: KeySmash.oHelpText
-},
-{
-	cCommand: "quoteupload",
-	fFunc: GrooveQuote.Upload,
-	oLongHelpText: GrooveQuote.oUploadHelpText
-},
-{
-	cCommand: "quote",
-	fFunc: GrooveQuote.Init,
-	oLongHelpText: GrooveQuote.oQuoteHelpText
-},
-{
-	cCommand: "ventriloquist",
-	fFunc: Ventriloquist.Change,
-	oLongHelpText: ""
-},
-{
-	cCommand: "compliment",
-	fFunc: Compliment.Init,
-	oLongHelpText: Compliment.oHelpText
-},
-{
-	cCommand: "nickname",
-	fFunc: Nickname.Init,
-	oLongHelpText: Nickname.oHelpText
-},
-{
-	cCommand: "options",
-	fFunc: Options.Init,
-	oLongHelpText: Options.oHelpText
-},
-{
-	cCommand: "makequote",
-	fFunc: GrooveQuote.MakeQuote,
-	oLongHelpText: GrooveQuote.oMakeQuoteHelpText
-},
-{
-	cCommand: "define",
-	fFunc: Dictionary.Init,
-	oLongHelpText: Dictionary.oHelpText
-},
-{
-	cCommand: "rank-add-category",
-	fFunc: Ranks.AddCategory,
-	oLongHelpText: Ranks.oAddCategoryHelpText
-},
-{
-	cCommand: "rank-remove-category",
-	fFunc: Ranks.RemoveCategory,
-	oLongHelpText: Ranks.oRemoveCategoryHelpText
-},
-{
-	cCommand: "rank-rename-category",
-	fFunc: Ranks.RenameCategory,
-	oLongHelpText: Ranks.oRenameCategoryHelpText
-},
-{
-	cCommand: "rank-add-role",
-	fFunc: Ranks.AddCategoryRank,
-	oLongHelpText: Ranks.oAddRoleHelpText
-},
-{
-	cCommand: "rank-remove-role",
-	fFunc: Ranks.RemoveCategoryRank,
-	oLongHelpText: Ranks.oRemoveRoleHelpText
-},
-{
-	cCommand: "rank-print-category",
-	fFunc: Ranks.ShowCategorysRanks,
-	oLongHelpText: Ranks.oPrintRankCategoryHelpText
-},
-{
-	cCommand: "rank-print-all",
-	fFunc: Ranks.PrintRanks,
-	oLongHelpText: Ranks.oPrintAllHelpText
-},
-{
-	cCommand: "rank",
-	fFunc: Ranks.ToggleUserRank,
-	oLongHelpText: Ranks.oToggleRankHelpText
-},
-{
-	cCommand: "library-add-category",
-	fFunc: LibraryCategory.AddCategory,
-	oLongHelpText: LibraryCategory.oAddCategoryHelpText
-},
-{
-	cCommand: "library-remove-category",
-	fFunc: LibraryCategory.RemoveCategory,
-	oLongHelpText: LibraryCategory.oRemoveCategoryHelpText
-},
-{
-	cCommand: "library-rename-category",
-	fFunc: LibraryCategory.RenameCategory,
-	oLongHelpText: LibraryCategory.oRenameCategoryHelpText
-},
-{
-	cCommand: "library-add-file",
-	fFunc: LibraryAddWizard.LibraryFileAddWizardSetup,
-	oLongHelpText: LibraryAddWizard.oAddFileHelpText
-},
-{
-	cCommand: "library-remove-file",
-	fFunc: LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup,
-	oLongHelpText: LibraryFileRemoveWizardSetup.oRemoveFileHelpText
-},
-{
-	cCommand: "library-print",
-	fFunc: LibraryPrint.PrintLibrary,
-	oLongHelpText: LibraryPrint.oPrintHelpText
-},
-{
-	cCommand: "library-get-file",
-	fFunc: LibraryGetFileWizard.GetLibraryFileWizardSetup,
-	oLongHelpText: LibraryGetFileWizard.oGetFileHelpText
-}]
+exports.InitCommandMap = function(){
+  exports.oCommandMap=[{
+    cCommand: "help",
+    fFunc: Help.Init,
+    oLongHelpText: Help.oHelpText
+  },
+  {
+    cCommand: "vote",
+    fFunc: Vote.VoteSetup,
+    oLongHelpText: Vote.oHelpText
+  },
+  {
+    cCommand: "getcode",
+    fFunc: SendSource,
+    oLongHelpText: oSendSourceHelpText
+  },
+  {
+    cCommand: "idiom",
+    fFunc: Idiom.Init,
+    oLongHelpText: Idiom.oHelpText
+  },
+  {
+    cCommand: "keysmash",
+    fFunc: KeySmash.Init,
+    oLongHelpText: KeySmash.oHelpText
+  },
+  {
+    cCommand: "quoteupload",
+    fFunc: GrooveQuote.Upload,
+    oLongHelpText: GrooveQuote.cUploadHelpText
+  },
+  {
+    cCommand: "quote",
+    fFunc: GrooveQuote.Init,
+    oLongHelpText: GrooveQuote.oQuoteHelpText
+  },
+  {
+    cCommand: "ventriloquist",
+    fFunc: Ventriloquist.Change,
+    oLongHelpText: ""
+  },
+  {
+    cCommand: "compliment",
+    fFunc: Compliment.Init,
+    oLongHelpText: Compliment.oHelpText
+  },
+  {
+    cCommand: "nickname",
+    fFunc: Nickname.Init,
+    oLongHelpText: Nickname.oHelpText
+  },
+  {
+    cCommand: "options",
+    fFunc: Options.Init,
+    oLongHelpText: Options.oHelpText
+  },
+  {
+    cCommand: "makequote",
+    fFunc: GrooveQuote.MakeQuote,
+    oLongHelpText: GrooveQuote.oMakeQuoteHelpText
+  },
+  {
+    cCommand: "define",
+    fFunc: Dictionary.Init,
+    oLongHelpText: Dictionary.oHelpText
+  },
+  {
+    cCommand: "rank-add-category",
+    fFunc: Ranks.AddCategory,
+    oLongHelpText: Ranks.oAddCategoryHelpText
+  },
+  {
+    cCommand: "rank-remove-category",
+    fFunc: Ranks.RemoveCategory,
+    oLongHelpText: Ranks.oRemoveCategoryHelpText
+  },
+  {
+    cCommand: "rank-rename-category",
+    fFunc: Ranks.RenameCategory,
+    oLongHelpText: Ranks.oRenameCategoryHelpText
+  },
+  {
+    cCommand: "rank-add-role",
+    fFunc: Ranks.AddCategoryRank,
+    oLongHelpText: Ranks.oAddRoleHelpText
+  },
+  {
+    cCommand: "rank-remove-role",
+    fFunc: Ranks.RemoveCategoryRank,
+    oLongHelpText: Ranks.oRemoveRoleHelpText
+  },
+  {
+    cCommand: "rank-print-category",
+    fFunc: Ranks.ShowCategorysRanks,
+    oLongHelpText: Ranks.oPrintRankCategoryHelpText
+  },
+  {
+    cCommand: "rank-print-all",
+    fFunc: Ranks.PrintRanks,
+    oLongHelpText: Ranks.oPrintAllHelpText
+  },
+  {
+    cCommand: "rank",
+    fFunc: Ranks.ToggleUserRank,
+    oLongHelpText: Ranks.oToggleRankHelpText
+  },
+  {
+    cCommand: "library-add-category",
+    fFunc: LibraryCategory.AddCategory,
+    oLongHelpText: LibraryCategory.oAddCategoryHelpText
+  },
+  {
+    cCommand: "library-remove-category",
+    fFunc: LibraryCategory.RemoveCategory,
+    oLongHelpText: LibraryCategory.oRemoveCategoryHelpText
+  },
+  {
+    cCommand: "library-rename-category",
+    fFunc: LibraryCategory.RenameCategory,
+    oLongHelpText: LibraryCategory.oRenameCategoryHelpText
+  },
+  {
+    cCommand: "library-add-file",
+    fFunc: LibraryAddWizard.LibraryFileAddWizardSetup,
+    oLongHelpText: LibraryAddWizard.oAddFileHelpText
+  },
+  {
+    cCommand: "library-remove-file",
+    fFunc: LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup,
+    oLongHelpText: LibraryFileRemoveWizardSetup.oRemoveFileHelpText
+  },
+  {
+    cCommand: "library-print",
+    fFunc: LibraryPrint.PrintLibrary,
+    oLongHelpText: LibraryPrint.oPrintHelpText
+  },
+  {
+    cCommand: "library-get-file",
+    fFunc: LibraryGetFileWizard.GetLibraryFileWizardSetup,
+    oLongHelpText: LibraryGetFileWizard.oGetFileHelpText
+  }]
+}
 
 exports.OptionTypes = {
     "guildid": {"optiontype": "channel"},

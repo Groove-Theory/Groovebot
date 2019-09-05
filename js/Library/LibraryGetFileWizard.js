@@ -2,6 +2,7 @@ const Globals = require('../Globals.js');
 const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
+const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
 exports.oRemoveFileHelpText = new EmbeddedHelpText(
     "library-get-file",
@@ -98,7 +99,7 @@ async function GetLibraryFileWizardAskFile(client, msg, oArgs)
     }
     else
     {
-        let cFilesDescriptions = LibraryUtils.printMultipleFilesDescription(aCatFilesData);
+        let cFilesDescriptions = await LibraryUtils.printMultipleFilesDescription(aCatFilesData);
         await msg.channel.send(
             {
                 embed:

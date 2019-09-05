@@ -2,6 +2,7 @@ const Globals = require('../Globals.js');
 const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js')
 const LibraryUtils = require('./LibraryUtils.js')
+const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
 
 exports.oAddCategoryHelpText = new EmbeddedHelpText(
@@ -26,11 +27,12 @@ exports.oAddCategoryHelpText = new EmbeddedHelpText(
      "``g!library-rename-category shoes hats`` (Renames the category 'shoes' to 'hats')"
  )
 
-exports.HandleType = {
+const HandleType = {
     ADD: 1,
     DELETE: 2,
     EDIT: 3
   };
+exports.HandleType = HandleType
 
 exports.AddCategory = function(client, msg)
 {
