@@ -8,7 +8,8 @@ var MDBlient = new MongoClient(uri,
   useNewUrlParser: true
 });
 var MongoDB = null;
-var dbo = null;
+
+exports.dbo = null;
 
 exports.Init = async function(client)
 {
@@ -24,7 +25,7 @@ exports.Init = async function(client)
         ErrorHandler.HandleError(client, err);
         return reject(false);
       }
-      dbo = db.db(Globals.Environment.PRODUCTION ? "GrooveDB" : "TestingDB");
+      exports.dbo = db.db(Globals.Environment.PRODUCTION ? "GrooveDB" : "TestingDB");
       MongoDB = db;
       console.log('[mongo] connected');
 
@@ -37,7 +38,7 @@ exports.Init = async function(client)
 exports.Insert = function(cCollectionName, oInsertObj)
 {
   var myobj = oInsertObj;
-  dbo.collection(cCollectionName).insertOne(myobj, function(err, res)
+  exports.dbo.collection(cCollectionName).insertOne(myobj, function(err, res)
   {
     if (err) throw err;
     console.log("1 document inserted");
@@ -47,7 +48,7 @@ exports.Insert = function(cCollectionName, oInsertObj)
 
 exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = null)
 {
-  dbo.collection(cCollectionName).updateOne(oKeyObj,
+  exports.dbo.collection(cCollectionName).updateOne(oKeyObj,
   {
     $set: oUpsertDataObj
   },
@@ -73,10 +74,34 @@ exports.Upsert = function(cCollectionName, oKeyObj, oUpsertDataObj, fCallabck = 
   });
 }
 
+exports.UpsertCustom = async function(client, cCollectionName, oKeyObj, oOptions, fCallabck = null)
+{
+  exports.dbo.collection(cCollectionName).updateOne(oKeyObj, oOptions,
+  {
+    upsert: true,
+    safe: false
+  }, async function(err, res)
+  {
+    if (err) throw err;
+    console.log("1 document upserted");
+    if (fCallabck)
+    {
+      try
+      {
+        await fCallabck();
+      }
+      catch(err)
+      {
+        ErrorHandler.HandleError(client, err);
+      }
+    }
+    //MongoDB.close();
+  });
+}
 // Use for Special Updates such as $pull that can't be done normally inside a $set. You need to set the $set property if you use this.
 exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck = null)
 {
-  dbo.collection(cCollectionName).updateOne(oKeyObj, oUpdateObj,
+  exports.dbo.collection(cCollectionName).updateOne(oKeyObj, oUpdateObj,
   {
     upsert: true,
     safe: false
@@ -99,13 +124,13 @@ exports.UpsertManual = function(cCollectionName, oKeyObj, oUpdateObj, fCallabck 
   });
 }
 
-exports.Query = function(cCollectionName, oQueryObj, oSort = {}, fCallabck = null)
+exports.Query = function(cCollectionName, oQueryObj, oReturn = {}, oSort = {}, fCallabck = null)
 {
 
   var query = new Promise((resolve, reject) =>
   {
-    dbo.collection(cCollectionName).find(
-      oQueryObj).sort(oSort).toArray(function(err, result)
+    exports.dbo.collection(cCollectionName).find(
+      oQueryObj, oReturn).sort(oSort).toArray(function(err, result)
     {
       if (err)
         reject(err);
@@ -117,10 +142,28 @@ exports.Query = function(cCollectionName, oQueryObj, oSort = {}, fCallabck = nul
   return query;
 }
 
+exports.QueryAggregate = function(cCollectionName, oQueryObj, oReturn = {}, oSort = {}, fCallabck = null)
+{
+  var query = new Promise((resolve, reject) =>
+  {
+    exports.dbo.collection(cCollectionName).aggregate(
+        {$match:oQueryObj},
+        {$project:oReturn}).toArray(function(err, result)
+        {
+        if (err)
+            reject(err);
+        else
+            resolve(result)
+        });
+  });
+
+  return query;
+}
+
 exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
 {
 
-  var x = dbo.collection(cCollectionName).aggregate([
+  var x = exports.dbo.collection(cCollectionName).aggregate([
   {
     $sample:
     {
@@ -136,7 +179,7 @@ exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
   var query = new Promise((resolve, reject) =>
   {
     console.log("made it to the eunction");
-    dbo.collection(cCollectionName).aggregate([
+    exports.dbo.collection(cCollectionName).aggregate([
     {
       $match: oQueryObj
     },
@@ -159,7 +202,7 @@ exports.QueryRandom = function(cCollectionName, oQueryObj, iNumDocs = 1)
 
 exports.Update = function(cCollectionName, oQueryObj, oNewValuesObj)
 {
-  dbo.collection(cCollectionName).updateOne(oQueryObj, oNewValuesObj, function(err, res)
+  exports.dbo.collection(cCollectionName).updateOne(oQueryObj, oNewValuesObj, function(err, res)
   {
     if (err) throw err;
     console.log("1 document updated");
@@ -172,10 +215,14 @@ exports.Delete = function(cCollectionName, oQueryObj)
   var myquery = {
     Address: '2'
   };
-  dbo.collection(cCollectionName).deleteMany(oQueryObj, function(err, obj)
+  exports.dbo.collection(cCollectionName).deleteMany(oQueryObj, function(err, obj)
   {
     if (err) throw err;
     console.log("1 document deleted");
     //MongoDB.close();
   });
 }
+
+
+
+
