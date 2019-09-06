@@ -31,7 +31,7 @@ exports.Init = function (client, msg) {
     });
     console.log(aMsgDetails);
     if (aMsgDetails.length == 1) {
-        msg.channel.send(oHelpText);
+        msg.channel.send({embed: oHelpText.oEmbedText});
     }
     else {
         var cCommand = aMsgDetails[1];
