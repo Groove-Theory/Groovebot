@@ -5,6 +5,7 @@ const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
 const SilenceChannel = require('./SilenceChannel.js')
+const WhatRepeat = require('./WhatRepeat.js')
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -42,6 +43,7 @@ exports.Init = function (client) {
 
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
+                WhatRepeat.ProcessMessage(client, msg);
             }
         }
         catch (err) {
