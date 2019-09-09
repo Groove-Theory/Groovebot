@@ -24,11 +24,12 @@ exports.ProcessMessage = async function(client, msg) {
                 oCommandObj.fFunc(client, msg)
             else
             {
-                if(cMsgCommand == "t!wiki") // Tatsu exception
-                    Dictionary.Init(client, msg);
-                else
                 msgChannel.send("The fuck is that shit?");
             }
+        }
+        else if(cMsgCommand.startsWith("t!wiki")) // Tatsu exception
+        {
+                Dictionary.Init(client, msg);
         }
     }
     catch(err)
