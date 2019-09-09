@@ -44,8 +44,11 @@ client.on('ready', async () => {
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
         Globals.aCompliments = compliment_obj.Compliments;
-      
+
       Globals.InitCommandMap();
+
+      var oGrooveUser = client.users.get(Globals.g_GrooveID);
+      oGrooveUser.send("I've successfully loaded!!");
 
     }
   }
