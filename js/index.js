@@ -47,8 +47,11 @@ client.on('ready', async () => {
 
       Globals.InitCommandMap();
 
-      var oGrooveUser = client.users.get(Globals.g_GrooveID);
-      oGrooveUser.send("I've successfully loaded!!");
+      if(Globals.Environment.PRODUCTION || Globals.Environment.STAGE)
+      {
+        var oGrooveUser = client.users.get(Globals.g_GrooveID);
+        oGrooveUser.send("I've successfully loaded!!");
+      }
 
     }
   }

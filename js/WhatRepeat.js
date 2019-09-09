@@ -1,4 +1,5 @@
 const Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js');
 
 const aWhatWords = [
     "what",
@@ -6,26 +7,33 @@ const aWhatWords = [
     "wut",
     "wut?",
     "wat",
-    "wat?"
-
+    "wat?",
+    "wh",
+    "wh?"
 ]
 exports.ProcessMessage = function(client, msg) {
-    var aWhatMessagesFound = aWhatWords.find(w => w.toLowerCase() == msg.content.toLowerCase());
-    if(aWhatMessagesFound && aWhatMessagesFound.length > 0)
+    try
     {
-        var iWhatMsgID = msg.id;
-        msg.channel.fetchMessages({ limit: 100 }).then((messages) => {
-            console.log(iWhatMsgID);
-        var aMessages= Array.from(messages);
-        var iWhatIndex = aMessages.findIndex(elem => elem[0] == iWhatMsgID)
-        var aRepeatMessageMap = aMessages[iWhatIndex + 1]
-        var oRepeatMessage = aRepeatMessageMap[1]
-        if(oRepeatMessage)
+        var aWhatMessagesFound = aWhatWords.find(w => w.toLowerCase() == msg.content.toLowerCase());
+        if(aWhatMessagesFound && aWhatMessagesFound.length > 0)
         {
-            writeOutput(msg, oRepeatMessage)
-        }
+            var iWhatMsgID = msg.id;
+            msg.channel.fetchMessages({ limit: 100 }).then((messages) => {
+                console.log(iWhatMsgID);
+            var aMessages= Array.from(messages);
+            var iWhatIndex = aMessages.findIndex(elem => elem[0] == iWhatMsgID)
+            var aRepeatMessageMap = aMessages[iWhatIndex + 1]
+            var oRepeatMessage = aRepeatMessageMap[1]
+            if(oRepeatMessage)
+            {
+                writeOutput(msg, oRepeatMessage)
+            }
 
-        }).catch(console.error);
+            }).catch(ErrorHandler.HandleError(client, err));
+        }
+    }
+    catch (err) {
+        ErrorHandler.HandleError(client, err);
     }
 
 }
