@@ -1,5 +1,6 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js');
+const Discord = require('discord.js');
 
 const bRecordDelete = true;
 exports.OnMessage = function (client, msg, iMainChannelID, iCopyChannelID, bUseCopyFunction) {
@@ -10,26 +11,20 @@ exports.OnMessage = function (client, msg, iMainChannelID, iCopyChannelID, bUseC
             var oGuild = msg.guild;
             var copyChannel = oGuild.channels.get(iCopyChannelID);
             if (copyChannel) {
-                copyChannel.send(
-                    {
-                        embed:
-                        {
-                            color: 3447003,
-                            author:
-                            {
-                                name: msg.author.username,
-                                icon_url: msg.author.avatarURL
-                            },
-                            title: "(New Message)",
-                            description: msg.content,
-                            timestamp: new Date(),
-                            footer:
-                            {
-                                icon_url: msg.author.avatarURL,
-                                text: msg.author.username
-                            }
-                        }
-                    });
+
+                let aFileAttachments = Array.from(msg.attachments.values()).map(x => x.url);
+                var bUseImageAttach = aFileAttachments.length == 1 && fileIsImage(aFileAttachments[0])
+                const exampleEmbed = new Discord.RichEmbed()
+                    .setColor('#0099ff')
+                    .setTitle('(New Message)')
+                    .setAuthor(msg.author.username, msg.author.avatarURL)
+                    .setDescription(msg.content)
+                    .attachFiles(bUseImageAttach ? [] : aFileAttachments)
+                    .setTimestamp()
+                    .setImage(bUseImageAttach ? aFileAttachments[0] : "")
+                    .setFooter( msg.author.username, msg.author.avatarURL);
+
+                copyChannel.send(exampleEmbed);
             }
         }
     }
@@ -124,4 +119,12 @@ exports.OnGuildMemberAdd = function (member) {
     catch (err) {
         ErrorHandler.HandleError(client, err);
     }
+}
+
+function fileIsImage(cURL)
+{
+    return cURL.endsWith(".png") ||
+    cURL.endsWith(".jpg") ||
+    cURL.endsWith(".jpeg") ||
+    cURL.endsWith(".gif")
 }
