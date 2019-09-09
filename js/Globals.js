@@ -256,7 +256,7 @@ exports.OptionTypes = {
 
 function SendSource(client, msg)
 {
-  msg.send("https://github.com/Groove-Theory/Groovebot");
+  msg.channel.send("https://github.com/Groove-Theory/Groovebot");
 }
 
 
