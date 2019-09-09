@@ -9,7 +9,11 @@ const aWhatWords = [
     "wat",
     "wat?",
     "wh",
-    "wh?"
+    "wh?",
+    "lol wut?",
+    "lol what?",
+    "lol wut",
+    "lol what"
 ]
 exports.ProcessMessage = function(client, msg) {
     try
