@@ -43,7 +43,7 @@ exports.Init = function (client) {
 
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
-                WhatRepeat.ProcessMessage(client, msg);
+                //WhatRepeat.ProcessMessage(client, msg);
             }
         }
         catch (err) {
