@@ -26,7 +26,7 @@ exports.cUploadHelpText = new EmbeddedHelpText(
      "``g!makequote hi my name is groove``"
  )
 
-if(false)
+if(!Globals.g_WindowsMachine)
 {
     const Canvas = require('canvas');
     registerFont = Canvas.registerFont;
