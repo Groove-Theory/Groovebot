@@ -33,7 +33,7 @@ exports.ProcessMessage = function(client, msg) {
                 writeOutput(msg, oRepeatMessage)
             }
 
-            }).catch(ErrorHandler.HandleError(client, err));
+            }).catch(function(err){ErrorHandler.HandleError(client, err)});
         }
     }
     catch (err) {
