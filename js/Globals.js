@@ -14,6 +14,7 @@ const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
 const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
 const LibraryPrint = require('./Library/LibraryPrint.js')
 const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
+const Streak = require('./Streak.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
@@ -237,6 +238,11 @@ exports.InitCommandMap = function(){
     cCommand: "library-get-file",
     fFunc: LibraryGetFileWizard.GetLibraryFileWizardSetup,
     oLongHelpText: LibraryGetFileWizard.oGetFileHelpText
+  },
+  {
+    cCommand: "streak",
+    fFunc: Streak.FindStreak,
+    oLongHelpText: Streak.oHelpText
   }]
 }
 
@@ -258,6 +264,33 @@ function SendSource(client, msg)
 {
   msg.channel.send("https://github.com/Groove-Theory/Groovebot");
 }
-
-
 exports.SendSource = SendSource 
+
+function GetChannelByInput(cInput)
+{
+  let cCleanID = "";
+  let cCheckMethod = "";
+  let oChannel = null;
+  if(cInput.startsWith(`<#`))
+  {
+    cCleanID = cInput.replace(/\D/g,'');
+    cCheckMethod = "ID";
+  }
+  else if(Number.isInteger(parseInt(cInput)))
+  {
+    cCleanID = cInput
+    cCheckMethod = "ID";
+  }
+  else
+  {
+    cCleanID = cInput
+    cCheckMethod = "NAME";
+  }
+  if(cCheckMethod == "ID")
+    oChannel = exports.g_Client.channels.find(c => c.id == cCleanID);
+  else if(cCheckMethod == "NAME")
+    oChannel = exports.g_Client.channels.find(c => c.name == cCleanID);
+  
+  return oChannel
+}
+exports.GetChannelByInput = GetChannelByInput 
