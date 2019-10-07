@@ -14,8 +14,8 @@ exports.oHelpText = new EmbeddedHelpText(
 exports.FindStreak = async function (client, msg) {
   try {
     var aMsgContents = msg.content.split(/\s+/);
-    let cString = aMsgContents[1];
-    let cChannel = aMsgContents[2];
+    let cString = aMsgContents.filter((val, index) => index > 0 && index < aMsgContents.length -1).join(" ");
+    let cChannel = aMsgContents[aMsgContents.length - 1];
 
     if(!cString)
     {
@@ -66,7 +66,6 @@ async function getStreakCount(cString, oChannel) {
         }
       last_id = messages.last().id;
       iNumMessagesCollected += 100;
-      console.log(iNumMessagesCollected);
       if(!bProceedWithLoop)
         break;
 
