@@ -5,7 +5,7 @@ const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
 const SilenceChannel = require('./SilenceChannel.js')
-const WhatRepeat = require('./WhatRepeat.js')
+const Ranks = require('./Ranks.js')
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -124,6 +124,16 @@ exports.Init = function (client) {
             {
                 member.addRole('457737348218617857')
             }
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
+    });
+
+    client.on('roleDelete', async role => {
+        // Don't need to query stuff yet for this event
+        try {
+            Ranks.ForceDeleteRank(client, role);
         }
         catch (err) {
             ErrorHandler.HandleError(client, err);
