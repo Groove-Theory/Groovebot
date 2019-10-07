@@ -93,6 +93,10 @@ exports.RemoveCategoryRank = function(client, msg)
     HandleCategoryRank(client, msg, HandleType.DELETE);
 }
 
+exports.ForceDeleteRank = function(client, role)
+{
+    ForceDeleteRank(client, role);
+}
 
 
 
@@ -493,4 +497,27 @@ function checkIfMod(member)
 
 function SendReplyMessage(client, msg, cContent) {
     msg.channel.send(cContent);
+}
+
+function ForceDeleteRank(client, oRole) {
+    try
+    {
+        var iRoleID = oRole.id;
+        cRoleName = oRole.name;
+
+        let oKeyObject = {
+            "guildID": oRole.guild.id,
+            "production": Globals.Environment.PRODUCTION
+        }
+
+        let oOptions = {
+            $pull: { "rankcategories.$[].ranks": iRoleID }
+        }
+
+        Globals.Database.UpsertCustom(client, "ServerData", oKeyObject, oOptions);
+    }
+    catch(err)
+    {
+        ErrorHandler.HandleError(client, err)
+    }
 }

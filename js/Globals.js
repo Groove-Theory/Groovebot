@@ -24,6 +24,7 @@ const Environment = {
   STAGE: EnvironmentMode == 1 || EnvironmentMode == "1",
   PRODUCTION: EnvironmentMode == 2 || EnvironmentMode == "2",
 };
+
 exports.g_WindowsMachine = process.platform == "win32";
 
 exports.cCommandPrefix = "g!"
