@@ -15,6 +15,7 @@ const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardS
 const LibraryPrint = require('./Library/LibraryPrint.js')
 const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const Streak = require('./Streak.js')
+const Approve = require('./Approve.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
@@ -24,6 +25,7 @@ const Environment = {
   STAGE: EnvironmentMode == 1 || EnvironmentMode == "1",
   PRODUCTION: EnvironmentMode == 2 || EnvironmentMode == "2",
 };
+
 exports.g_WindowsMachine = process.platform == "win32";
 
 exports.cCommandPrefix = "g!"
@@ -243,6 +245,11 @@ exports.InitCommandMap = function(){
     cCommand: "streak",
     fFunc: Streak.FindStreak,
     oLongHelpText: Streak.oHelpText
+  },
+  {
+    cCommand: "approve",
+    fFunc: Approve.ParseApprove,
+    oLongHelpText: Approve.oHelpText
   }]
 }
 
@@ -256,6 +263,9 @@ exports.OptionTypes = {
     "copyoutputchannel": {"optiontype": "channel"},
     "togglechannelcopy": {"optiontype": "boolean"},
     "silencechannels": {"optiontype": "channelarray"},
+    "addroleoninvite": {"optiontype": "rolearray"},
+    "addroleonapprove": {"optiontype": "rolearray"},
+    "removeroleonapprove": {"optiontype": "rolearray"},
 }
 
 
@@ -294,3 +304,61 @@ function GetChannelByInput(cInput)
   return oChannel
 }
 exports.GetChannelByInput = GetChannelByInput 
+
+function GetMemberByInput(guild, cInput)
+{
+  let cCleanID = "";
+  let cCheckMethod = "";
+  let oMember = null;
+  if(cInput.startsWith(`<@`))
+  {
+    cCleanID = cInput.replace(/\D/g,'');
+    cCheckMethod = "ID";
+  }
+  else if(Number.isInteger(parseInt(cInput)))
+  {
+    cCleanID = cInput
+    cCheckMethod = "ID";
+  }
+  else
+  {
+    cCleanID = cInput
+    cCheckMethod = "NAME";
+  }
+  if(cCheckMethod == "ID")
+    oMember = guild.members.find(m => m.id == cCleanID);
+  else if(cCheckMethod == "NAME")
+    oMember = guild.members.find(m => m.name == cCleanID);
+  
+  return oMember
+}
+exports.GetMemberByInput = GetMemberByInput 
+
+function GetRoleByInput(guild, cInput)
+{
+  let cCleanID = "";
+  let cCheckMethod = "";
+  let oRole = null;
+  if(cInput.startsWith(`<@&`))
+  {
+    cCleanID = cInput.replace(/\D/g,'');
+    cCheckMethod = "ID";
+  }
+  else if(Number.isInteger(parseInt(cInput)))
+  {
+    cCleanID = cInput
+    cCheckMethod = "ID";
+  }
+  else
+  {
+    cCleanID = cInput
+    cCheckMethod = "NAME";
+  }
+  if(cCheckMethod == "ID")
+    oRole = guild.roles.find(r => r.id == cCleanID);
+  else if(cCheckMethod == "NAME")
+    oRole = guild.roles.find(r => r.name == cCleanID);
+  
+  return oRole
+}
+exports.GetRoleByInput = GetRoleByInput 
