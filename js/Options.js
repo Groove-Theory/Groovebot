@@ -57,6 +57,15 @@ exports.Init = function (client, msg) {
             case "togglesilencechannel":
                 ToggleSilenceChannel(client, msg, aMsgDetails)
                 break;
+            case "toggleaddroleoninvite":
+                ToggleAddRoleOnInvite(client, msg, aMsgDetails)
+                break;
+            case "toggleaddroleonapprove":
+                ToggleAddRoleOnApprove(client, msg, aMsgDetails)
+                break;
+            case "toggleremoveroleonapprove":
+                ToggleRemoveRoleOnApprove(client, msg, aMsgDetails)
+                break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
                 break;
@@ -104,7 +113,7 @@ async function ShowOption(client, msg, aMsgDetails) {
         for (var key in oResult) {
             if (oResult.hasOwnProperty(key) && aDontShowProps.indexOf(key.toLowerCase()) == -1) {
                 cMessage += "**" + key.toLowerCase() + "** = " + oResult[key]
-                cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, key)
+                cMessage = AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key)
                 cMessage += "\r\n"
 
             }
@@ -113,7 +122,7 @@ async function ShowOption(client, msg, aMsgDetails) {
     }
     else {
         cMessage = "**" + cOptionToQuery.toLowerCase() + "** = " + oResult[cOptionToQuery.toLowerCase()]
-        cMessage = AddDetailsToShowOptionsMessage(client, cMessage, oResult, cOptionToQuery.toLowerCase())
+        cMessage = AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, cOptionToQuery.toLowerCase())
         SendReplyMessage(client, msg, cMessage);
     }
 }
@@ -254,6 +263,111 @@ function ToggleSilenceChannel(client, msg, aMsgDetails) {
     }
 }
 
+function ToggleAddRoleOnInvite(client, msg, aMsgDetails) {
+
+    var cRole = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
+    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+    var oGuild = msg.guild;
+
+    var oRole = Globals.GetRoleByInput(oGuild, cRole);
+
+    if (!oRole) {
+        SendReplyMessage(client, msg, "Sorry, I can't find this role")
+    }
+    else {
+        var oKeyObject = {
+            guildID: oGuild.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        var oInsertObject = {};
+        var cMessage = "";
+        if (bOn) {
+            oInsertObject = {
+                $addToSet: { "addroleoninvite": oRole.id }
+            };
+            cMessage = `**${oRole.name}** will now be added to members upon invite`;
+        }
+        else {
+            oInsertObject = {
+                $pull: { "addroleoninvite": oRole.id }
+            };
+            cMessage = cMessage = `**${oRole.name}** will NO LONGER be added to members upon invite`;
+        }
+
+        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    }
+}
+
+function ToggleAddRoleOnApprove(client, msg, aMsgDetails) {
+
+    var cRole = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
+    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+    var oGuild = msg.guild;
+
+    var oRole = Globals.GetRoleByInput(oGuild, cRole);
+
+    if (!oRole) {
+        SendReplyMessage(client, msg, "Sorry, I can't find this role")
+    }
+    else {
+        var oKeyObject = {
+            guildID: oGuild.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        var oInsertObject = {};
+        var cMessage = "";
+        if (bOn) {
+            oInsertObject = {
+                $addToSet: { "addroleonapprove": oRole.id }
+            };
+            cMessage = `**${oRole.name}** will now be added to members upon approval`;
+        }
+        else {
+            oInsertObject = {
+                $pull: { "addroleonapprove": oRole.id }
+            };
+            cMessage = cMessage = `**${oRole.name}** will NO LONGER be added to members upon approval`;
+        }
+
+        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    }
+}
+
+function ToggleRemoveRoleOnApprove(client, msg, aMsgDetails) {
+
+    var cRole = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
+    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+    var oGuild = msg.guild;
+
+    var oRole = Globals.GetRoleByInput(oGuild, cRole);
+
+    if (!oRole) {
+        SendReplyMessage(client, msg, "Sorry, I can't find this role")
+    }
+    else {
+        var oKeyObject = {
+            guildID: oGuild.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        var oInsertObject = {};
+        var cMessage = "";
+        if (bOn) {
+            oInsertObject = {
+                $addToSet: { "removeroleonapprove": oRole.id }
+            };
+            cMessage = `**${oRole.name}** will now be removed from members upon approval`;
+        }
+        else {
+            oInsertObject = {
+                $pull: { "removeroleonapprove": oRole.id }
+            };
+            cMessage = cMessage = `**${oRole.name}** will NO LONGER be removed from members upon approval`;
+        }
+
+        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    }
+}
+
 function SendErrorMessage(client, msg) {
     msg.channel.send("Sorry, you goofed this command. Type 'g!options' for help on option setup");
 }
@@ -266,7 +380,7 @@ function SendReplyMessageInCustomChannel(client, oChannel, cContent) {
     oChannel.send(cContent);
 }
 
-function AddDetailsToShowOptionsMessage(client, cMessage, oResult, key) {
+function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) {
     var oOptionType = Globals.OptionTypes[key];
     if (oOptionType && oOptionType.optiontype == "channel") {
         var oChannel = client.channels.find(c => c.id == oResult[key])
@@ -283,6 +397,21 @@ function AddDetailsToShowOptionsMessage(client, cMessage, oResult, key) {
                     if (i != 0)
                         cMessage += ", "
                     cMessage += oChannel.name;
+                }
+            }
+            cMessage += ")*";
+        }
+    }
+    else if (oOptionType && oOptionType.optiontype == "rolearray") {
+        var aRoles = oResult && oResult[key] ? oResult[key] : [];
+        if (aRoles && aRoles.length > 0) {
+            cMessage += " *("
+            for (var i = 0; i < aRoles.length; i++) {
+                var oRole = oGuild.roles.find(r => r.id == oResult[key][i])
+                if (oRole) {
+                    if (i != 0)
+                        cMessage += ", "
+                    cMessage += oRole.name;
                 }
             }
             cMessage += ")*";
@@ -333,6 +462,18 @@ exports.Onload = function()
                 {
                     name: "g!options **ToggleSilenceChannel** <channelid> <on/off>",
                     value: "Toggle Auto-delete all incoming messages from channel (except for g!options commands)"
+                },
+                {
+                    name: "g!options **ToggleAddRoleOnInvite** <role> <on/off>",
+                    value: "Toggle which role is added to new members on invite to server"
+                },
+                {
+                    name: "g!options **ToggleAddRoleOnApprove** <role> <on/off>",
+                    value: "Toggle which role is added to new members on approval to server"
+                },
+                {
+                    name: "g!options **ToggleRemoveRoleOnApprove** <role> <on/off>",
+                    value: "Toggle which role is removed from new members on approval to server"
                 }],
             timestamp: new Date(),
             footer:

@@ -5,6 +5,7 @@ const Ouija = require('./Ouija.js')
 const CommandListener = require('./CommandListener.js')
 const Ventriloquist = require('./Ventriloquist.js')
 const SilenceChannel = require('./SilenceChannel.js')
+const Approve = require('./Approve.js')
 const Ranks = require('./Ranks.js')
 
 exports.Init = function (client) {
@@ -119,11 +120,12 @@ exports.Init = function (client) {
         // Don't need to query stuff yet for this event
         try {
             FoyerCopy.OnGuildMemberAdd(member);
+            Approve.HandleMemberInvite(member)
             // Hotfix for one guild
-            if(member.guild.id == "190543951080456192")
-            {
-                member.addRole('457737348218617857')
-            }
+            // if(member.guild.id == "190543951080456192")
+            // {
+            //     member.addRole('457737348218617857')
+            // }
         }
         catch (err) {
             ErrorHandler.HandleError(client, err);
