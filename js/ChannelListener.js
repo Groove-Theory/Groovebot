@@ -43,7 +43,7 @@ exports.Init = function (client) {
 
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
-                WhatRepeat.ProcessMessage(client, msg);
+                //WhatRepeat.ProcessMessage(client, msg);
             }
         }
         catch (err) {
@@ -119,6 +119,11 @@ exports.Init = function (client) {
         // Don't need to query stuff yet for this event
         try {
             FoyerCopy.OnGuildMemberAdd(member);
+            // Hotfix for one guild
+            if(member.guild.id == "190543951080456192")
+            {
+                member.addRole('457737348218617857')
+            }
         }
         catch (err) {
             ErrorHandler.HandleError(client, err);
