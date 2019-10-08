@@ -17,6 +17,13 @@ exports.HandleMemberInvite = HandleMemberInvite
 
 async function ParseApprove(client, msg) {
   try {
+
+    var oMember = msg.member
+    if(!member || !member.hasPermission('MANAGE_GUILD'))
+    {
+      msg.channel.send("Sorry, you need the 'Manage Server' permission to use this command :sob: ");
+      return;
+    }
     var aMsgContents = msg.content.split(/\s+/);
     let cMember = aMsgContents[1];
     let oGuild = msg.guild;
@@ -59,7 +66,7 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
   await oMember.addRoles(aAddRolesOnApprove);
   await oMember.removeRoles(aRemoveRolesOnApprove);
 
-  cReturnMessage = `${oMember.displayName} has been approved!`
+  cReturnMessage = `**${oMember.displayName}** has been approved!`
 
   oChannel.send(cReturnMessage);
 }
