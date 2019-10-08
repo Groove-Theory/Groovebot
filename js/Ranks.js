@@ -192,7 +192,7 @@ function HandleCategoryRank(client, msg, iHandleType)
         }
 
         let oGuild = msg.guild;
-        var oRole = oGuild.roles.find(r => r.name == cRoleName);
+        var oRole = oGuild.roles.find(r => r.name.toUpperCase() == cRoleName.toUpperCase());
         if(!oRole)
         {
             oRole = oGuild.roles.find(r => r.id == cRoleName);
@@ -434,7 +434,7 @@ exports.ToggleUserRank = async function(client, msg)
         var oMember = msg.member;
 
         var aMsgContents = msg.content.split(/\s+/);
-        var cRankName = aMsgContents && aMsgContents.length > 1 ? aMsgContents[1] : ""
+        var cRankName = aMsgContents.filter(function(elem, index){ return index > 0 }).join(" ");
 
         if(cRankName == "")
         {
@@ -443,7 +443,7 @@ exports.ToggleUserRank = async function(client, msg)
         }
 
         let oGuild = msg.guild;
-        var oRole = oGuild.roles.find(r => r.name == cRankName);
+        var oRole = oGuild.roles.find(r => r.name.toUpperCase() == cRankName.toUpperCase());
         if(!oRole)
         {
             SendReplyMessage(client, msg, "Sorry, I can't rind that rank");
