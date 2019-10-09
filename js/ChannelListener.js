@@ -7,6 +7,8 @@ const Ventriloquist = require('./Ventriloquist.js')
 const SilenceChannel = require('./SilenceChannel.js')
 const Approve = require('./Approve.js')
 const Ranks = require('./Ranks.js')
+const PinboardAddHandler = require('./Pinboard/PinboardAddHandler.js')
+const PinboardRemoveHandler = require('./Pinboard/PinboardRemoveHandler.js')
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -141,5 +143,38 @@ exports.Init = function (client) {
             ErrorHandler.HandleError(client, err);
         }
     });
+
+    client.on('messageReactionAdd', async(reaction, user) => {
+        let oGuild = reaction.message.guild;
+        let oServerOptions = await getServerOptions(oGuild)
+        if(oServerOptions["pinboardchannel"])
+            PinboardAddHandler.ProcessReact(reaction, user, oServerOptions)
+    });
+
+    client.on('messageReactionRemove', async(reaction, user) => {
+        let oGuild = reaction.message.guild;
+        let oServerOptions = await getServerOptions(oGuild)
+        if(oServerOptions["pinboardchannel"])
+            PinboardRemoveHandler.ProcessReact(reaction, user, oServerOptions)
+    });
+
+    client.on('messageReactionRemoveAll', async(reaction, user) => {
+        let oGuild = reaction.message.guild;
+        let oServerOptions = await getServerOptions(oGuild)
+        if(oServerOptions["pinboardchannel"])
+            PinboardRemoveHandler.ProcessReact(reaction, user, oServerOptions)
+    });
 }
 
+async function getServerOptions(oGuild) {
+    var oQueryObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
+    }
+
+    let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
+
+    let oResult = aResult.length > 0 ? aResult[0] : null;
+
+    return oResult;
+} 

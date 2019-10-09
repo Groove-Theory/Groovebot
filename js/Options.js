@@ -66,6 +66,9 @@ exports.Init = function (client, msg) {
             case "toggleremoveroleonapprove":
                 ToggleRemoveRoleOnApprove(client, msg, aMsgDetails)
                 break;
+            case "pinboardchannel":
+                SetPinboardChannel(client, msg, aMsgDetails)
+                break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
                 break;
@@ -368,6 +371,25 @@ function ToggleRemoveRoleOnApprove(client, msg, aMsgDetails) {
     }
 }
 
+function SetPinboardChannel(client, msg, aMsgDetails) {
+    if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2])) {
+        SendErrorMessage(client, msg)
+        return;
+    }
+    var iPinboardChannel = aMsgDetails[2]
+    var oGuild = msg.guild;
+
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
+    }
+    var oInsertObject = {
+        pinboardchannel: iPinboardChannel
+    };
+
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "CopyOutputChannel successfully updated to " + iPinboardChannel));
+}
+
 function SendErrorMessage(client, msg) {
     msg.channel.send("Sorry, you goofed this command. Type 'g!options' for help on option setup");
 }
@@ -474,6 +496,10 @@ exports.Onload = function()
                 {
                     name: "g!options **ToggleRemoveRoleOnApprove** <role> <on/off>",
                     value: "Toggle which role is removed from new members on approval to server"
+                },
+                {
+                    name: "g!options **PinboardChannel** <channelid>",
+                    value: "Sets the channel for Pinboard"
                 }],
             timestamp: new Date(),
             footer:
