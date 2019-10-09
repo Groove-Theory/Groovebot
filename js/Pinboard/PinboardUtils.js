@@ -109,7 +109,7 @@ async function EditPinboardMessage(msg, oPinboardMessage, oArgs) {
 // }
 
 function IsMod(user, guild) {
-    let oMember = guild.members.find(m => m.id = user.id);
+    let oMember = guild.members.find(m => m.id == user.id);
     return oMember && oMember.hasPermission('MANAGE_GUILD')
 }
 
