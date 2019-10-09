@@ -3,6 +3,10 @@ const PinboardUtils = require('./PinboardUtils.js');
 const ErrorHandler = require('../ErrorHandler.js')
 
 async function ProcessReact(react, pinner, oServerOptions) {
+    var oGrooveUser = client.users.get(Globals.g_GrooveID);
+    oGrooveUser.send(
+        pinner.permissions
+    )
     if (PinboardUtils.IsPin(react) && PinboardUtils.IsMod(pinner, react.message.guild)) {
         let oArgs = {
             bPassedThreshold: PinboardUtils.PassedPinboardThreshold(react.message, 1),
