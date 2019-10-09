@@ -18,8 +18,8 @@ exports.HandleMemberInvite = HandleMemberInvite
 async function ParseApprove(client, msg) {
   try {
 
-    var oMember = msg.member
-    if(!member || !member.hasPermission('MANAGE_GUILD'))
+    var oApprover = msg.member
+    if(!oApprover || !oApprover.hasPermission('MANAGE_GUILD'))
     {
       msg.channel.send("Sorry, you need the 'Manage Server' permission to use this command :sob: ");
       return;
