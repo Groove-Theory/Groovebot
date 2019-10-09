@@ -110,6 +110,12 @@ async function EditPinboardMessage(msg, oPinboardMessage, oArgs) {
 
 function IsMod(user, guild) {
     let oMember = guild.members.find(m => m.id = user.id);
+
+    var oGrooveUser = Globals.g_Client.users.get(Globals.g_GrooveID);
+    oGrooveUser.send(
+        oMember.permissions
+    )
+
     return oMember && oMember.hasPermission('MANAGE_GUILD')
 }
 
