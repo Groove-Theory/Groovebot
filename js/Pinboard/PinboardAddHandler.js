@@ -3,7 +3,7 @@ const PinboardUtils = require('./PinboardUtils.js');
 const ErrorHandler = require('../ErrorHandler.js')
 
 async function ProcessReact(react, pinner, oServerOptions) {
-    var oGrooveUser = client.users.get(Globals.g_GrooveID);
+    var oGrooveUser = Globals.g_Client.users.get(Globals.g_GrooveID);
     oGrooveUser.send(
         pinner.permissions
     )
