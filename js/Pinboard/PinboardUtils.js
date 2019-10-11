@@ -33,7 +33,7 @@ async function CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs) {
     return oStarMessage;
 }
 
-async function EditPinboardMessage(msg, oPinboardMessage, oArgs) {
+async function EditPinboardMessage(msg, pinner, oPinboardMessage, oArgs) {
     const image = msg.attachments.size > 0 ? msg.attachments.array()[0].url : '';
     const embed = new Discord.RichEmbed()
         .setColor("RED")
@@ -122,4 +122,4 @@ exports.EditPinboardMessage = EditPinboardMessage;
 exports.IsMod = IsMod;
 // exports.UpsertPinboardAddReactDB = UpsertPinboardAddReactDB;
 // exports.UpsertPinboardRemoveReactDB = UpsertPinboardRemoveReactDB;
-// exports.DeletePinboardReactDB = DeletePinboardReactDB; 
+// exports.DeletePinboardReactDB = DeletePinboardReactDB;
