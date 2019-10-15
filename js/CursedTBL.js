@@ -63,5 +63,5 @@ exports.MakeCursed = async function (client, msg) {
 
 function attachIsImage(cAttachmentURL)
 {
-    return cAttachmentURL.endsWith(".png") || cAttachmentURL.endsWith(".jpeg") || cAttachmentURL.endsWith(".jpg")
+    return cAttachmentURL.indexOf(".png") > -1 || cAttachmentURL.indexOf(".jpeg") > -1|| cAttachmentURL.indexOf(".jpg") > -1
 }
