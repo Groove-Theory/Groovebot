@@ -21,7 +21,6 @@ exports.InitSpotifyHandler = function(){
 function refreshToken()
 {
     Globals.spotifyApi.clientCredentialsGrant().then(function(data) {
-        console.log(data.body['access_token']);
         Globals.spotifyApi.setAccessToken(data.body['access_token']);
     }, function(err) {
         ErrorHandler.HandleError(Globals.g_Client, err);
