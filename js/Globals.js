@@ -17,6 +17,7 @@ const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
+const Spotify = require('./Spotify.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
@@ -29,7 +30,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "g!"
+exports.cCommandPrefix = "gt!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
@@ -256,6 +257,11 @@ exports.InitCommandMap = function(){
     cCommand: "cursed",
     fFunc: CursedTBL.MakeCursed,
     oLongHelpText: CursedTBL.oHelpText
+  },
+  {
+    cCommand: "spotify",
+    fFunc: Spotify.GetSong,
+    oLongHelpText: Spotify.oHelpText
   }]
 }
 
