@@ -1,7 +1,6 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const Globals = require('../Globals.js')
 const ErrorHandler = require('../ErrorHandler.js');
-const cron = require('node-schedule');
 
 exports.spotifyApi = {};
 exports.InitSpotifyHandler = function(){
@@ -12,9 +11,10 @@ exports.InitSpotifyHandler = function(){
     });
 
     refreshToken();
-    var rule = new cron.RecurrenceRule();
-    rule.minute = new cron.Range(0, 59, 55);
-    cron.scheduleJob(rule, refreshToken);
+
+    let  refreshTokenInterval = setInterval(function(){ 
+        refreshToken();
+    }, 55 * 1000 * 60 );
 
 }
 
@@ -30,4 +30,3 @@ function refreshToken()
 
 
 
-  
