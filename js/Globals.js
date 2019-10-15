@@ -16,6 +16,7 @@ const LibraryPrint = require('./Library/LibraryPrint.js')
 const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
+const CursedTBL = require('./CursedTBL.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
@@ -250,6 +251,11 @@ exports.InitCommandMap = function(){
     cCommand: "approve",
     fFunc: Approve.ParseApprove,
     oLongHelpText: Approve.oHelpText
+  },
+  {
+    cCommand: "cursed",
+    fFunc: CursedTBL.MakeCursed,
+    oLongHelpText: CursedTBL.oHelpText
   }]
 }
 
@@ -274,7 +280,7 @@ function SendSource(client, msg)
 {
   msg.channel.send("https://github.com/Groove-Theory/Groovebot");
 }
-exports.SendSource = SendSource 
+exports.SendSource = SendSource
 
 function GetChannelByInput(cInput)
 {
@@ -300,10 +306,10 @@ function GetChannelByInput(cInput)
     oChannel = exports.g_Client.channels.find(c => c.id == cCleanID);
   else if(cCheckMethod == "NAME")
     oChannel = exports.g_Client.channels.find(c => c.name == cCleanID);
-  
+
   return oChannel
 }
-exports.GetChannelByInput = GetChannelByInput 
+exports.GetChannelByInput = GetChannelByInput
 
 function GetMemberByInput(guild, cInput)
 {
@@ -329,10 +335,10 @@ function GetMemberByInput(guild, cInput)
     oMember = guild.members.find(m => m.id == cCleanID);
   else if(cCheckMethod == "NAME")
     oMember = guild.members.find(m => m.name == cCleanID);
-  
+
   return oMember
 }
-exports.GetMemberByInput = GetMemberByInput 
+exports.GetMemberByInput = GetMemberByInput
 
 function GetRoleByInput(guild, cInput)
 {
@@ -358,7 +364,7 @@ function GetRoleByInput(guild, cInput)
     oRole = guild.roles.find(r => r.id == cCleanID);
   else if(cCheckMethod == "NAME")
     oRole = guild.roles.find(r => r.name == cCleanID);
-  
+
   return oRole
 }
-exports.GetRoleByInput = GetRoleByInput 
+exports.GetRoleByInput = GetRoleByInput
