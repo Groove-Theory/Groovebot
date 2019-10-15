@@ -17,7 +17,7 @@ const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
-const Spotify = require('./Spotify.js')
+const GrooveSong = require('./Spotify/GrooveSong.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
@@ -30,7 +30,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "gt!"
+exports.cCommandPrefix = "g!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
@@ -91,6 +91,8 @@ exports.aCompliments = null;
 exports.g_GrooveID = "193800300518309888";
 
 exports.Database = null;
+
+exports.spotifyApi = null;
 
 const oSendSourceHelpText =  new EmbeddedHelpText(
   "GetCode",
@@ -259,9 +261,9 @@ exports.InitCommandMap = function(){
     oLongHelpText: CursedTBL.oHelpText
   },
   {
-    cCommand: "spotify",
-    fFunc: Spotify.GetSong,
-    oLongHelpText: Spotify.oHelpText
+    cCommand: "groovesong",
+    fFunc: GrooveSong.GetSong,
+    oLongHelpText: GrooveSong.oHelpText
   }]
 }
 

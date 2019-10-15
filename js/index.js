@@ -4,6 +4,7 @@ const Globals = require('./Globals.js')
 const Options = require('./Options.js')
 const Database = require('./Database.js')
 const ChannelListener = require('./ChannelListener.js')
+const SpotifyHandler = require('./Spotify/SpotifyHandler.js')
 const fs = require('fs');
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_SECRET;
@@ -40,6 +41,7 @@ client.on('ready', async () => {
       });
       Options.Onload();
       ChannelListener.Init(client);
+      SpotifyHandler.InitSpotifyHandler();
 
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
