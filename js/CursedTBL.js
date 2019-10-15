@@ -28,28 +28,31 @@ exports.MakeCursed = async function (client, msg) {
             return true;
         }
 
-        if (msg.attachments.size > 0) {
-            msg.attachments.forEach(async function(oAttachment)
-            {
-                if(attachIsImage(oAttachment))
-                {
-                    const image = await loadImage(oAttachment.url);
+        let cAttachmentURL = "";
+        if(msg.embeds[0] && msg.embeds[0].url)
+            cAttachmentURL = msg.embeds[0].url;
+        else if(msg.attachments.size > 0)
+            cAttachmentURL = Array.from(msg.attachments)[0][1].url
 
-                    const canvas = createCanvas(1000, 1000);
-                    const ctx = canvas.getContext('2d');
 
-                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        if(attachIsImage(cAttachmentURL))
+        {
+            const image = await loadImage(cAttachmentURL);
 
-                    ctx.fillStyle = "#0000FF";
-                    ctx.fillRect(0, 475, 1000, 50);
+            const canvas = createCanvas(1000, 1000);
+            const ctx = canvas.getContext('2d');
 
-                    const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-                    msg.channel.send("**C U R S E D**", attachment);
-                }
-            })
+            ctx.fillStyle = "#0000FF";
+            ctx.fillRect(0, 475, 1000, 50);
 
+            const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+
+            msg.channel.send("**C U R S E D**", attachment);
         }
+
+
     }
     catch (err) {
         ErrorHandler.HandleError(client, err);
@@ -58,8 +61,7 @@ exports.MakeCursed = async function (client, msg) {
 }
 
 
-function attachIsImage(oAttachment)
+function attachIsImage(cAttachmentURL)
 {
-    let url = oAttachment.url;
-    return url.endsWith(".png") || url.endsWith(".jpeg") || url.endsWith(".jpg")
+    return cAttachmentURL.endsWith(".png") || cAttachmentURL.endsWith(".jpeg") || cAttachmentURL.endsWith(".jpg")
 }
