@@ -1,6 +1,6 @@
 const SpotifyWebApi = require('spotify-web-api-node');
-const Globals = require('./Globals.js')
-const ErrorHandler = require('./ErrorHandler.js');
+const Globals = require('../Globals.js')
+const ErrorHandler = require('../ErrorHandler.js');
 
 exports.spotifyApi = {};
 exports.InitSpotifyHandler = function(){
