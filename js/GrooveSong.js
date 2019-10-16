@@ -52,7 +52,7 @@ async function fetchYoutubeID(cString)
         fetch(oData.uri.href)
         .then(res => res.json())
         .then(async function(json){
-            if(json.items.length > 0)
+            if(json.items && json.items.length > 0)
                 resolve(json.items[0].id.videoId);
             else
                 resolve("");

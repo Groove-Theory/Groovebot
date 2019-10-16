@@ -15,6 +15,7 @@ exports.InitSpotifyHandler = function(){
     let  refreshTokenInterval = setInterval(function(){ 
         refreshToken();
     }, 55 * 1000 * 60 );
+    
 
 }
 
