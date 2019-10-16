@@ -22,6 +22,7 @@ function refreshToken()
 {
     Globals.spotifyApi.clientCredentialsGrant().then(function(data) {
         Globals.spotifyApi.setAccessToken(data.body['access_token']);
+        console.log("Spotify Refreshed!");
     }, function(err) {
         ErrorHandler.HandleError(Globals.g_Client, err);
     });

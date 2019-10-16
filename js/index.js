@@ -42,7 +42,7 @@ client.on('ready', async () => {
       });
       Options.Onload();
       ChannelListener.Init(client);
-      //SpotifyHandler.InitSpotifyHandler();
+      SpotifyHandler.InitSpotifyHandler();
       YoutubeHandler.InitYoutubeHandler();
 
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
