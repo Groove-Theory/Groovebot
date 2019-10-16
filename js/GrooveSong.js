@@ -1,7 +1,7 @@
 const SpotifyWebApi = require('spotify-web-api-node');
-const Globals = require('../Globals.js')
-const ErrorHandler = require('../ErrorHandler.js');
-const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
+const Globals = require('./Globals.js')
+const ErrorHandler = require('./ErrorHandler.js');
+const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 exports.oHelpText = new EmbeddedHelpText(
     "GrooveSong",
@@ -22,7 +22,7 @@ exports.GetSong = async function (client, msg) {
         limit: 1,
         fields: 'items'
       })
-    
+
     let cSongUrl = oObj.body.items.length > 0 ? oObj.body.items[0].track.external_urls.spotify : "";
 
     if(cSongUrl)

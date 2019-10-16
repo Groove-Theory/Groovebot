@@ -17,7 +17,7 @@ const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
 const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
-const GrooveSong = require('./Spotify/GrooveSong.js')
+const GrooveSong = require('./GrooveSong.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 
