@@ -1,4 +1,4 @@
-const RandomWord = require('random-word');
+const RandomWord = require('random-english-words');
 const WordDefinition = require('word-definition');
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js')
@@ -14,12 +14,12 @@ exports.oHelpText = new EmbeddedHelpText(
 
 
 exports.Init = function(client, msg)
-{      
+{
   let iTries = 0;
   let bTrueDefinition = false;  // default is a joke def
   let bDelay = false;
 
-  var msgChannel = client.channels.get(msg.channel.id); 
+  var msgChannel = client.channels.get(msg.channel.id);
   var aMsgContent = msg.content.split(" ")
   if(aMsgContent && aMsgContent.length > 0 && aMsgContent[aMsgContent.length - 1] == "/t")
   {
@@ -36,7 +36,7 @@ exports.Init = function(client, msg)
   var cMsgData = aMsgContent.join(" ").trim();
   var cQueried = cMsgData.replace(/\b\w/g, l => l.toUpperCase());
 
-  
+
   if(cQueried && cQueried.length > 0)
   {
     if(bTrueDefinition)
@@ -87,7 +87,7 @@ function getDefinition(client, cWord, cQueried, msgChannel, iTries, bTrueDefinit
 
 function printDefinition(oDefinition, cQueried, msgChannel, bDelay)
 {
-  setTimeout(function(){ 
+  setTimeout(function(){
         var cRetMsg = "";
         cRetMsg += "**" + cQueried+ "**"
         cRetMsg += " *(" + oDefinition.category + ")* - "
