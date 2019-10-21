@@ -9,6 +9,8 @@ const Approve = require('./Approve.js')
 const Ranks = require('./Ranks.js')
 const PinboardAddHandler = require('./Pinboard/PinboardAddHandler.js')
 const PinboardRemoveHandler = require('./Pinboard/PinboardRemoveHandler.js')
+const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
+//const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -44,6 +46,7 @@ exports.Init = function (client) {
                 var bToggleOuija = oResult["toggleouija"];
                 Ouija.ProcessMessage(client, msg, iOuijaChannelID, bToggleOuija);
 
+                GroovePointsMessageHandler.ProcessMessage(client, msg);
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
                 //WhatRepeat.ProcessMessage(client, msg);
@@ -177,4 +180,4 @@ async function getServerOptions(oGuild) {
     let oResult = aResult.length > 0 ? aResult[0] : null;
 
     return oResult;
-} 
+}
