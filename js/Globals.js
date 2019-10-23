@@ -30,7 +30,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "g!"
+exports.cCommandPrefix = "gt!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
@@ -280,6 +280,9 @@ exports.OptionTypes = {
     "addroleoninvite": {"optiontype": "rolearray"},
     "addroleonapprove": {"optiontype": "rolearray"},
     "removeroleonapprove": {"optiontype": "rolearray"},
+    "pinboardchannel": {"optiontype": "channel"},
+    "goodgroovepointemojiids": {"optiontype": "emojiarray"},
+    "badgroovepointemojiids": {"optiontype": "emojiarray"},
 }
 
 
@@ -376,3 +379,32 @@ function GetRoleByInput(guild, cInput)
   return oRole
 }
 exports.GetRoleByInput = GetRoleByInput
+
+function GetEmojiByInput(guild, cInput)
+{
+  let cCleanID = "";
+  let cCheckMethod = "";
+  let oEmoji = null;
+  if(cInput.startsWith(`<:`))
+  {
+    cCleanID = cInput.replace(/\D/g,'');
+    cCheckMethod = "ID";
+  }
+  else if(Number.isInteger(parseInt(cInput)))
+  {
+    cCleanID = cInput
+    cCheckMethod = "ID";
+  }
+  else
+  {
+    cCleanID = cInput
+    cCheckMethod = "NAME";
+  }
+  if(cCheckMethod == "ID")
+    oEmoji = guild.emojis.find(e => e.id == cCleanID);
+  else if(cCheckMethod == "NAME")
+    oEmoji = guild.emojis.find(e => e.name == cCleanID);
+
+  return oEmoji
+}
+exports.GetEmojiByInput = GetEmojiByInput

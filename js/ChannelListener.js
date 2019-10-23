@@ -10,7 +10,7 @@ const Ranks = require('./Ranks.js')
 const PinboardAddHandler = require('./Pinboard/PinboardAddHandler.js')
 const PinboardRemoveHandler = require('./Pinboard/PinboardRemoveHandler.js')
 const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
-//const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
+const GroovePointsEmojiHandler = require('./GroovePoints/GroovePointsEmojiHandler.js')
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -46,9 +46,9 @@ exports.Init = function (client) {
                 var bToggleOuija = oResult["toggleouija"];
                 Ouija.ProcessMessage(client, msg, iOuijaChannelID, bToggleOuija);
 
-                GroovePointsMessageHandler.ProcessMessage(client, msg);
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
+                GroovePointsMessageHandler.ProcessMessage(client, msg);
                 //WhatRepeat.ProcessMessage(client, msg);
             }
         }
@@ -152,6 +152,10 @@ exports.Init = function (client) {
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
             PinboardAddHandler.ProcessReact(reaction, user, oServerOptions)
+
+        let aGoodGroovePointEmojiIDs = oServerOptions["goodgroovepointemojiids"]
+        let aBadGroovePointEmojiIDs = oServerOptions["badgroovepointemojiids"]
+        GroovePointsEmojiHandler.ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
     });
 
     client.on('messageReactionRemove', async(reaction, user) => {
@@ -159,6 +163,10 @@ exports.Init = function (client) {
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
             PinboardRemoveHandler.ProcessReact(reaction, user, oServerOptions)
+
+        let aGoodGroovePointEmojiIDs = oServerOptions["goodgroovepointemojiids"]
+        let aBadGroovePointEmojiIDs = oServerOptions["badgroovepointemojiids"]
+        GroovePointsEmojiHandler.ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
     });
 
     client.on('messageReactionRemoveAll', async(reaction, user) => {

@@ -4,6 +4,7 @@ async function ProcessMessage(client, msg)
 {
     let oMember = msg.member;
     let oGuild = msg.guild;
+    if(oMember.user.bot) return;
 
     let oGroovePointMember = new GroovePointMember(oGuild.id, oMember.id);
     await oGroovePointMember.InitUser();

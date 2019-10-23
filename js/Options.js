@@ -69,6 +69,12 @@ exports.Init = function (client, msg) {
             case "pinboardchannel":
                 SetPinboardChannel(client, msg, aMsgDetails)
                 break;
+            case "togglegoodgroovepointemoji":
+                SetGoodGroovePointEmoji(client, msg, aMsgDetails)
+                break;
+            case "togglebadgroovepointemoji":
+                SetBadGroovePointEmoji(client, msg, aMsgDetails)
+                break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
                 break;
@@ -390,6 +396,80 @@ function SetPinboardChannel(client, msg, aMsgDetails) {
     Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "CopyOutputChannel successfully updated to " + iPinboardChannel));
 }
 
+
+function SetGoodGroovePointEmoji(client, msg, aMsgDetails) {
+
+    var cEmoji = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
+    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+    var oGuild = msg.guild;
+
+    var oEmoji = Globals.GetEmojiByInput(oGuild, cEmoji);
+
+    if (!oEmoji) {
+        SendReplyMessage(client, msg, "Sorry, I can't find this emoji")
+    }
+    else {
+        var oKeyObject = {
+            guildID: oGuild.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        var oInsertObject = {};
+        var cMessage = "";
+        if (bOn) {
+            oInsertObject = {
+                $addToSet: { "goodgroovepointemojiids": oEmoji.id }
+            };
+            cMessage = `${oEmoji} will now be a **good** groove point emoji`;
+        }
+        else {
+            oInsertObject = {
+                $pull: { "goodgroovepointemojiids": oEmoji.id }
+            };
+            cMessage = cMessage = `${oEmoji} will NO LONGER be a **good** groove point emoji`;
+        }
+
+        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    }
+}
+
+function SetBadGroovePointEmoji(client, msg, aMsgDetails) {
+
+    var cEmoji = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
+    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+    var oGuild = msg.guild;
+
+    var oEmoji = Globals.GetEmojiByInput(oGuild, cEmoji);
+
+    if (!oEmoji) {
+        SendReplyMessage(client, msg, "Sorry, I can't find this emoji")
+    }
+    else {
+        var oKeyObject = {
+            guildID: oGuild.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        var oInsertObject = {};
+        var cMessage = "";
+        if (bOn) {
+            oInsertObject = {
+                $addToSet: { "badgroovepointemojiids": oEmoji.id }
+            };
+            cMessage = `${oEmoji} will now be a **bad** groove point emoji`;
+        }
+        else {
+            oInsertObject = {
+                $pull: { "badgroovepointemojiids": oEmoji.id }
+            };
+            cMessage = cMessage = `${oEmoji} will NO LONGER be a **bad** groove point emoji`;
+        }
+
+        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    }
+}
+
+
+////////////////////
+
 function SendErrorMessage(client, msg) {
     msg.channel.send("Sorry, you goofed this command. Type 'g!options' for help on option setup");
 }
@@ -434,6 +514,21 @@ function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) 
                     if (i != 0)
                         cMessage += ", "
                     cMessage += oRole.name;
+                }
+            }
+            cMessage += ")*";
+        }
+    }
+    else if (oOptionType && oOptionType.optiontype == "emojiarray") {
+        var aEmojis = oResult && oResult[key] ? oResult[key] : [];
+        if (aEmojis && aEmojis.length > 0) {
+            cMessage += " *("
+            for (var i = 0; i < aEmojis.length; i++) {
+                var oEmoji = oGuild.emojis.find(r => r.id == oResult[key][i])
+                if (oEmoji) {
+                    if (i != 0)
+                        cMessage += ", "
+                    cMessage += `${oEmoji}`;
                 }
             }
             cMessage += ")*";
@@ -487,19 +582,27 @@ exports.Onload = function()
                 },
                 {
                     name: "g!options **ToggleAddRoleOnInvite** <role> <on/off>",
-                    value: "Toggle which role is added to new members on invite to server"
+                    value: "Toggle which role(s) is added to new members on invite to server"
                 },
                 {
                     name: "g!options **ToggleAddRoleOnApprove** <role> <on/off>",
-                    value: "Toggle which role is added to new members on approval to server"
+                    value: "Toggle which role(s) is added to new members on approval to server"
                 },
                 {
                     name: "g!options **ToggleRemoveRoleOnApprove** <role> <on/off>",
-                    value: "Toggle which role is removed from new members on approval to server"
+                    value: "Toggle which role(s) is removed from new members on approval to server"
                 },
                 {
                     name: "g!options **PinboardChannel** <channelid>",
                     value: "Sets the channel for Pinboard"
+                },
+                {
+                    name: "g!options **ToggleGoodGroovePointEmoji** <emoji> <on/off>",
+                    value: "Toggle which emojis(s) are good reaction emojis for Groove Points"
+                },
+                {
+                    name: "g!options **ToggleBadGroovePointEmoji** <emoji> <on/off>",
+                    value: "Toggle which emojis(s) are bad reaction emojis for Groove Points"
                 }],
             timestamp: new Date(),
             footer:

@@ -1,15 +1,54 @@
-function awardPoints(oGroovePointMember)
+const GroovePointMember = require("../Classes/GroovePointMember.js");
+
+async function ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs)
 {
+    let oMember = reaction.message.member;
+    let oGuild = reaction.message.guild;
+    if(oMember.user.bot) return;
 
+    let oGroovePointMember = new GroovePointMember(oGuild.id, oMember.id);
+    await oGroovePointMember.InitUser();
+
+    let iReactID = reaction.emoji.id;
+
+    if(aGoodGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    {
+        oGroovePointMember.addPoints(100);
+        oGroovePointMember.UpdateUser();
+    }
+    else if(aBadGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    {
+        oGroovePointMember.addPoints(-100);
+        oGroovePointMember.UpdateUser();
+    }
 }
+exports.ProcessEmojiAdd = ProcessEmojiAdd
 
-// Return 1 for Good, Return -1 for Bad, and Return 0 for neutral
-function checkEmojiWorth(iReactID)
+async function ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs)
 {
+    let oMember = reaction.message.member;
+    let oGuild = reaction.message.guild;
+    if(oMember.user.bot) return;
 
+    let oGroovePointMember = new GroovePointMember(oGuild.id, oMember.id);
+    await oGroovePointMember.InitUser();
+
+    let iReactID = reaction.emoji.id;
+
+    if(aGoodGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    {
+        oGroovePointMember.addPoints(-100);
+        oGroovePointMember.UpdateUser();
+    }
+    else if(aBadGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    {
+        oGroovePointMember.addPoints(100);
+        oGroovePointMember.UpdateUser();
+    }
 }
+exports.ProcessEmojiRemove = ProcessEmojiRemove
 
 function getRandomValue(iMin, iMax)
 {
-
+    return Math.floor(Math.random() * iMax) + iMin
 }
