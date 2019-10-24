@@ -155,7 +155,7 @@ exports.Init = function (client) {
 
         let aGoodGroovePointEmojiIDs = oServerOptions["goodgroovepointemojiids"]
         let aBadGroovePointEmojiIDs = oServerOptions["badgroovepointemojiids"]
-        GroovePointsEmojiHandler.ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
+        //GroovePointsEmojiHandler.ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
     });
 
     client.on('messageReactionRemove', async(reaction, user) => {
@@ -166,7 +166,7 @@ exports.Init = function (client) {
 
         let aGoodGroovePointEmojiIDs = oServerOptions["goodgroovepointemojiids"]
         let aBadGroovePointEmojiIDs = oServerOptions["badgroovepointemojiids"]
-        GroovePointsEmojiHandler.ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
+        //GroovePointsEmojiHandler.ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
     });
 
     client.on('messageReactionRemoveAll', async(reaction, user) => {
