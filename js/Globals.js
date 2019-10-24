@@ -18,8 +18,8 @@ const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
 const GrooveSong = require('./GrooveSong.js')
+const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
-
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
 const Environment = {
@@ -264,6 +264,11 @@ exports.InitCommandMap = function(){
     cCommand: "groovesong",
     fFunc: GrooveSong.GetSong,
     oLongHelpText: GrooveSong.oHelpText
+  },
+  {
+    cCommand: "rep",
+    fFunc: GroovePointsRepHandler.GiveRep,
+    oLongHelpText: GroovePointsRepHandler.oHelpText
   }]
 }
 
@@ -280,6 +285,9 @@ exports.OptionTypes = {
     "addroleoninvite": {"optiontype": "rolearray"},
     "addroleonapprove": {"optiontype": "rolearray"},
     "removeroleonapprove": {"optiontype": "rolearray"},
+    "pinboardchannel": {"optiontype": "channel"},
+    "goodgroovepointemojiids": {"optiontype": "emojiarray"},
+    "badgroovepointemojiids": {"optiontype": "emojiarray"},
 }
 
 
@@ -318,6 +326,12 @@ function GetChannelByInput(cInput)
   return oChannel
 }
 exports.GetChannelByInput = GetChannelByInput
+
+function getRandomValue(iMin, iMax)
+{
+    return Math.floor(Math.random() * (iMax-iMin)) + iMin
+}
+exports.getRandomValue = getRandomValue
 
 function GetMemberByInput(guild, cInput)
 {
@@ -376,3 +390,32 @@ function GetRoleByInput(guild, cInput)
   return oRole
 }
 exports.GetRoleByInput = GetRoleByInput
+
+function GetEmojiByInput(guild, cInput)
+{
+  let cCleanID = "";
+  let cCheckMethod = "";
+  let oEmoji = null;
+  if(cInput.startsWith(`<:`))
+  {
+    cCleanID = cInput.replace(/\D/g,'');
+    cCheckMethod = "ID";
+  }
+  else if(Number.isInteger(parseInt(cInput)))
+  {
+    cCleanID = cInput
+    cCheckMethod = "ID";
+  }
+  else
+  {
+    cCleanID = cInput
+    cCheckMethod = "NAME";
+  }
+  if(cCheckMethod == "ID")
+    oEmoji = guild.emojis.find(e => e.id == cCleanID);
+  else if(cCheckMethod == "NAME")
+    oEmoji = guild.emojis.find(e => e.name == cCleanID);
+
+  return oEmoji
+}
+exports.GetEmojiByInput = GetEmojiByInput
