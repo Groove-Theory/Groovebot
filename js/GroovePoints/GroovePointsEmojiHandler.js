@@ -5,6 +5,7 @@ async function ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGro
     let oMember = reaction.message.member;
     let oGuild = reaction.message.guild;
     if(oMember.user.bot) return;
+    if(user.id == oMember.user.id) return;
 
     let oGroovePointMember = new GroovePointMember(oGuild.id, oMember.id);
     await oGroovePointMember.InitUser();
@@ -47,8 +48,3 @@ async function ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBad
     }
 }
 exports.ProcessEmojiRemove = ProcessEmojiRemove
-
-function getRandomValue(iMin, iMax)
-{
-    return Math.floor(Math.random() * iMax) + iMin
-}

@@ -18,8 +18,8 @@ const Streak = require('./Streak.js')
 const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
 const GrooveSong = require('./GrooveSong.js')
+const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
-
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
 const Environment = {
@@ -30,7 +30,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "gt!"
+exports.cCommandPrefix = "g!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
@@ -264,6 +264,11 @@ exports.InitCommandMap = function(){
     cCommand: "groovesong",
     fFunc: GrooveSong.GetSong,
     oLongHelpText: GrooveSong.oHelpText
+  },
+  {
+    cCommand: "rep",
+    fFunc: GroovePointsRepHandler.GiveRep,
+    oLongHelpText: GroovePointsRepHandler.oHelpText
   }]
 }
 
@@ -321,6 +326,12 @@ function GetChannelByInput(cInput)
   return oChannel
 }
 exports.GetChannelByInput = GetChannelByInput
+
+function getRandomValue(iMin, iMax)
+{
+    return Math.floor(Math.random() * (iMax-iMin)) + iMin
+}
+exports.getRandomValue = getRandomValue
 
 function GetMemberByInput(guild, cInput)
 {

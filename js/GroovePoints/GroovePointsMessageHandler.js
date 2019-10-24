@@ -1,4 +1,5 @@
 const GroovePointMember = require("../Classes/GroovePointMember.js");
+const Globals = require("../Globals.js");
 
 async function ProcessMessage(client, msg)
 {
@@ -18,7 +19,7 @@ function awardPoints(oGroovePointMember, dMsgDate)
     let bAward = checkForTimeout(oGroovePointMember.dLastMessage, 1000*60*2);
     if(bAward)
     {
-        oGroovePointMember.addPoints(getRandomValue(10, 100));
+        oGroovePointMember.addPoints(Globals.getRandomValue(10, 100));
         oGroovePointMember.dLastMessage = dMsgDate;
     }
 }
