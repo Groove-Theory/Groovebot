@@ -62,9 +62,12 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
 
   let aAddRolesOnApprove = oResult["addroleonapprove"];
   let aRemoveRolesOnApprove = oResult["removeroleonapprove"];
+  let aMemberCurrentRoles = oMember.roles.map(r => r.id);
+  let aRolesToAddToMember = aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1)
+  let aRolesToRemoveFromMember = aRemoveRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == 1)
 
-  await oMember.addRoles(aAddRolesOnApprove);
-  await oMember.removeRoles(aRemoveRolesOnApprove);
+  await oMember.addRoles(aRolesToAddToMember);
+  await oMember.removeRoles(aRolesToRemoveFromMember);
 
   cReturnMessage = `**${oMember.displayName}** has been approved!`
 
@@ -88,5 +91,7 @@ async function HandleMemberInvite(oMember) {
   }
 
   let aAddRolesOnApprove = oResult["addroleoninvite"];
-  await oMember.addRoles(aAddRolesOnApprove);
+  let aMemberCurrentRoles = oMember.roles.map(r => r.id);
+  let aRolesToAddToMember = aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1)
+  await oMember.addRoles(aRolesToAddToMember);
 }

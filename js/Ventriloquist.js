@@ -5,7 +5,14 @@ exports.ProcessMessage = function(client, msg) {
     if (msg.author.id == Globals.g_GrooveID && msg.channel.id == ventriloquistInputChannelID) {
 
         var outputChannel = client.channels.get(ventriloquistOutputChannelID);
-        outputChannel.send(msg.content);
+        if(msg.attachments.size > 0)
+        {
+            outputChannel.send(msg.content, {
+                files: Array.from(msg.attachments.values()).map(a => a.url)
+              })
+        }
+        else
+            outputChannel.send(msg.content);
 
     }
 }

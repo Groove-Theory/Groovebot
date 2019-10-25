@@ -141,7 +141,7 @@ exports.InitCommandMap = function(){
     oLongHelpText: GrooveQuote.oQuoteHelpText
   },
   {
-    cCommand: "ventriloquist",
+    cCommand: "v",
     fFunc: Ventriloquist.Change,
     oLongHelpText: ""
   },
