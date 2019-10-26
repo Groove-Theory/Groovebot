@@ -19,6 +19,7 @@ const Approve = require('./Approve.js')
 const CursedTBL = require('./CursedTBL.js')
 const GrooveSong = require('./GrooveSong.js')
 const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
+const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
@@ -269,6 +270,11 @@ exports.InitCommandMap = function(){
     cCommand: "rep",
     fFunc: GroovePointsRepHandler.GiveRep,
     oLongHelpText: GroovePointsRepHandler.oHelpText
+  },
+  {
+    cCommand: "leaderboard",
+    fFunc: GroovePointsLeaderboardHandler.ParseInputForLeaderboard,
+    oLongHelpText: GroovePointsLeaderboardHandler.oHelpText
   }]
 }
 
