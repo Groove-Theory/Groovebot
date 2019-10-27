@@ -45,7 +45,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "getcode",
       Globals.SendSource,
-      "",
+      "g!getcode",
+      " Get the Github Repo for Groovebot ",
       Globals.oSendSourceHelpText,
       false,
       Globals.CommandTypeStrings.INFORMATION
@@ -63,7 +64,7 @@ exports.InitCommandMap = function(){
       "keysmash",
       KeySmash.Init,
       "g!keysmash",
-      "",
+      " Make Groovebot smash their keyboard! ",
       KeySmash.oHelpText,
       false,
       Globals.CommandTypeStrings.FUN
@@ -96,7 +97,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "compliment",
       Compliment.Init,
-      "",
+      "g!compliment <users>",
+      " Send a compliment to yourself or to anyone by mentioning them ",
       Compliment.oHelpText,
       false,
       Globals.CommandTypeStrings.FUN
@@ -104,7 +106,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "nickname",
       Nickname.Init,
-      "",
+      "g!nickname <name>",
+      " Change Groove's nickname with a new nickname of your choosing! ",
       Nickname.oHelpText,
       false,
       Globals.CommandTypeStrings.GROOVE
@@ -121,7 +124,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "makequote",
       GrooveQuote.MakeQuote,
-      "",
+      "g!makequote <message>",
+      " Make your own Groove quote ",
       GrooveQuote.oMakeQuoteHelpText,
       false,
       Globals.CommandTypeStrings.GROOVE
@@ -129,7 +133,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "define",
       Dictionary.Init,
-      "",
+      "g!define <word> </t>",
+      "Let Groovebot try to define a word for you! (Type '/t' at the end to get the actual definition)",
       Dictionary.oHelpText,
       false,
       Globals.CommandTypeStrings.FUN
@@ -182,8 +187,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "rank-print-category",
       Ranks.ShowCategorysRanks,
-      "g!keysmash",
-      " Make Groovebot smash their keyboard! ",
+      "g!rank-print-category <catname?>",
+      "Prints all roles in a category, or just print out all categories",
       Ranks.oPrintRankCategoryHelpText,
       false,
       Globals.CommandTypeStrings.RANK
@@ -191,7 +196,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "rank-print-all",
       Ranks.PrintRanks,
-      "",
+      "g!rank-print-all",
+      "List out all roles and all categories",
       Ranks.oPrintAllHelpText,
       false,
       Globals.CommandTypeStrings.RANK
@@ -324,3 +330,15 @@ exports.InitCommandMap = function(){
       Globals.CommandTypeStrings.GROOVEPOINTS
     ));
   }
+
+
+
+
+  // {
+  //   name: "\"AskOuija:\"",
+  //   value: " Starts a ouija question (must set up in Options). Inputs are only one letter messages. Type \"goodbye\" to end. "
+  // },
+  // {
+  //   name: "\"Hey Groovebot, \"",
+  //   value: " Starts a question for Groovebot (must set up in Options). Inputs are only one word messages (no spaces). Type \"goodbye\" to end. "
+  // }
