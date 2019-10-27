@@ -18,7 +18,7 @@ exports.ProcessMessage = async function(client, msg) {
         if(cMsgCommand.startsWith(cCommandPrefix))
         {
             let cCommand = cMsgCommand.substr(cMsgCommand.indexOf(cCommandPrefix) + cCommandPrefix.length);
-            let oCommandObj = Globals.oCommandMap.find(c => c.cCommand == cCommand)
+            let oCommandObj = Globals.aCommandMap.find(c => c.cCommand == cCommand)
 
             if(oCommandObj)
                 oCommandObj.fFunc(client, msg)

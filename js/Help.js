@@ -15,7 +15,7 @@ exports.Init = function (client, msg) {
   var msgText = msg.content;
   var aMsgWords = msgText.split(" ");
   var cCommand = aMsgWords[1]
-  let oCommandObj = cCommand ? Globals.oCommandMap.find(c => c.cCommand.toLowerCase() == cCommand.toLowerCase()) : null;
+  let oCommandObj = cCommand ? Globals.aCommandMap.find(c => c.cCommand.toLowerCase() == cCommand.toLowerCase()) : null;
 
   if(cCommand)
   {

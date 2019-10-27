@@ -1,0 +1,326 @@
+const Globals = require('./Globals.js')
+const Vote = require('./Vote.js')
+const GrooveQuote = require('./GrooveQuote.js')
+const Help = require('./Help.js')
+const Ventriloquist = require('./Ventriloquist.js')
+const Dictionary = require('./Dictionary.js')
+const Compliment = require('./Compliment.js')
+const Nickname = require('./Nickname.js')
+const Idiom = require('./Idiom.js')
+const KeySmash = require('./KeySmash.js')
+const Options = require('./Options.js')
+const Ranks = require('./Ranks.js')
+const LibraryCategory = require('./Library/LibraryCategory.js')
+const LibraryAddWizard = require('./Library/LibraryAddWizard.js')
+const LibraryFileRemoveWizardSetup = require('./Library/LibraryFileRemoveWizardSetup.js')
+const LibraryPrint = require('./Library/LibraryPrint.js')
+const LibraryGetFileWizard = require('./Library/LibraryGetFileWizard.js')
+const Streak = require('./Streak.js')
+const Approve = require('./Approve.js')
+const CursedTBL = require('./CursedTBL.js')
+const GrooveSong = require('./GrooveSong.js')
+const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
+const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
+const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
+
+exports.InitCommandMap = function(){
+    Globals.aCommandMap.push(new Command(
+      "help",
+      Help.Init,
+      "g!help",
+      "Press g!help <command name> to get detailed help of a specific command",
+      Help.oHelpText,
+      false,
+      Globals.CommandTypeStrings.INFORMATION
+    ));
+    Globals.aCommandMap.push(new Command(
+      "vote",
+      Vote.VoteSetup,
+      "g!vote",
+      "Starts a wizard to begin an anonymous vote ",
+      Vote.oHelpText,
+      true,
+      Globals.CommandTypeStrings.MOD
+    ));
+    Globals.aCommandMap.push(new Command(
+      "getcode",
+      Globals.SendSource,
+      "",
+      Globals.oSendSourceHelpText,
+      false,
+      Globals.CommandTypeStrings.INFORMATION
+    ));
+    Globals.aCommandMap.push(new Command(
+      "idiom",
+      Idiom.Init,
+      "g!idiom",
+      " Let Groovebot try and come up with a wise saying! ",
+      Idiom.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "keysmash",
+      KeySmash.Init,
+      "g!keysmash",
+      "",
+      KeySmash.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "quoteupload",
+      GrooveQuote.Upload,
+      "",
+      null,
+      true,
+      Globals.CommandTypeStrings.HIDDEN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "quote",
+      GrooveQuote.Init,
+      "g!quote",
+      " Get a random Groove quote ",
+      GrooveQuote.oQuoteHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVE
+    ));
+    Globals.aCommandMap.push(new Command(
+      "v",
+      Ventriloquist.Change,
+      "",
+      null,
+      true,
+      Globals.CommandTypeStrings.HIDDEN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "compliment",
+      Compliment.Init,
+      "",
+      Compliment.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "nickname",
+      Nickname.Init,
+      "",
+      Nickname.oHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVE
+    ));
+    Globals.aCommandMap.push(new Command(
+      "options",
+      Options.Init,
+      "g!options",
+      "Setup options for this server (must have 'Manage Server' permissions)",
+      Options.oHelpText,
+      true,
+      Globals.CommandTypeStrings.MOD
+    ));
+    Globals.aCommandMap.push(new Command(
+      "makequote",
+      GrooveQuote.MakeQuote,
+      "",
+      GrooveQuote.oMakeQuoteHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVE
+    ));
+    Globals.aCommandMap.push(new Command(
+      "define",
+      Dictionary.Init,
+      "",
+      Dictionary.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-add-category",
+      Ranks.AddCategory,
+      "g!rank-add-category <catname>",
+      "Adds a rank category for the server",
+      Ranks.oAddCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-remove-category",
+      Ranks.RemoveCategory,
+      "g!rank-remove-category <catname>",
+      "Removes a rank category",
+      Ranks.oRemoveCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-rename-category",
+      Ranks.RenameCategory,
+      "g!rank-rename-category <oldname> <newname>",
+      "Renames a rank category ",
+      Ranks.oRenameCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-add-role",
+      Ranks.AddCategoryRank,
+      "g!rank-add-role <catname> <rolename>",
+      "Adds a role to a rank-category",
+      Ranks.oAddRoleHelpText,
+      true,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-remove-role",
+      Ranks.RemoveCategoryRank,
+      "g!rank-remove-role <catname> <rolename>",
+      "Removes a role from a rank-category ",
+      Ranks.oRemoveRoleHelpText,
+      true,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-print-category",
+      Ranks.ShowCategorysRanks,
+      "g!keysmash",
+      " Make Groovebot smash their keyboard! ",
+      Ranks.oPrintRankCategoryHelpText,
+      false,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank-print-all",
+      Ranks.PrintRanks,
+      "",
+      Ranks.oPrintAllHelpText,
+      false,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rank",
+      Ranks.ToggleUserRank,
+      "g!rank <rolename>",
+      " Add or remove a role",
+      Ranks.oToggleRankHelpText,
+      false,
+      Globals.CommandTypeStrings.RANK
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-add-category",
+      LibraryCategory.AddCategory,
+      "g!library-add-category <catname>",
+      "Adds a library-category to the server ",
+      LibraryCategory.oAddCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-remove-category",
+      LibraryCategory.RemoveCategory,
+      "g!library-remove-category <catname>",
+      "Removes a library category",
+      LibraryCategory.oRemoveCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-rename-category",
+      LibraryCategory.RenameCategory,
+      "g!library-rename-category <oldname> <newname>",
+      "Renames a library-category",
+      LibraryCategory.oRenameCategoryHelpText,
+      true,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-add-file",
+      LibraryAddWizard.LibraryFileAddWizardSetup,
+      "g!library-add-file",
+      "Begins a wizard to add a file to a category",
+      LibraryAddWizard.oAddFileHelpText,
+      true,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-remove-file",
+      LibraryFileRemoveWizardSetup.LibraryFileRemoveWizardSetup,
+      "g!library-remove-file",
+      "Begins a wizard to remove a file to a category",
+      LibraryFileRemoveWizardSetup.oRemoveFileHelpText,
+      true,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-print",
+      LibraryPrint.PrintLibrary,
+      "",
+      LibraryPrint.oPrintHelpText,
+      false,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "library-get-file",
+      LibraryGetFileWizard.GetLibraryFileWizardSetup,
+      "g!library-get-file",
+      " Start a wizard to get a library file",
+      LibraryGetFileWizard.oGetFileHelpText,
+      false,
+      Globals.CommandTypeStrings.LIBRARY
+    ));
+    Globals.aCommandMap.push(new Command(
+      "streak",
+      Streak.FindStreak,
+      "",
+      Streak.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "approve",
+      Approve.ParseApprove,
+      "",
+      Approve.oHelpText,
+      true,
+      Globals.CommandTypeStrings.MOD
+    ));
+    Globals.aCommandMap.push(new Command(
+      "cursed",
+      CursedTBL.MakeCursed,
+      "",
+      CursedTBL.oHelpText,
+      false,
+      Globals.CommandTypeStrings.FUN
+    ));
+    Globals.aCommandMap.push(new Command(
+      "groovesong",
+      GrooveSong.GetSong,
+      "",
+      GrooveSong.oHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVE
+    ));
+    Globals.aCommandMap.push(new Command(
+      "rep",
+      GroovePointsRepHandler.GiveRep,
+      "",
+      GroovePointsRepHandler.oHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVEPOINTS
+    ));
+    Globals.aCommandMap.push(new Command(
+      "leaderboard",
+      GroovePointsLeaderboardHandler.ParseInputForLeaderboard,
+      "",
+      GroovePointsLeaderboardHandler.oHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVEPOINTS
+    ));
+    Globals.aCommandMap.push(new Command(
+      "daily",
+      GroovePointsDailyHandler.HandleDailyPackage,
+      "",
+      GroovePointsDailyHandler.oHelpText,
+      false,
+      Globals.CommandTypeStrings.GROOVEPOINTS
+    ));
+  }
