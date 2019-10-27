@@ -14,6 +14,14 @@ async function ProcessReact(react, pinner, oServerOptions) {
 }
 exports.ProcessReact = ProcessReact;
 
+async function ProcessReactRemoveAll(message, oServerOptions) {
+    let oArgs = {
+        bPassedThreshold: false,
+        iPinCount: 0
+    }
+    HandlePinboardChannelMessage(message, null, oServerOptions, oArgs);
+}
+exports.ProcessReactRemoveAll = ProcessReactRemoveAll;
 
 
 

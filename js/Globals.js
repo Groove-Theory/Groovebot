@@ -20,6 +20,7 @@ const CursedTBL = require('./CursedTBL.js')
 const GrooveSong = require('./GrooveSong.js')
 const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
 const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
+const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
@@ -275,6 +276,11 @@ exports.InitCommandMap = function(){
     cCommand: "leaderboard",
     fFunc: GroovePointsLeaderboardHandler.ParseInputForLeaderboard,
     oLongHelpText: GroovePointsLeaderboardHandler.oHelpText
+  },
+  {
+    cCommand: "daily",
+    fFunc: GroovePointsDailyHandler.HandleDailyPackage,
+    oLongHelpText: GroovePointsDailyHandler.oHelpText
   }]
 }
 
@@ -425,3 +431,14 @@ function GetEmojiByInput(guild, cInput)
   return oEmoji
 }
 exports.GetEmojiByInput = GetEmojiByInput
+
+function MillisecondsToTimeString(iMilliseconds)
+{
+    let iDays = Math.floor(iMilliseconds/86400000);
+    let iHours = Math.floor(iMilliseconds/3600000)%24;
+    let iMinutes = Math.floor(iMilliseconds/60000)%60;
+    let iSeconds =Math.floor(iMilliseconds/1000)%60
+    
+    return `${iDays} Days, ${iHours} Hours, ${iMinutes} Minutes, ${iSeconds} Seconds`
+}
+exports.MillisecondsToTimeString = MillisecondsToTimeString
