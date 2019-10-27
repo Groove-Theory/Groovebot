@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const Vote = require('./Vote.js')
 const GrooveQuote = require('./GrooveQuote.js')
 const Help = require('./Help.js')
@@ -426,7 +427,14 @@ function GetEmojiByInput(guild, cInput)
   if(cCheckMethod == "ID")
     oEmoji = guild.emojis.find(e => e.id == cCleanID);
   else if(cCheckMethod == "NAME")
+  {
     oEmoji = guild.emojis.find(e => e.name == cCleanID);
+    if(!oEmoji)
+    {
+      ;//if(!containsAlphaNumeric(cCleanID))
+        //oEmoji = cCleanID;
+    }
+  }
 
   return oEmoji
 }
@@ -442,3 +450,9 @@ function MillisecondsToTimeString(iMilliseconds)
     return `${iDays} Days, ${iHours} Hours, ${iMinutes} Minutes, ${iSeconds} Seconds`
 }
 exports.MillisecondsToTimeString = MillisecondsToTimeString
+
+function containsAlphaNumeric(string){
+  return _(string).toArray().filter(function(char){
+     return char.match(/[a-zA-Z0-9]/);
+  }).value().length > 0 ? true : false;
+ }
