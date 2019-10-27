@@ -260,7 +260,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "library-print",
       LibraryPrint.PrintLibrary,
-      "",
+      "g!library-print <category?>",
+      "Print the server's library (or a specific category)",
       LibraryPrint.oPrintHelpText,
       false,
       "LIBRARY"
@@ -277,7 +278,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "streak",
       Streak.FindStreak,
-      "",
+      "g!streak <string> <channel>",
+      "Get the count of how many times a string/emoji/whatever has been pasted in a row",
       Streak.oHelpText,
       false,
       "FUN"
@@ -285,7 +287,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "approve",
       Approve.ParseApprove,
-      "",
+      "g!approve <member>",
+      "Approve a member into the server (will update roles based on Options)",
       Approve.oHelpText,
       true,
       "MOD"
@@ -293,7 +296,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "cursed",
       CursedTBL.MakeCursed,
-      "",
+      "g!approve <imageURL or image>",
+      "Makes an image super duper cursed",
       CursedTBL.oHelpText,
       false,
       "FUN"
@@ -301,7 +305,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "groovesong",
       GrooveSong.GetSong,
-      "",
+      "g!groovesong ",
+      "Gives you a random song from Groove's Spotify playlist!",
       GrooveSong.oHelpText,
       false,
       "GROOVE"
@@ -309,7 +314,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "rep",
       GroovePointsRepHandler.GiveRep,
-      "",
+      "g!rep <member?>",
+      "Awards a bunch of GroovePoints to any user in the server (once per day)",
       GroovePointsRepHandler.oHelpText,
       false,
       "GROOVEPOINTS"
@@ -317,7 +323,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "leaderboard",
       GroovePointsLeaderboardHandler.ParseInputForLeaderboard,
-      "",
+      "g!leaderboard <page?>",
+      "Shows the leaderboard of GroovePoints for this server",
       GroovePointsLeaderboardHandler.oHelpText,
       false,
       "GROOVEPOINTS"
@@ -325,7 +332,8 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "daily",
       GroovePointsDailyHandler.HandleDailyPackage,
-      "",
+      "g!daily <member?>",
+      "Gives you your daily package of GroovePoints (can be given to another member). Once per day",
       GroovePointsDailyHandler.oHelpText,
       false,
       "GROOVEPOINTS"

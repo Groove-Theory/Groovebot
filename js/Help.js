@@ -65,8 +65,8 @@ async function getHelpPageInfo(oChannel, bMod, iDirection, oMessage)
     let iPage = oEmbed.description ? oEmbed.description.substring(5) : null
     if(iPage)
     {
-      let iNewPage = iPage + iDirection;
-      let oCommandValues = Object.values(Globals.CommandTypeStrings)
+      let iNewPage = parseInt(iPage) + iDirection;
+      //let oCommandValues = Object.values(Globals.CommandTypeStrings)
       let cCommandKey = Object.keys(Globals.CommandTypeStrings).find(key => Globals.CommandTypeStrings[key].order === iNewPage);
       if(!cCommandKey)
         return;
@@ -86,10 +86,17 @@ async function printHelpEmbed(oChannel, cCommandKey, bMod, oMessage)
   .setTitle(`${Globals.CommandTypeStrings[cCommandKey].cname} Commands`)
   .setDescription(`Page ${Globals.CommandTypeStrings[cCommandKey].order}`);
 
-  for(let i = 0; i < aCommands.length; i++)
+  if(aCommands.length == 0)
   {
-    let oItem = aCommands[i];
-    oHelpEmbed.addField(oItem.cHelpTextTitle, oItem._cShortHelpText, false); 
+    oHelpEmbed.addField("Sorry, no commands exist for this page.", "Please move forward or backwards", false); 
+  }
+  else
+  {
+    for(let i = 0; i < aCommands.length; i++)
+    {
+      let oItem = aCommands[i];
+      oHelpEmbed.addField(oItem.cHelpTextTitle, oItem._cShortHelpText, false); 
+    }
   }
   if(oMessage)
     return await oMessage.edit(oHelpEmbed)
