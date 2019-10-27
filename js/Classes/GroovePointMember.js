@@ -3,6 +3,8 @@ class GroovePointMember {
   constructor(iGuildID, iUserID) {
     this._iGuildID = iGuildID;
     this._iUserID = iUserID;
+    this._iAddPoints = 0;
+    this._oInsertObject = {};
   }
     get iGuildID() {
         return this._iGuildID;
@@ -16,6 +18,7 @@ class GroovePointMember {
     }
     set dLastMessage(x) {
         this._dLastMessage = x;
+        this._oInsertObject["lastawardedmessagedate"] = x
     }
 
     get dLastRepDate() {
@@ -23,6 +26,7 @@ class GroovePointMember {
     }
     set dLastRepDate(x) {
         this._dLastRepDate = x;
+        this._oInsertObject["dlastrepdate"] = x
     }
 
     get dLastPackageDate() {
@@ -30,6 +34,7 @@ class GroovePointMember {
     }
     set dLastPackageDate(x) {
         this._dLastPackageDate = x;
+        this._oInsertObject["dlastpackagedate"] = x
     }
 
     get iPoints() {
@@ -38,7 +43,7 @@ class GroovePointMember {
 
     addPoints(iVal)
     {
-        this._iPoints += iVal;
+        this._iAddPoints += iVal;
     }
 
     async InitUser()
@@ -64,14 +69,16 @@ class GroovePointMember {
             guildID: this._iGuildID,
             userID: this._iUserID
         }
-        var oInsertObject = {
-            "points": this._iPoints,
-            "lastawardedmessagedate": this._dLastMessage,
-            "dlastrepdate": this._dLastRepDate,
-            "dlastpackagedate": this._dLastPackageDate,
-        };
+        let oUpdateObject = {};
+        if(Object.keys(this._oInsertObject).length > 0)
+            oUpdateObject["$set"] = this._oInsertObject
+        oUpdateObject["$inc"] =  { "points": this._iAddPoints}
 
-        Globals.Database.Upsert("GroovePoints", oKeyObject, oInsertObject);
+        Globals.Database.dbo.collection("GroovePoints").updateOne(oKeyObject, oUpdateObject, {
+            upsert: true,
+            safe: false
+        });
+        //Globals.Database.Upsert("GroovePoints", oKeyObject, oInsertObject);
     }
 
 }

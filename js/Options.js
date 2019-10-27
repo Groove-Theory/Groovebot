@@ -441,7 +441,7 @@ function SetBadGroovePointEmoji(client, msg, aMsgDetails) {
     var oEmoji = Globals.GetEmojiByInput(oGuild, cEmoji);
 
     if (!oEmoji) {
-        SendReplyMessage(client, msg, "Sorry, I can't find this emoji")
+        SendReplyMessage(client, msg, "Sorry, I can't find this emoji. I can only use custom-emojis")
     }
     else {
         var oKeyObject = {

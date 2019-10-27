@@ -1,4 +1,5 @@
 const GroovePointMember = require("../Classes/GroovePointMember.js");
+const Discord = require('discord.js');
 
 async function ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs)
 {
@@ -12,12 +13,12 @@ async function ProcessEmojiAdd(reaction, user, aGoodGroovePointEmojiIDs, aBadGro
 
     let iReactID = reaction.emoji.id;
 
-    if(aGoodGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    if(aGoodGroovePointEmojiIDs && aGoodGroovePointEmojiIDs.indexOf(iReactID) > -1)
     {
         oGroovePointMember.addPoints(100);
         oGroovePointMember.UpdateUser();
     }
-    else if(aBadGroovePointEmojiIDs.indexOf(iReactID) > -1)
+    else if(aBadGroovePointEmojiIDs && aBadGroovePointEmojiIDs.indexOf(iReactID) > -1)
     {
         oGroovePointMember.addPoints(-100);
         oGroovePointMember.UpdateUser();

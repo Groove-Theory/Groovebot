@@ -42,7 +42,7 @@ class PaginationMessage {
         const reactionFilter = reaction => {
             return aButtons.find(b => b.cEmoji == reaction.emoji.name)
           }
-        this._oReactCollector = new Discord.ReactionCollector(this._oMessage, reactionFilter, {max:100, time:12000});
+        this._oReactCollector = new Discord.ReactionCollector(this._oMessage, reactionFilter, {max:100, time:120000});
         this._oReactCollector.on("collect", reaction => {
             if(reaction.users.find(u=>u.id != Globals.g_Client.user.id))
             {
