@@ -169,11 +169,11 @@ exports.Init = function (client) {
         //GroovePointsEmojiHandler.ProcessEmojiRemove(reaction, user, aGoodGroovePointEmojiIDs, aBadGroovePointEmojiIDs);
     });
 
-    client.on('messageReactionRemoveAll', async(reaction, user) => {
-        let oGuild = reaction.message.guild;
+    client.on('messageReactionRemoveAll', async(message) => {
+        let oGuild = message.guild;
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
-            PinboardRemoveHandler.ProcessReact(reaction, user, oServerOptions)
+            PinboardRemoveHandler.ProcessReactRemoveAll(message, oServerOptions)
     });
 }
 

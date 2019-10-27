@@ -1,8 +1,11 @@
 const GroovePointMember = require("../Classes/GroovePointMember.js");
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
+const PaginationMessage = require("../Classes/PaginationMessage.js");
+const PaginationButton = require("../Classes/PaginationButton.js");
 const Discord = require('discord.js');
 const Globals = require("../Globals.js");
 
+const iRanksPerPage = 10;
 exports.oHelpText = new EmbeddedHelpText(
     "Leaderboard",
     "Find out your place on the GroovePoints:tm: leaderboards",
@@ -22,25 +25,53 @@ async function ParseInputForLeaderboard(client, msg)
     let oGuild = msg.guild;
     if(!oAuthor) return;
 
-    printLeaderboard(oGuild, oAuthor, msg.channel, iPage);
+    let oLeaderBoardMessage = await printLeaderboard(oGuild, oAuthor, msg.channel, iPage);
+    let oPagMessage = new PaginationMessage();
+    oPagMessage.addButton(new PaginationButton("◀", function(){editLeaderboardMessage(oGuild, oAuthor, oLeaderBoardMessage, -1)}, 1));
+    oPagMessage.addButton(new PaginationButton('▶', function(){editLeaderboardMessage(oGuild, oAuthor, oLeaderBoardMessage, 1)}, 2));
+    oPagMessage.oMessage = oLeaderBoardMessage
+    await oPagMessage.Init();
 }
 exports.ParseInputForLeaderboard = ParseInputForLeaderboard;
 
-async function printLeaderboard(oGuild, oAuthor, oChannel, iPage)
+// -1 = Reverse, 1 = Forward
+async function editLeaderboardMessage(oGuild, oAuthor, oMessage, iDirection)
+{
+  let oEmbed = oMessage.embeds[0];
+  if(oEmbed)
+  {
+    let aPageData = oEmbed.description ? oEmbed.description.substring(5).split("/") : null
+    if(aPageData)
+    {
+      let iCurrentPage = parseInt(aPageData[0]);
+      let iTotalPages = parseInt(aPageData[1]);
+      if(!Number.isInteger(iCurrentPage) || !Number.isInteger(iCurrentPage))
+        return;
+      if(iCurrentPage >= iTotalPages && iDirection == 1)
+        return;
+      if(iCurrentPage <= 1 && iDirection == -1)
+        return
+
+      await printLeaderboard(oGuild, oAuthor, oMessage.channel, iCurrentPage + iDirection, oMessage)
+    }
+  }
+}
+
+async function printLeaderboard(oGuild, oAuthor, oChannel, iPage, oMessage)
 {
     let aData = await getLeaderboardData(oGuild.id, iPage);
     let oEmbed = new Discord.RichEmbed()
                     .setColor('#c0ff28')
                     .setTitle('GroovePoints Leaderboard')
-                    .setDescription(`Page ${iPage} (Ranks ${((iPage-1)*10)+1}-${((iPage)*10)})`);
-    for(let i = 0; i < 10; i++)
+                    .setDescription(`Page ${iPage}/${Math.ceil(aData.length/iRanksPerPage)}`);
+    for(let i = 0; i < iRanksPerPage; i++)
     {
-        let oItem = aData[((iPage-1) * 10 )+ i];
+        let oItem = aData[((iPage-1) * iRanksPerPage )+ i];
         if(oItem)
         {
             let oMember = oGuild.members.find(m => m.id == oItem.userID)
             if(oMember)
-                oEmbed.addField(`${((iPage-1) * 10 )+ i +1}) ${oMember.user.username} `, oItem.points, false); 
+                oEmbed.addField(`${((iPage-1) * iRanksPerPage )+ i +1}) ${oMember.user.username} `, oItem.points, false); 
         }
     }
 
@@ -48,7 +79,10 @@ async function printLeaderboard(oGuild, oAuthor, oChannel, iPage)
     let iAuthorRank = aData.findIndex(x => x.userId = oAuthor.id);
     if(oAuthorData)
         oEmbed.setFooter( `Your rank = #${iAuthorRank + 1}   (${oAuthorData.points} Points)`);
-    oChannel.send(oEmbed);
+    if(oMessage)
+      return await oMessage.edit(oEmbed)
+    else
+      return await oChannel.send(oEmbed);
 }
 
 async function getLeaderboardData(iGuildId, iPage)

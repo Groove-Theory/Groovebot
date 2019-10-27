@@ -56,7 +56,6 @@ client.on('ready', async () => {
         var oGrooveUser = client.users.get(Globals.g_GrooveID);
         oGrooveUser.send("I've successfully loaded!!");
       }
-
     }
   }
   catch (err) {

@@ -25,6 +25,13 @@ class GroovePointMember {
         this._dLastRepDate = x;
     }
 
+    get dLastPackageDate() {
+        return this._dLastPackageDate;
+    }
+    set dLastPackageDate(x) {
+        this._dLastPackageDate = x;
+    }
+
     get iPoints() {
         return this._iPoints;
     }
@@ -47,6 +54,8 @@ class GroovePointMember {
         this._iPoints = oResult && oResult["points"] ? oResult["points"] : 0;
         this._dLastMessage = oResult && oResult["lastawardedmessagedate"] ? oResult["lastawardedmessagedate"] : new Date();
         this._dLastRepDate = oResult && oResult["dlastrepdate"] ? oResult["dlastrepdate"] : new Date('1970-01-01');
+        this._dLastPackageDate = oResult && oResult["dlastpackagedate"] ? oResult["dlastpackagedate"] : new Date('1970-01-01');
+
 
     }
     UpdateUser()
@@ -58,7 +67,8 @@ class GroovePointMember {
         var oInsertObject = {
             "points": this._iPoints,
             "lastawardedmessagedate": this._dLastMessage,
-            "dlastrepdate": this._dLastRepDate
+            "dlastrepdate": this._dLastRepDate,
+            "dlastpackagedate": this._dLastPackageDate,
         };
 
         Globals.Database.Upsert("GroovePoints", oKeyObject, oInsertObject);
