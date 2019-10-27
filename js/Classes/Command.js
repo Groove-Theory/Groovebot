@@ -1,13 +1,13 @@
 const Globals = require('../Globals.js')
 class Command {
-  constructor(_cCommand, _fFunc, _cShortHelpText, _oLongHelpText, bModOnly, cCommandType) {
-    this._cCommand = _cCommand;
-    this._fFunc = _fFunc;
-    this._cHelpTextTitle = _cHelpTextTitle;
-    this._cShortHelpText = _cShortHelpText;
-    this._oLongHelpText = _oLongHelpText;
+  constructor(cCommand, fFunc, cHelpTextTitle, cShortHelpText, oLongHelpText, bModOnly, cCommandType) {
+    this._cCommand = cCommand;
+    this._fFunc = fFunc;
+    this._cHelpTextTitle = cHelpTextTitle;
+    this._cShortHelpText = cShortHelpText;
+    this._oLongHelpText = oLongHelpText;
     this._bModOnly = bModOnly;
-    this._bModOnly = bModOnly;
+    this._cCommandType = cCommandType;
   }
     get cCommand() {
         return this._cCommand;
@@ -49,6 +49,13 @@ class Command {
     }
     set bModOnly(x) {
         this._bModOnly = x;
+    }
+
+    get cCommandType() {
+        return this._cCommandType;
+    }
+    set cCommandType(x) {
+        this._cCommandType = x;
     }
 
 }

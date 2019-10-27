@@ -20,14 +20,14 @@ else if(Environment.STAGE)
 exports.Environment = Environment;
 
 const CommandTypeStrings = {
-  FUN: "Fun",
-  GROOVE: "Groove",
-  GROOVEPOINTS: "Groove Points",
-  HIDDEN: "",
-  INFORMATION: "Information",
-  LIBRARY: "Library",
-  MOD: "Mod",
-  RANK: "Rank",
+  FUN: {cname: "Fun", order: 2},
+  GROOVE: {cname: "Groove", order: 3},
+  GROOVEPOINTS: {cname: "Groove Points", order: 4},
+  HIDDEN: {cname: "", order: -100},
+  INFORMATION: {cname: "Information", order: 1},
+  LIBRARY: {cname: "Library", order: 5},
+  MOD: {cname: "Mod", order: 7},
+  RANK: {cname: "Rank", order: 6},
 };
 exports.CommandTypeStrings = CommandTypeStrings;
 

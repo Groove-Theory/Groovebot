@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const ErrorHandler = require('./ErrorHandler.js')
 const Globals = require('./Globals.js')
+const CommandList = require('./CommandList.js')
 const Options = require('./Options.js')
 const Database = require('./Database.js')
 const ChannelListener = require('./ChannelListener.js')
@@ -49,7 +50,7 @@ client.on('ready', async () => {
       if (compliment_obj)
         Globals.aCompliments = compliment_obj.Compliments;
 
-      Globals.InitCommandMap();
+      CommandList.InitCommandMap();
 
       if(Globals.Environment.PRODUCTION || Globals.Environment.STAGE)
       {

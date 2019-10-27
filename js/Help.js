@@ -1,5 +1,8 @@
 const Globals = require('./Globals.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
+const PaginationMessage = require("./Classes/PaginationMessage.js");
+const PaginationButton = require("./Classes/PaginationButton.js");
+const Discord = require('discord.js');
 
 const oHelpText = new EmbeddedHelpText(
    "Help",
@@ -10,7 +13,7 @@ const oHelpText = new EmbeddedHelpText(
 )
 exports.oHelpText = oHelpText
 
-exports.Init = function (client, msg) {
+exports.Init = async function (client, msg) {
 
   var msgText = msg.content;
   var aMsgWords = msgText.split(" ");
@@ -28,65 +31,13 @@ exports.Init = function (client, msg) {
     }
     else if(cCommand == "mod")
     {
-      msg.channel.send(
-        {
-          embed:
-          {
-            color: 3447003,
-            title: "**__MOD Commands List__**",
-            description: "List of Groovebot commands for mods",
-            fields: [
-              {
-                name: "g!vote",
-                value: "Starts a wizard to begin an anonymous vote "
-              },
-              {
-                name: "g!options",
-                value: "Setup options for this server (must have 'Manage Server' permissions)"
-              },
-              {
-                name: "g!rank-add-category <catname>",
-                value: "Adds a rank category for the server"
-              },
-              {
-                name: "g!rank-remove-category <catname>",
-                value: "Removes a rank category"
-              },
-              {
-                name: "g!rank-rename-category <oldname> <newname>",
-                value: "Renames a rank category "
-              },
-              {
-                name: "g!rank-add-role <catname> <rolename>",
-                value: "Adds a role to a rank-category"
-              },
-              {
-                name: "g!rank-remove-role <catname> <rolename>",
-                value: "Removes a role from a rank-category "
-              },
-              {
-                name: "g!library-add-category <catname>",
-                value: "Adds a library-category to the server "
-              },
-              {
-                name: "g!library-remove-category <catname>",
-                value: "Removes a library category"
-              },
-              {
-                name: "g!library-rename-category <oldname> <newname>",
-                value: "Renames a library-category"
-              },
-              {
-                name: "g!library-add-file",
-                value: "Begins a wizard to add a file to a category"
-              },
-              {
-                name: "g!library-remove-file",
-                value: "Begins a wizard to remove a file to a category"
-              },   
-            ]
-          }
-        });
+
+      let oHelpMessage = await getHelpPageInfo(msg.channel, true, 0, null);
+      let oPagMessage = new PaginationMessage();
+      oPagMessage.addButton(new PaginationButton("◀", function(){getHelpPageInfo(msg.channel, true, -1, oHelpMessage)}, 1));
+      oPagMessage.addButton(new PaginationButton('▶', function(){getHelpPageInfo(msg.channel, true, 1, oHelpMessage)}, 2));
+      oPagMessage.oMessage = oHelpMessage
+      await oPagMessage.Init();
     }
     else
     {
@@ -95,83 +46,55 @@ exports.Init = function (client, msg) {
   }
   else
   {
-    msg.channel.send(
-      {
-        embed:
-        {
-          color: 3447003,
-          title: "**__Commands List__**",
-          description: "List of Groovebot commands",
-          fields: [
-            {
-              name: "g!help",
-              value: "You just pressed this :laughing: "
-            },
-            {
-              name: "g!rank <rolename>",
-              value: " Add or remove a role"
-            },
-            {
-              name: "g!get-library-file",
-              value: " Start a wizard to get a library file"
-            },
-            {
-              name: "g!idiom",
-              value: " Let Groovebot try and come up with a wise saying! "
-            },
-            {
-              name: "g!keysmash",
-              value: " Make Groovebot smash their keyboard! "
-            },
-            {
-              name: "g!quote",
-              value: " Get a random Groove quote "
-            },
-            {
-              name: "g!makequote <message>",
-              value: " Make your own Groove quote "
-            },
-            {
-              name: "g!compliment <users>",
-              value: " Send a compliment to yourself or to anyone by mentioning them "
-            },
-            {
-              name: "g!getcode",
-              value: " Get the Github Repo for Groovebot "
-            },
-            {
-              name: "g!nickname <name>",
-              value: " Change Groove's nickname with a new nickname of your choosing! "
-            },
-            {
-              name: "g!define <word> </t>",
-              value: "Let Groovebot try to define a word for you! (Type '/t' at the end to get the actual definition)"
-            },
-            {
-              name: "g!rank-print-category <catname?>",
-              value: "Prints all roles in a category, or just print out all categories"
-            },
-            {
-              name: "g!rank-print-all",
-              value: "List out all roles and all categories"
-            },
-            {
-              name: "g!rank <rankname>",
-              value: "Assigns a rank to yourself"
-            },
-            {
-              name: "\"AskOuija:\"",
-              value: " Starts a ouija question (must set up in Options). Inputs are only one letter messages. Type \"goodbye\" to end. "
-            },
-            {
-              name: "\"Hey Groovebot, \"",
-              value: " Starts a question for Groovebot (must set up in Options). Inputs are only one word messages (no spaces). Type \"goodbye\" to end. "
-            },
-          ]
-        }
-      });
+    let oHelpMessage = await getHelpPageInfo(msg.channel, false, 0, null);
+    let oPagMessage = new PaginationMessage();
+    oPagMessage.addButton(new PaginationButton("◀", function(){getHelpPageInfo(msg.channel, false, -1, oHelpMessage)}, 1));
+    oPagMessage.addButton(new PaginationButton('▶', function(){getHelpPageInfo(msg.channel, false, 1, oHelpMessage)}, 2));
+    oPagMessage.oMessage = oHelpMessage
+    await oPagMessage.Init();
   }
 
+}
+
+
+async function getHelpPageInfo(oChannel, bMod, iDirection, oMessage)
+{
+  let oEmbed = oMessage && oMessage.embeds ? oMessage.embeds[0] : null;
+  if(oEmbed)
+  {
+    let iPage = oEmbed.description ? oEmbed.description.substring(5) : null
+    if(iPage)
+    {
+      let iNewPage = iPage + iDirection;
+      let oCommandValues = Object.values(Globals.CommandTypeStrings)
+      let cCommandKey = Object.keys(Globals.CommandTypeStrings).find(key => Globals.CommandTypeStrings[key].order === iNewPage);
+      if(!cCommandKey)
+        return;
+
+        return printHelpEmbed(oChannel, cCommandKey, bMod, oMessage)
+    }
+  }
+  else
+    return printHelpEmbed(oChannel, "INFORMATION", bMod, null)
+}
+
+async function printHelpEmbed(oChannel, cCommandKey, bMod, oMessage)
+{
+  let aCommands = Globals.aCommandMap.filter(c => c.cCommandType == cCommandKey && c.bModOnly == bMod)
+  let oHelpEmbed = new Discord.RichEmbed()
+  .setColor('#0356fc')
+  .setTitle(`${Globals.CommandTypeStrings[cCommandKey].cname} Commands`)
+  .setDescription(`Page ${Globals.CommandTypeStrings[cCommandKey].order}`);
+
+  for(let i = 0; i < aCommands.length; i++)
+  {
+    let oItem = aCommands[i];
+    oHelpEmbed.addField(oItem.cHelpTextTitle, oItem._cShortHelpText, false); 
+  }
+  if(oMessage)
+    return await oMessage.edit(oHelpEmbed)
+  else
+    return await oChannel.send(oHelpEmbed);
 }
 
 

@@ -22,6 +22,7 @@ const GrooveSong = require('./GrooveSong.js')
 const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
 const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
 const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
+const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
@@ -31,7 +32,7 @@ exports.InitCommandMap = function(){
       "Press g!help <command name> to get detailed help of a specific command",
       Help.oHelpText,
       false,
-      Globals.CommandTypeStrings.INFORMATION
+      "INFORMATION"
     ));
     Globals.aCommandMap.push(new Command(
       "vote",
@@ -40,7 +41,7 @@ exports.InitCommandMap = function(){
       "Starts a wizard to begin an anonymous vote ",
       Vote.oHelpText,
       true,
-      Globals.CommandTypeStrings.MOD
+      "MOD"
     ));
     Globals.aCommandMap.push(new Command(
       "getcode",
@@ -49,7 +50,7 @@ exports.InitCommandMap = function(){
       " Get the Github Repo for Groovebot ",
       Globals.oSendSourceHelpText,
       false,
-      Globals.CommandTypeStrings.INFORMATION
+      "INFORMATION"
     ));
     Globals.aCommandMap.push(new Command(
       "idiom",
@@ -58,7 +59,7 @@ exports.InitCommandMap = function(){
       " Let Groovebot try and come up with a wise saying! ",
       Idiom.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "keysmash",
@@ -67,7 +68,7 @@ exports.InitCommandMap = function(){
       " Make Groovebot smash their keyboard! ",
       KeySmash.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "quoteupload",
@@ -75,7 +76,7 @@ exports.InitCommandMap = function(){
       "",
       null,
       true,
-      Globals.CommandTypeStrings.HIDDEN
+      "HIDDEN"
     ));
     Globals.aCommandMap.push(new Command(
       "quote",
@@ -84,7 +85,7 @@ exports.InitCommandMap = function(){
       " Get a random Groove quote ",
       GrooveQuote.oQuoteHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVE
+      "GROOVE"
     ));
     Globals.aCommandMap.push(new Command(
       "v",
@@ -92,7 +93,7 @@ exports.InitCommandMap = function(){
       "",
       null,
       true,
-      Globals.CommandTypeStrings.HIDDEN
+      "HIDDEN"
     ));
     Globals.aCommandMap.push(new Command(
       "compliment",
@@ -101,7 +102,7 @@ exports.InitCommandMap = function(){
       " Send a compliment to yourself or to anyone by mentioning them ",
       Compliment.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "nickname",
@@ -110,7 +111,7 @@ exports.InitCommandMap = function(){
       " Change Groove's nickname with a new nickname of your choosing! ",
       Nickname.oHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVE
+      "GROOVE"
     ));
     Globals.aCommandMap.push(new Command(
       "options",
@@ -119,7 +120,7 @@ exports.InitCommandMap = function(){
       "Setup options for this server (must have 'Manage Server' permissions)",
       Options.oHelpText,
       true,
-      Globals.CommandTypeStrings.MOD
+      "MOD"
     ));
     Globals.aCommandMap.push(new Command(
       "makequote",
@@ -128,7 +129,7 @@ exports.InitCommandMap = function(){
       " Make your own Groove quote ",
       GrooveQuote.oMakeQuoteHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVE
+      "GROOVE"
     ));
     Globals.aCommandMap.push(new Command(
       "define",
@@ -137,7 +138,7 @@ exports.InitCommandMap = function(){
       "Let Groovebot try to define a word for you! (Type '/t' at the end to get the actual definition)",
       Dictionary.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-add-category",
@@ -146,7 +147,7 @@ exports.InitCommandMap = function(){
       "Adds a rank category for the server",
       Ranks.oAddCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-remove-category",
@@ -155,7 +156,7 @@ exports.InitCommandMap = function(){
       "Removes a rank category",
       Ranks.oRemoveCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-rename-category",
@@ -164,7 +165,7 @@ exports.InitCommandMap = function(){
       "Renames a rank category ",
       Ranks.oRenameCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-add-role",
@@ -173,7 +174,7 @@ exports.InitCommandMap = function(){
       "Adds a role to a rank-category",
       Ranks.oAddRoleHelpText,
       true,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-remove-role",
@@ -182,7 +183,7 @@ exports.InitCommandMap = function(){
       "Removes a role from a rank-category ",
       Ranks.oRemoveRoleHelpText,
       true,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-print-category",
@@ -191,7 +192,7 @@ exports.InitCommandMap = function(){
       "Prints all roles in a category, or just print out all categories",
       Ranks.oPrintRankCategoryHelpText,
       false,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank-print-all",
@@ -200,7 +201,7 @@ exports.InitCommandMap = function(){
       "List out all roles and all categories",
       Ranks.oPrintAllHelpText,
       false,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "rank",
@@ -209,7 +210,7 @@ exports.InitCommandMap = function(){
       " Add or remove a role",
       Ranks.oToggleRankHelpText,
       false,
-      Globals.CommandTypeStrings.RANK
+      "RANK"
     ));
     Globals.aCommandMap.push(new Command(
       "library-add-category",
@@ -218,7 +219,7 @@ exports.InitCommandMap = function(){
       "Adds a library-category to the server ",
       LibraryCategory.oAddCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-remove-category",
@@ -227,7 +228,7 @@ exports.InitCommandMap = function(){
       "Removes a library category",
       LibraryCategory.oRemoveCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-rename-category",
@@ -236,7 +237,7 @@ exports.InitCommandMap = function(){
       "Renames a library-category",
       LibraryCategory.oRenameCategoryHelpText,
       true,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-add-file",
@@ -245,7 +246,7 @@ exports.InitCommandMap = function(){
       "Begins a wizard to add a file to a category",
       LibraryAddWizard.oAddFileHelpText,
       true,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-remove-file",
@@ -254,7 +255,7 @@ exports.InitCommandMap = function(){
       "Begins a wizard to remove a file to a category",
       LibraryFileRemoveWizardSetup.oRemoveFileHelpText,
       true,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-print",
@@ -262,7 +263,7 @@ exports.InitCommandMap = function(){
       "",
       LibraryPrint.oPrintHelpText,
       false,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "library-get-file",
@@ -271,7 +272,7 @@ exports.InitCommandMap = function(){
       " Start a wizard to get a library file",
       LibraryGetFileWizard.oGetFileHelpText,
       false,
-      Globals.CommandTypeStrings.LIBRARY
+      "LIBRARY"
     ));
     Globals.aCommandMap.push(new Command(
       "streak",
@@ -279,7 +280,7 @@ exports.InitCommandMap = function(){
       "",
       Streak.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "approve",
@@ -287,7 +288,7 @@ exports.InitCommandMap = function(){
       "",
       Approve.oHelpText,
       true,
-      Globals.CommandTypeStrings.MOD
+      "MOD"
     ));
     Globals.aCommandMap.push(new Command(
       "cursed",
@@ -295,7 +296,7 @@ exports.InitCommandMap = function(){
       "",
       CursedTBL.oHelpText,
       false,
-      Globals.CommandTypeStrings.FUN
+      "FUN"
     ));
     Globals.aCommandMap.push(new Command(
       "groovesong",
@@ -303,7 +304,7 @@ exports.InitCommandMap = function(){
       "",
       GrooveSong.oHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVE
+      "GROOVE"
     ));
     Globals.aCommandMap.push(new Command(
       "rep",
@@ -311,7 +312,7 @@ exports.InitCommandMap = function(){
       "",
       GroovePointsRepHandler.oHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVEPOINTS
+      "GROOVEPOINTS"
     ));
     Globals.aCommandMap.push(new Command(
       "leaderboard",
@@ -319,7 +320,7 @@ exports.InitCommandMap = function(){
       "",
       GroovePointsLeaderboardHandler.oHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVEPOINTS
+      "GROOVEPOINTS"
     ));
     Globals.aCommandMap.push(new Command(
       "daily",
@@ -327,7 +328,7 @@ exports.InitCommandMap = function(){
       "",
       GroovePointsDailyHandler.oHelpText,
       false,
-      Globals.CommandTypeStrings.GROOVEPOINTS
+      "GROOVEPOINTS"
     ));
   }
 
