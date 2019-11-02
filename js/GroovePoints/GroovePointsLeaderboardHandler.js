@@ -71,14 +71,14 @@ async function printLeaderboard(oGuild, oAuthor, oChannel, iPage, oMessage)
         {
             let oMember = oGuild.members.find(m => m.id == oItem.userID)
             if(oMember)
-                oEmbed.addField(`${((iPage-1) * iRanksPerPage )+ i +1}) ${oMember.user.username} `, oItem.points, false); 
+                oEmbed.addField(`${((iPage-1) * iRanksPerPage )+ i +1}) ${oMember.user.username} `, Globals.NumToSuffixedString(oItem.points), false); 
         }
     }
 
     let oAuthorData = aData.find(x => x.userID == oAuthor.id)
     let iAuthorRank = aData.findIndex(x => x.userID== oAuthor.id);
     if(oAuthorData)
-        oEmbed.setFooter( `Your rank = #${iAuthorRank + 1}   (${Globals.NumToSuffixedString(oAuthorData.points)} Points)`);
+        oEmbed.setFooter( `Your rank = #${iAuthorRank + 1}   (${oAuthorData.points} Points)`);
     if(oMessage)
       return await oMessage.edit(oEmbed)
     else
