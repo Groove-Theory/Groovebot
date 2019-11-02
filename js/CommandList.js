@@ -23,6 +23,7 @@ const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js
 const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
 const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
 const GroovePointGiveHandler = require("./GroovePoints/GroovePointGiveHandler.js");
+const Portmanteau = require('./Portmanteau.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -347,6 +348,15 @@ exports.InitCommandMap = function(){
       GroovePointGiveHandler.oHelpText,
       false,
       "GROOVEPOINTS"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "portmanteau",
+      Portmanteau.Init,
+      "g!ortmanteau <word1> <word2>",
+      "Make a new word from two other words.",
+      Portmanteau.oHelpText,
+      false,
+      "FUN"
     ));
   }
 

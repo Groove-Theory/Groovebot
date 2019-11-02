@@ -153,11 +153,13 @@ function GetChannelByInput(cInput)
 }
 exports.GetChannelByInput = GetChannelByInput
 
-function getRandomValue(iMin, iMax)
+function getRandomInt(iMin, iMax)
 {
-    return Math.floor(Math.random() * (iMax-iMin)) + iMin
+  let min = Math.ceil(iMin);
+  let max = Math.floor(iMax);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-exports.getRandomValue = getRandomValue
+exports.getRandomInt = getRandomInt
 
 function GetMemberByInput(guild, cInput)
 {
