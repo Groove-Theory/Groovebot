@@ -264,8 +264,12 @@ function MillisecondsToTimeString(iMilliseconds)
 }
 exports.MillisecondsToTimeString = MillisecondsToTimeString
 
-function containsAlphaNumeric(string){
-  return _(string).toArray().filter(function(char){
-     return char.match(/[a-zA-Z0-9]/);
-  }).value().length > 0 ? true : false;
- }
+function NumToSuffixedString(iVal)
+{
+    let aSuffixes = ["", "K", "M", "B", "T", "Q"];
+    let iIndexToUse = Math.floor(Math.log(Math.abs(iVal))/Math.log(1000))
+    if(iIndexToUse != 0 && !aSuffixes[iIndexToUse])
+        return 0;
+    return `${parseFloat(iIndexToUse > 0 ? (iVal / Math.pow(1000,iIndexToUse)).toFixed(2) : iVal)}${aSuffixes[iIndexToUse]}`.trim();
+}
+exports.NumToSuffixedString = NumToSuffixedString

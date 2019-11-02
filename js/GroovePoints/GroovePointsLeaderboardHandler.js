@@ -75,10 +75,10 @@ async function printLeaderboard(oGuild, oAuthor, oChannel, iPage, oMessage)
         }
     }
 
-    let oAuthorData = aData.find(x => x.userId = oAuthor.id)
-    let iAuthorRank = aData.findIndex(x => x.userId = oAuthor.id);
+    let oAuthorData = aData.find(x => x.userID == oAuthor.id)
+    let iAuthorRank = aData.findIndex(x => x.userID== oAuthor.id);
     if(oAuthorData)
-        oEmbed.setFooter( `Your rank = #${iAuthorRank + 1}   (${oAuthorData.points} Points)`);
+        oEmbed.setFooter( `Your rank = #${iAuthorRank + 1}   (${Globals.NumToSuffixedString(oAuthorData.points)} Points)`);
     if(oMessage)
       return await oMessage.edit(oEmbed)
     else

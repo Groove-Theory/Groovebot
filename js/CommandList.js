@@ -22,6 +22,7 @@ const GrooveSong = require('./GrooveSong.js')
 const GroovePointsRepHandler = require("./GroovePoints/GroovePointsRepHandler.js");
 const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeaderboardHandler.js");
 const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
+const GroovePointGiveHandler = require("./GroovePoints/GroovePointGiveHandler.js");
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -335,6 +336,15 @@ exports.InitCommandMap = function(){
       "g!daily <member?>",
       "Gives you your daily package of GroovePoints (can be given to another member). Once per day",
       GroovePointsDailyHandler.oHelpText,
+      false,
+      "GROOVEPOINTS"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "givepoints",
+      GroovePointGiveHandler.HandleGivePoints,
+      "g!givepoints <points> <member>",
+      "Donate any of your GroovePoints:tm: to any other user.",
+      GroovePointGiveHandler.oHelpText,
       false,
       "GROOVEPOINTS"
     ));
