@@ -29,7 +29,7 @@ exports.Init = async function (client, msg) {
         cNewWord = combineWords(cSecondWord, cFirstWord);
 
     if(cNewWord)
-        msg.channel.send(`${cFirstWord} + ${cSecondWord} = **${cNewWord}**`);
+        msg.channel.send(`${cFirstWord} + ${cSecondWord} = **${Globals.capitalizeString(cNewWord)}**`);
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);

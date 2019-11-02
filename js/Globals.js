@@ -275,3 +275,8 @@ function NumToSuffixedString(iVal)
     return `${parseFloat(iIndexToUse > 0 ? (iVal / Math.pow(1000,iIndexToUse)).toFixed(2) : iVal)}${aSuffixes[iIndexToUse]}`.trim();
 }
 exports.NumToSuffixedString = NumToSuffixedString
+
+function capitalizeString(cStr, bProper) {
+  return (bProper ? cStr.toLowerCase() : cStr).replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
+exports.capitalizeString = capitalizeString
