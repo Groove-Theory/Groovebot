@@ -53,7 +53,7 @@ async function HandleDailyPackageSelf(oGuild, oAwarder, oChannel)
         return;
     }
 
-    let iPointsAwarded = Globals.getRandomValue(-1000, 5000);
+    let iPointsAwarded = Globals.getRandomInt(-1000, 5000);
     oGroovePointMember.addPoints(iPointsAwarded);
     oGroovePointMember.dLastPackageDate = new Date();
     oGroovePointMember.UpdateUser();
@@ -79,7 +79,7 @@ async function HandleDailyPackageGift(oGuild, oAwarder, oMentionedUser, oChannel
     let oGroovePointMemberReceiver = new GroovePointMember(oGuild.id, oMentionedUser.id);
     await oGroovePointMemberReceiver.InitUser();
 
-    let iPointsAwarded = Globals.getRandomValue(-1000, 5000);
+    let iPointsAwarded = Globals.getRandomInt(-1000, 5000);
     oGroovePointMemberReceiver.addPoints(iPointsAwarded);
     oGroovePointMemberAwarder.dLastPackageDate = new Date();
     await oGroovePointMemberReceiver.UpdateUser();

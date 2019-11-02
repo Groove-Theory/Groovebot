@@ -45,7 +45,7 @@ async function GiveRep(client, msg)
     let oGroovePointMemberReceiver = new GroovePointMember(oGuild.id, oMentionedUser.id);
     await oGroovePointMemberReceiver.InitUser();
 
-    let iPointsAwarded = Globals.getRandomValue(1000, 5000);
+    let iPointsAwarded = Globals.getRandomInt(1000, 5000);
     oGroovePointMemberReceiver.addPoints(iPointsAwarded);
     oGroovePointMemberAwarder.dLastRepDate = new Date();
     await oGroovePointMemberReceiver.UpdateUser();

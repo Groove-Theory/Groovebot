@@ -19,7 +19,7 @@ function awardPoints(oGroovePointMember, dMsgDate)
     let bAward = checkForTimeout(oGroovePointMember.dLastMessage, 1000*60*2);
     if(bAward)
     {
-        oGroovePointMember.addPoints(Globals.getRandomValue(10, 100));
+        oGroovePointMember.addPoints(Globals.getRandomInt(10, 100));
         oGroovePointMember.dLastMessage = dMsgDate;
     }
 }
@@ -30,7 +30,7 @@ function checkForTimeout(dLastMessage, iTimeoutMilliSec)
     return dNow.getTime() > dLastMessage.getTime() + iTimeoutMilliSec;
 }
 
-function getRandomValue(iMin, iMax)
+function getRandomInt(iMin, iMax)
 {
     return Math.floor(Math.random() * iMax) + iMin
 }
