@@ -11,8 +11,6 @@ exports.oHelpText = new EmbeddedHelpText(
    "``g!acronym lol`` (this might give out 'Laugh Out Loud')"
 )
 
-let aVowels = ["a", "e", "i", "o", "u"];
-
 exports.Init = async function (client, msg) {
     let aInput = msg.content.split(/\s+/);
     aInput.shift();
