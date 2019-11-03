@@ -24,6 +24,7 @@ const GroovePointsLeaderboardHandler = require("./GroovePoints/GroovePointsLeade
 const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandler.js");
 const GroovePointGiveHandler = require("./GroovePoints/GroovePointGiveHandler.js");
 const Portmanteau = require('./Portmanteau.js')
+const Acronym = require('./Acronym.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -352,9 +353,18 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "portmanteau",
       Portmanteau.Init,
-      "g!ortmanteau <word1> <word2>",
+      "g!portmanteau <word1> <word2>",
       "Make a new word from two other words.",
       Portmanteau.oHelpText,
+      false,
+      "FUN"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "acronym",
+      Acronym.Init,
+      "g!acronym <acronym>",
+      "Decode any acronym!.",
+      Acronym.oHelpText,
       false,
       "FUN"
     ));

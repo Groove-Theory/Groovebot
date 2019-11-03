@@ -10,7 +10,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "g!"
+exports.cCommandPrefix = "gt!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
@@ -261,7 +261,7 @@ function MillisecondsToTimeString(iMilliseconds)
     let iHours = Math.floor(iMilliseconds/3600000)%24;
     let iMinutes = Math.floor(iMilliseconds/60000)%60;
     let iSeconds =Math.floor(iMilliseconds/1000)%60
-    
+
     return `${iDays} Days, ${iHours} Hours, ${iMinutes} Minutes, ${iSeconds} Seconds`
 }
 exports.MillisecondsToTimeString = MillisecondsToTimeString

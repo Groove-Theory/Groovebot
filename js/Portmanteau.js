@@ -43,7 +43,7 @@ function combineWords(cFrontWord, cBackWord)
 
     let cCombinedWord = "";
     if(aVowels.indexOf(cFrontPart[cFrontPart.length - 1]) > -1 && aVowels.indexOf(cBackPart[0]) > -1)
-        cCombinedWord = vowelCollisionHandle(cFrontPart, cBackPart) 
+        cCombinedWord = vowelCollisionHandle(cFrontPart, cBackPart)
     else
         cCombinedWord = cFrontPart + cBackPart;
     return cCombinedWord;
