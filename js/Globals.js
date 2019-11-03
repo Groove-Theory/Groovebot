@@ -10,7 +10,7 @@ const Environment = {
 
 exports.g_WindowsMachine = process.platform == "win32";
 
-exports.cCommandPrefix = "gt!"
+exports.cCommandPrefix = "g!"
 if(Environment.PRODUCTION)
   exports.cCommandPrefix = "g!"
 else if(Environment.TESTING)
