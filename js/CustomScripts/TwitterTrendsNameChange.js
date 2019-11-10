@@ -8,7 +8,6 @@ exports.Init = async function (client, msg) {
             var params = {
                 id: 1, //global WOEID
             }
-            if(Glo)
             Globals.TwitterApi.get('trends/place', params, function(err, data, response) {
             // If there is no error, proceed
                 if(!err && data.length > 0)
