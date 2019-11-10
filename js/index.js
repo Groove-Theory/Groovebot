@@ -11,7 +11,7 @@ const TwitterHandler = require('./APIHandlers/TwitterHandler.js')
 const fs = require('fs');
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_SECRET;
-const TwitterTrendsNameChange = require('./CustomScripts/TwitterTrendsNameChange.js')
+const CustomScriptsMain = require('./CustomScripts/CustomScriptsMain.js')
 /*
 const ErrorHandler = require('./ErrorHandler.js');
 
@@ -54,7 +54,7 @@ client.on('ready', async () => {
         Globals.aCompliments = compliment_obj.Compliments;
 
       CommandList.InitCommandMap();
-      TwitterTrendsNameChange.Init();
+      CustomScriptsMain.Init();
       if(Globals.Environment.PRODUCTION || Globals.Environment.STAGE)
       {
         var oGrooveUser = client.users.get(Globals.g_GrooveID);
