@@ -25,6 +25,7 @@ const GroovePointsDailyHandler = require("./GroovePoints/GroovePointsDailyHandle
 const GroovePointGiveHandler = require("./GroovePoints/GroovePointGiveHandler.js");
 const Portmanteau = require('./Portmanteau.js')
 const Acronym = require('./Acronym.js')
+const Vulgar = require('./Vulgar.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -365,6 +366,15 @@ exports.InitCommandMap = function(){
       "g!acronym <acronym>",
       "Decode any acronym!.",
       Acronym.oHelpText,
+      false,
+      "FUN"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "vulgar",
+      Vulgar.Init,
+      "g!vulgar <string/user>",
+      "Find out how vulgar a user or someone is!",
+      Vulgar.oHelpText,
       false,
       "FUN"
     ));
