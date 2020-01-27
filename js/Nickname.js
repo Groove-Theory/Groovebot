@@ -23,8 +23,15 @@ exports.Init = async function (client, msg) {
     msg.channel.send("Hehehehe, I changed Groove's name to **" + cNewNick + "**");
   }
   catch (err) {
-    msg.channel.send("....Nah that name sucks not gonna do it");
-    ErrorHandler.HandleError(client, err);
-
+    try{
+      var oGrooveBotUser = oGuild.members.find(m => m.id ===client.user.id);
+      await oGrooveBotUser.setNickname(cNewNick)
+      msg.channel.send("Ok, I changed my name to **" + cNewNick + "**..... I like it!");
+    }
+    catch(err)
+    {
+      msg.channel.send("....Nah that name sucks not gonna do it");
+      ErrorHandler.HandleError(client, err);
+    }
   }
 }
