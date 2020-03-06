@@ -14,6 +14,7 @@ exports.oHelpText = new EmbeddedHelpText(
 exports.Init = async function(client, msg) {
     try{
         var cWordToBeTranslated = createTextToBeTranslated();
+        console.log(cWordToBeTranslated)
         var res = await Translate(cWordToBeTranslated, { from: 'ig', to: 'en' });
         msg.channel.send("**\"" + res + "\"**")
     }
@@ -46,32 +47,26 @@ function createTextToBeTranslated() {
     g_aWordTypes.push(new WordType("uwu"));
     g_aWordTypes.push(new WordType("nani"));
     g_aWordTypes.push(new WordType("owo"));
-    g_aWordTypes.push(new WordType("uh"));
-    g_aWordTypes.push(new WordType("ag"));
-
-
+    g_aWordTypes.push(new WordType("yeet"));
+    g_aWordTypes.push(new WordType("hewwo"));
+    g_aWordTypes.push(new WordType("aww"));
+    g_aWordTypes.push(new WordType("oh"));
     for (var i = 0; i < g_aWordTypes.length; i++) {
         g_aWordTypes[i].iNum = parseInt(Math.random() * 10)
     }
 
 
     var bCompleted = false;
-    var iNoSpaceChance = 6;
+    var iNoSpaceChance = 0;
     var cStringToBeTranslated = "";
 
     while (g_aWordTypes.length > 0) {
         try {
             var iRandomIndex = Math.floor(Math.random() * g_aWordTypes.length);
             var oRandomWordType = g_aWordTypes[iRandomIndex];
-            var cRandomString = randomizeWord(oRandomWordType.cString)
+            var cRandomString = oRandomWordType.cString;//randomizeWord(oRandomWordType.cString)
             cStringToBeTranslated += cRandomString;
-
-            if (randomChance(iNoSpaceChance)) {
-                cStringToBeTranslated += " "
-                iNoSpaceChance = 6
-            } else {
-                iNoSpaceChance++;
-            }
+            cStringToBeTranslated += " "
             oRandomWordType.iNum--;
             if (oRandomWordType.iNum <= 0) {
                 g_aWordTypes.splice(iRandomIndex, 1);
