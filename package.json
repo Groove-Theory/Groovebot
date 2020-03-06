@@ -3,6 +3,8 @@
   "dependencies": {
     "canvas": "^2.6.0",
     "discord.js": "^11.5.1",
+    "frinkiac": "^1.0.2",
+    "frinkiac-gif-generator": "^0.5.0",
     "google-translate-api": "^2.3.0",
     "mongodb": "^3.2.7",
     "node-fetch": "^2.6.0",
