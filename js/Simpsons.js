@@ -2,7 +2,7 @@ const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js');
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 const gifGenerator = require('frinkiac-gif-generator');
-//const frinkiac = null;//require('frinkiac');
+const frinkiac = require('frinkiac');
 
 exports.oHelpText = new EmbeddedHelpText(
   "Simpsons",
@@ -24,17 +24,27 @@ exports.Init = async function (client, msg) {
 
     let cString = aData.join(" ");
     var oMessage = await msg.channel.send("Ok give me a sec....")
-    var cGif = await GetSimpsonsGif(cString)
-    if(cGif)
-        oMessage.edit(cGif)
-    else
+    try
     {
-        // var cPic = await GetSimpsonsImage(cString)
-        // if(cPic)
-        //     msg.channel.send(cPic)
-        // else
-        oMessage.edit(":shrug:");
+        var cGif = await GetSimpsonsGif(cString)
+        if(cGif)
+            oMessage.edit(cGif);
+        else
+            SimpsonsImageFallback(oMessage, cString);
     }
+    catch(e)
+    {
+        SimpsonsImageFallback(oMessage, cString);
+    }
+}
+
+async function SimpsonsImageFallback(oMessage, cString)
+{
+    var cPic = await GetSimpsonsImage(cString)
+    if(cPic)
+        oMessage.send(cPic)
+    else
+        oMessage.edit(":shrug:");
 }
 
 async function GetSimpsonsGif(cString)
@@ -52,6 +62,6 @@ async function GetSimpsonsImage(cString)
             return res.data;
         }
     })
-    var memeURLs = data.map(frinkiac.memeMap, frinkiac); // ['https://frinkiac.com/meme/S05E03/512110?b64lines=']
+    var memeURLs = cData.map(frinkiac.memeMap, frinkiac); // ['https://frinkiac.com/meme/S05E03/512110?b64lines=']
     return memeURLs[0];
 }
