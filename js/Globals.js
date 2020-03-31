@@ -297,6 +297,8 @@ function cleanString(cStr, oOptions)
   var newStr = cStr;
   if(!oOptions || oOptions.RemoveEveryoneAndHere)
     newStr = removeEveryoneAndHereFromString(newStr)
+  if(!oOptions || oOptions.RemoveMentions)
+    newStr = removeMentionFromString(newStr)
 
   return newStr;
 }
