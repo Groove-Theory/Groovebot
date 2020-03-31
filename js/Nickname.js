@@ -15,9 +15,7 @@ exports.Init = async function (client, msg) {
   try {
     var cMessage = msg.content;
     var cNewNick = msg.content.substring(11);
-
-    if(StringIsBad(cNewNick) ) // Todo: Get Cheesecord or write findmention string checker
-      throw "bad mention nick"
+    cNewNick = Globals.cleanString(cNewNick);
 
     var oGuild = msg.guild; // client.guilds.get(Globals.g_GuildID);
     var oGrooveUser = oGuild.members.find(m => m.id === Globals.g_GrooveID);

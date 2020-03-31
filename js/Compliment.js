@@ -30,6 +30,7 @@ exports.Init = async function (client, msg) {
         var cComplimentText = Globals.aCompliments[Math.floor(Math.random() * Globals.aCompliments.length)];
 
         cMsg += cComplimentText;
+        cMsg = Globals.cleanString(cMsg);
         msgChannel.send(cMsg);
     }
     catch (err) {

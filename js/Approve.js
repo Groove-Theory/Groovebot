@@ -69,6 +69,7 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
   oMember.addRoles(aRolesToAddToMember).then(function(oMember){
     oMember.removeRoles(aRolesToRemoveFromMember).then(function(oMember){
       cReturnMessage = `**${oMember.displayName}** has been approved!`
+      cReturnMessage = Globals.cleanString(cReturnMessage);
       oChannel.send(cReturnMessage);
     })
   })

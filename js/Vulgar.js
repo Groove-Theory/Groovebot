@@ -38,7 +38,7 @@ exports.Init = async function (client, msg) {
     let iScore = AccessVulgarityScore(cData);
     let cScoreDesc = GetVulgarityString(iScore);
     let cRet = aData.join(" ");
-
+    cRet = Globals.cleanString(cRet);
     msg.channel.send(`I give ${cData.length > 50 ? "this" : `**${cRet}**`} a Vulgarity Score:tm: of **${iScore}%**, which is **${cScoreDesc}**`)
 }
 

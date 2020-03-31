@@ -92,6 +92,7 @@ function printDefinition(oDefinition, cQueried, msgChannel, bDelay)
         cRetMsg += "**" + cQueried+ "**"
         cRetMsg += " *(" + oDefinition.category + ")* - "
         cRetMsg += oDefinition.definition
+        cRetMsg = Globals.cleanString(cRetMsg);
         msgChannel.send(cRetMsg);
       }, bDelay ? 2000 : 0);
 }

@@ -28,6 +28,7 @@ exports.Init = async function (client, msg) {
     else
         cNewWord = combineWords(cSecondWord, cFirstWord);
 
+    cNewWord = Globals.cleanString(cNewWord);
     if(cNewWord)
         msg.channel.send(`${cFirstWord} + ${cSecondWord} = **${Globals.capitalizeString(cNewWord)}**`);
   }

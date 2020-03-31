@@ -280,3 +280,24 @@ function capitalizeString(cStr, bProper) {
   return (bProper ? cStr.toLowerCase() : cStr).replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
 exports.capitalizeString = capitalizeString
+
+
+function removeMentionFromString(cStr)
+{
+  return cStr.replace(/<@[\d\w]+>/g, "");
+}
+
+function removeEveryoneAndHereFromString(cStr)
+{
+  return cStr.replace("@everyone", "").replace("@here", "");
+}
+
+function cleanString(cStr, oOptions)
+{
+  var newStr = cStr;
+  if(!oOptions || oOptions.RemoveEveryoneAndHere)
+    newStr = removeEveryoneAndHereFromString(newStr)
+
+  return newStr;
+}
+exports.cleanString = cleanString
