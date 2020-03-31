@@ -284,7 +284,7 @@ exports.capitalizeString = capitalizeString
 
 function removeMentionFromString(cStr)
 {
-  return cStr.replace(/<@[\d\w]+>/g, "");
+  return cStr.replace(/<@[\d\w]+>/g, "").replace(/<@&[\d\w]+>/g, "");
 }
 
 function removeEveryoneAndHereFromString(cStr)
