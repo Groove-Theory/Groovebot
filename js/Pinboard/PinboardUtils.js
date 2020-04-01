@@ -28,6 +28,7 @@ async function CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs) {
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL)
         .setTimestamp()
         .setFooter(`📌 Pinned by ${pinner.username}*| ${msg.id}`, pinner.displayAvatarURL)
+        .addField("Go to Message", msg.url, false)
         .setImage(image);
     let oStarMessage = await oPinboardChannel.send(embed);
     return oStarMessage;
