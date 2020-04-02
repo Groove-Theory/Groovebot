@@ -26,8 +26,9 @@ const CommandTypeStrings = {
   HIDDEN: {cname: "", order: -100},
   INFORMATION: {cname: "Information", order: 1},
   LIBRARY: {cname: "Library", order: 5},
-  MOD: {cname: "Mod", order: 7},
+  MOD: {cname: "Mod", order: 8},
   RANK: {cname: "Rank", order: 6},
+  VOICE: {cname: "Voice", order: 7},
 };
 exports.CommandTypeStrings = CommandTypeStrings;
 

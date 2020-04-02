@@ -27,6 +27,8 @@ const Portmanteau = require('./Portmanteau.js')
 const Acronym = require('./Acronym.js')
 const Vulgar = require('./Vulgar.js')
 const Simpsons = require('./Simpsons.js')
+const VoiceChat = require('./VoiceChat/VoiceChat.js')
+const MusicBot = require('./VoiceChat/MusicBot.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -388,16 +390,22 @@ exports.InitCommandMap = function(){
       false,
       "FUN"
     ));
+    Globals.aCommandMap.push(new Command(
+      "voice-join",
+      VoiceChat.VoiceJoin,
+      "g!voice-join",
+      "Makes Groovebot join the voice channel that you're in",
+      MusicBot.oJoinHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "voice-leave",
+      VoiceChat.VoiceLeave,
+      "g!voice-leave",
+      "Makes Groovebot leave the voice channel that you're in",
+      MusicBot.oLeaveHelpText,
+      false,
+      "VOICE"
+    ));
   }
-
-
-
-
-  // {
-  //   name: "\"AskOuija:\"",
-  //   value: " Starts a ouija question (must set up in Options). Inputs are only one letter messages. Type \"goodbye\" to end. "
-  // },
-  // {
-  //   name: "\"Hey Groovebot, \"",
-  //   value: " Starts a question for Groovebot (must set up in Options). Inputs are only one word messages (no spaces). Type \"goodbye\" to end. "
-  // }
