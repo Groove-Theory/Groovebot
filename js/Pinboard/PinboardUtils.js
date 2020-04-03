@@ -27,6 +27,7 @@ async function CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs) {
         .setDescription(msg.content)
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL)
         .setTimestamp()
+        .addField("Go to Message", "[Link](" + msg.url + ")", false)
         .setFooter(`📌 Pinned by ${pinner.username}*| ${msg.id}`, pinner.displayAvatarURL)
         .addField("Go to Message", msg.url, false)
         .setImage(image);
@@ -41,6 +42,7 @@ async function EditPinboardMessage(msg, pinner, oPinboardMessage, oArgs) {
         .setDescription(msg.content)
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL)
         .setTimestamp()
+        .addField("Go to Message", "[Link](" + msg.url + ")", false)
         .setFooter(`📌 Pinned by ${pinner.username} | ${msg.id}`, pinner.displayAvatarURL)
         .setImage(image);
     oPinboardMessage.edit(embed);
