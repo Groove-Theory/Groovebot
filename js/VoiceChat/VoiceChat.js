@@ -43,6 +43,7 @@ exports.VoiceLeave = async function (client, msg) {
       if(MemberIsInVoiceChannel(oMember))
       {
           oVoiceChannel.leave();
+          msg.channel.send("ok bai");
       }
       else
       {
