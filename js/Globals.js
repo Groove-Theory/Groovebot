@@ -267,6 +267,20 @@ function MillisecondsToTimeString(iMilliseconds)
 }
 exports.MillisecondsToTimeString = MillisecondsToTimeString
 
+function MillisecondsToTimeSymbol(iMilliseconds)
+{
+    let iHours = Math.floor(iMilliseconds/3600000)%24;
+    let iMinutes = Math.floor(iMilliseconds/60000)%60;
+    let iSeconds =Math.floor(iMilliseconds/1000)%60
+
+    let cHours = iHours < 10 ? "0" + iHours : iHours;
+    let cMinutes = iMinutes < 10 ? "0" + iMinutes : iMinutes;
+    let cSeconds = iSeconds < 10 ? "0" + iSeconds : iSeconds;
+
+    return `${cHours}:${cMinutes}:${cSeconds}`
+}
+exports.MillisecondsToTimeSymbol = MillisecondsToTimeSymbol
+
 function NumToSuffixedString(iVal)
 {
     let aSuffixes = ["", "K", "M", "B", "T", "Q"];

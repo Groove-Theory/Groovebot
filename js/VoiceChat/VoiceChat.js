@@ -21,13 +21,14 @@ exports.VoiceJoin = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voiceChannel;
-      if(MemberIsInVoiceChannel(oMember))
+      if(MemberIsInVoiceChannel(oMember, false))
       {
           oVoiceChannel.join();
+          msg.channel.send(":wave: Hello, groobot is in the voice thingy");
       }
       else
       {
-          msg.channel.send("You must be in a voice channel first");
+          msg.channel.send("You must be in a voice channel first.");
       }
   }
   catch (err) {
@@ -53,9 +54,30 @@ exports.VoiceLeave = async function (client, msg) {
   }
 }
 
-function MemberIsInVoiceChannel(oMember)
+function MemberIsInVoiceChannel(oMember, bBotCheck)
 {
-    return oMember.voiceChannel.id > 0;
+  var iMemberVoiceChannelID = oMember.voiceChannel && oMember.voiceChannel.id > 0 ? oMember.voiceChannel.id : -1;
+  if(bBotCheck)
+  {
+    var oVoiceConnection = GetVoiceConnection(iMemberVoiceChannelID)
+    if(!oVoiceConnection)
+      return false;
+  }
+  return iMemberVoiceChannelID > -1;
 }
+exports.MemberIsInVoiceChannel = MemberIsInVoiceChannel;
 
-
+function GetVoiceConnection(iMemberVoiceChannelID)
+{
+  var aData = Array.from(Globals.g_Client.voice.connections);
+  if(!aData)
+    return null;
+  if(!aData[0])
+    return null;
+  if(!aData[0][1].channel)
+    return null;
+  if(aData[0][1].channel.id != iMemberVoiceChannelID)
+    return null;
+  return aData[0][1];
+}
+exports.GetVoiceConnection = GetVoiceConnection;

@@ -395,7 +395,7 @@ exports.InitCommandMap = function(){
       VoiceChat.VoiceJoin,
       "g!voice-join",
       "Makes Groovebot join the voice channel that you're in",
-      MusicBot.oJoinHelpText,
+      VoiceChat.oJoinHelpText,
       false,
       "VOICE"
     ));
@@ -404,7 +404,52 @@ exports.InitCommandMap = function(){
       VoiceChat.VoiceLeave,
       "g!voice-leave",
       "Makes Groovebot leave the voice channel that you're in",
-      MusicBot.oLeaveHelpText,
+      VoiceChat.oLeaveHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-add",
+      MusicBot.AddToQueue,
+      "g!music-add",
+      "Add a youtube track to the music queue",
+      MusicBot.oAddQueueHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-queue",
+      MusicBot.PrintQueue,
+      "g!music-queue",
+      "Print the music queue",
+      MusicBot.oPrintQueueHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-now",
+      MusicBot.NowPlaying,
+      "g!music-now",
+      "Get info for the current song in the queue",
+      MusicBot.oNowPlayingHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-play",
+      MusicBot.PlayQueue,
+      "g!music-play",
+      "Play the music queue",
+      MusicBot.oPlayHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-stop",
+      MusicBot.NowPlaStopPlayingQueueying,
+      "g!music-stop",
+      "Stop Playing the Queue",
+      MusicBot.oStopHelpText,
       false,
       "VOICE"
     ));
