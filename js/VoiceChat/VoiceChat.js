@@ -20,7 +20,7 @@ exports.oLeaveHelpText = new EmbeddedHelpText(
 exports.VoiceJoin = async function (client, msg) {
   try {
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(MemberIsInVoiceChannel(oMember, false))
       {
           oVoiceChannel.join();
@@ -39,7 +39,7 @@ exports.VoiceJoin = async function (client, msg) {
 exports.VoiceLeave = async function (client, msg) {
   try {
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(MemberIsInVoiceChannel(oMember))
       {
           oVoiceChannel.leave();
@@ -56,7 +56,7 @@ exports.VoiceLeave = async function (client, msg) {
 
 function MemberIsInVoiceChannel(oMember, bBotCheck)
 {
-  var iMemberVoiceChannelID = oMember.voiceChannel && oMember.voiceChannel.id > 0 ? oMember.voiceChannel.id : -1;
+  var iMemberVoiceChannelID = oMember.voice && oMember.voice.channel && oMember.voice.channel.id > 0 ? oMember.voice.channel.id : -1;
   if(bBotCheck)
   {
     var oVoiceConnection = GetVoiceConnection(iMemberVoiceChannelID)

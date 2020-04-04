@@ -10,7 +10,7 @@ exports.ProcessMessage = async function(client, msg) {
         if (msg.author.id == client.user.id)
             return;  
 
-        var msgChannel = client.channels.get(msg.channel.id);
+        var msgChannel = client.channels.cache.get(msg.channel.id);
         var msgText = msg.content;
         var aMsgWords = msgText.split(" ");
         var cMsgCommand = aMsgWords && aMsgWords.length > 0 ? aMsgWords[0] : null;

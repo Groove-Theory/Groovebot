@@ -46,7 +46,7 @@ exports.AddToQueue = async function (client, msg) {
       let cURL = aMsgContents[1];
       let iPosition = aMsgContents[2];
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       let oSongData = await getYoutubeData(cURL);
       if(!oSongData)
       {
@@ -91,7 +91,7 @@ exports.PrintQueue = async function (client, msg) {
       let iPage = aMsgContents[1];
       iPage = iPage ? iPage : 1;
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
       {
         msg.channel.send("You and I must be in a voice channel first");
@@ -135,7 +135,7 @@ exports.NowPlaying = async function (client, msg) {
   try {
       var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
       {
         msg.channel.send("You and I must be in a voice channel first");
@@ -163,14 +163,14 @@ exports.PlayQueue = async function (client, msg) {
 
       var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
       {
         msg.channel.send("You and I must be in a voice channel first");
         return;
       }
       
-      PlayNextSong(oMember.voiceChannel.id);
+      PlayNextSong(oMember.voice.channel.id);
       
   }
   catch (err) {
@@ -190,13 +190,23 @@ async function PlayNextSong (iVoiceChannelID) {
       
       let oCurrentSongData = aResult[0];
       const stream = ytdl(oCurrentSongData.cURL, { filter : 'audioonly' });
-      const dispatcher = oVoiceConnection.playStream(stream, streamOptions);
+          const dispatcher = oVoiceConnection
+          .play(
+            ytdl(oCurrentSongData.cURL, { // pass the url to .ytdl()
+              quality: 'highestaudio',
+              // download part of the song before playing it
+              // helps reduces stuttering
+              highWaterMark: 1024 * 1024 * 10
+            })
+          )//oVoiceConnection.playStream(stream, streamOptions);
 
-      dispatcher.on("finish", () => {
-        OnSongFinished(oCurrentSongData, iVoiceChannelID);
-        PlayNextSong();
-      })
-      .on("error", error => console.error(error));
+      //const dispatcher = oVoiceConnection.playStream(stream, streamOptions);
+
+    //   dispatcher.on("finish", () => {
+    //     OnSongFinished(oCurrentSongData, iVoiceChannelID);
+    //     PlayNextSong();
+    //   })
+    //   .on("error", error => console.error(error));
       dispatcher.setVolume(1);
       
   }
@@ -210,7 +220,7 @@ exports.StopPlayingQueue = async function (client, msg) {
   try {
       var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
-      let oVoiceChannel = oMember.voiceChannel;
+      let oVoiceChannel = oMember.voice.channel;
       if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
       {
         msg.channel.send("You and I must be in a voice channel first");
@@ -228,6 +238,8 @@ exports.StopPlayingQueue = async function (client, msg) {
     ErrorHandler.HandleError(client, err);
   }
 }
+
+
 
 async function getMaxPositionOfChannelQueue(iVoiceChannelID)
 {

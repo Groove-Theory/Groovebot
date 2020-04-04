@@ -4,7 +4,7 @@ exports.ProcessMessage = function(client, msg) {
     var ventriloquistOutputChannelID = Globals.g_VentriloquistOutputChannelID;
     if (msg.author.id == Globals.g_GrooveID && msg.channel.id == ventriloquistInputChannelID) {
 
-        var outputChannel = client.channels.get(ventriloquistOutputChannelID);
+        var outputChannel = client.channels.cache.get(ventriloquistOutputChannelID);
         if(msg.attachments.size > 0)
         {
             outputChannel.send(msg.content, {

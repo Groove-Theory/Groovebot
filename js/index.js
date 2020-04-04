@@ -40,7 +40,7 @@ client.on('ready', async () => {
       Globals.g_Client = client;
 
       console.log("I'm in: --> " + client.user.username);
-      client.guilds.forEach(function (oGuild) {
+      client.guilds.cache.forEach(function (oGuild) {
         Options.CheckServerOptionsExist(client, oGuild)
       });
       Options.Onload();
@@ -57,7 +57,7 @@ client.on('ready', async () => {
       CustomScriptsMain.Init();
       if(Globals.Environment.PRODUCTION || Globals.Environment.STAGE)
       {
-        var oGrooveUser = client.users.get(Globals.g_GrooveID);
+        var oGrooveUser = client.users.cache.get(Globals.g_GrooveID);
         oGrooveUser.send("I've successfully loaded!!");
       }
     }

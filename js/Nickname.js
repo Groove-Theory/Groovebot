@@ -17,7 +17,7 @@ exports.Init = async function (client, msg) {
     var cNewNick = msg.content.substring(11);
     cNewNick = Globals.cleanString(cNewNick);
 
-    var oGuild = msg.guild; // client.guilds.get(Globals.g_GuildID);
+    var oGuild = msg.guild; // client.guilds.cache.get(Globals.g_GuildID);
     var oGrooveUser = oGuild.members.find(m => m.id === Globals.g_GrooveID);
 
     await oGrooveUser.setNickname(cNewNick)

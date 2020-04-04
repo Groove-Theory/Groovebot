@@ -19,7 +19,7 @@ exports.Init = function(client, msg)
   let bTrueDefinition = false;  // default is a joke def
   let bDelay = false;
 
-  var msgChannel = client.channels.get(msg.channel.id);
+  var msgChannel = client.channels.cache.get(msg.channel.id);
   var aMsgContent = msg.content.split(" ")
   if(aMsgContent && aMsgContent.length > 0 && aMsgContent[aMsgContent.length - 1] == "/t")
   {

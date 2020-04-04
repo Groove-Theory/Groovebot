@@ -9,7 +9,7 @@ exports.OnMessage = function (client, msg, iMainChannelID, iCopyChannelID, bUseC
 
         if (bUseCopyFunction && iMainChannelID && iCopyChannelID && iMainChannelID == msg.channel.id) {
             var oGuild = msg.guild;
-            var copyChannel = oGuild.channels.get(iCopyChannelID);
+            var copyChannel = oGuild.channels.cache.get(iCopyChannelID);
             if (copyChannel) {
 
                 let aFileAttachments = Array.from(msg.attachments.values()).map(x => x.url);
@@ -38,7 +38,7 @@ exports.OnMessageUpdate = function (client, oldMessage, newMessage, iMainChannel
         var oGuild = oldMessage.guild;
 
         if (bUseCopyFunction && iMainChannelID && iCopyChannelID && iMainChannelID == oldMessage.channel.id) {
-            var copyChannel = oGuild.channels.get(iCopyChannelID);
+            var copyChannel = oGuild.channels.cache.get(iCopyChannelID);
             if (copyChannel) {
                 copyChannel.send(
                     {
@@ -74,7 +74,7 @@ exports.OnMessageDelete = function (client, msg, iMainChannelID, iCopyChannelID,
         var oGuild = msg.guild;
 
         if (bUseCopyFunction && iCopyChannelID && iCopyChannelID == msg.channel.id) {
-            var copyChannel = oGuild.channels.get(iCopyChannelID);
+            var copyChannel = oGuild.channels.cache.get(iCopyChannelID);
             if (copyChannel) {
                 copyChannel.send(
                     {
