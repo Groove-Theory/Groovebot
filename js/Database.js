@@ -212,9 +212,6 @@ exports.Update = function(cCollectionName, oQueryObj, oNewValuesObj)
 
 exports.Delete = function(cCollectionName, oQueryObj)
 {
-  var myquery = {
-    Address: '2'
-  };
   exports.dbo.collection(cCollectionName).deleteMany(oQueryObj, function(err, obj)
   {
     if (err) throw err;

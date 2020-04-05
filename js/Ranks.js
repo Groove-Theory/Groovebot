@@ -192,10 +192,10 @@ function HandleCategoryRank(client, msg, iHandleType)
         }
 
         let oGuild = msg.guild;
-        var oRole = oGuild.roles.find(r => r.name.toUpperCase() == cRoleName.toUpperCase());
+        var oRole = oGuild.roles.cache.find(r => r.name.toUpperCase() == cRoleName.toUpperCase());
         if(!oRole)
         {
-            oRole = oGuild.roles.find(r => r.id == cRoleName);
+            oRole = oGuild.roles.cache.find(r => r.id == cRoleName);
             if(!oRole)
             {
                 SendReplyMessage(client, msg, `Sorry, I can't find the role ${cRoleName} in this server`);
@@ -335,7 +335,7 @@ async function ShowRanks(client, msg, cCatName)
         var cReturn = "**LIST OF RANKS FOR CATEGORY: " + cCatName.toUpperCase() + "** \r\n```\r\n";
         for(var i = 0; i < aRanks.length; i++)
         {
-            oRole = oGuild.roles.find(r => r.id == aRanks[i]);
+            oRole = oGuild.roles.cache.find(r => r.id == aRanks[i]);
             if(oRole)
             {
                 aRankNames.push(oRole.name);
@@ -392,7 +392,7 @@ exports.PrintRanks = async function(client, msg)
                     for(var j = 0; j < oCategory.ranks.length; j++)
                     {
                         let iRank = oCategory.ranks[j];
-                        let oRole = oGuild.roles.find(r => r.id == iRank);
+                        let oRole = oGuild.roles.cache.find(r => r.id == iRank);
                         let cRoleName = oRole.name;
                         aRankNames.push(cRoleName)
                     }
@@ -443,7 +443,7 @@ exports.ToggleUserRank = async function(client, msg)
         }
 
         let oGuild = msg.guild;
-        var oRole = oGuild.roles.find(r => r.name.toUpperCase() == cRankName.toUpperCase());
+        var oRole = oGuild.roles.cache.find(r => r.name.toUpperCase() == cRankName.toUpperCase());
         if(!oRole)
         {
             SendReplyMessage(client, msg, "Sorry, I can't rind that rank");
@@ -468,16 +468,16 @@ exports.ToggleUserRank = async function(client, msg)
         }
         else
         {
-            var bHasRoleAlready = oMember.roles.find(r => r.id == iRoleID);
+            var bHasRoleAlready = oMember.roles.cache.find(r => r.id == iRoleID);
             let cMessage = "Uh oh, there's been an error..."
             if(bHasRoleAlready)
             {
-                await oMember.removeRole(iRoleID)
+                await oMember.roles.remove(iRoleID)
                 cMessage = "I've removed the role **" + cRankName + "** from you";
             }
             else
             {
-                await oMember.addRole(iRoleID)
+                await oMember.roles.add(iRoleID)
                 cMessage = "I've added the role **" + cRankName + "** for you";
             }
             SendReplyMessage(client, msg, cMessage);

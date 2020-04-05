@@ -62,12 +62,12 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
 
   let aAddRolesOnApprove = oResult["addroleonapprove"];
   let aRemoveRolesOnApprove = oResult["removeroleonapprove"];
-  let aMemberCurrentRoles = oMember.roles.map(r => r.id);
+  let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
   let aRolesToAddToMember = aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1)
   let aRolesToRemoveFromMember = aRemoveRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) > -1)
 
-  oMember.addRoles(aRolesToAddToMember).then(function(oMember){
-    oMember.removeRoles(aRolesToRemoveFromMember).then(function(oMember){
+  oMember.roles.add(aRolesToAddToMember).then(function(oMember){
+    oMember.roles.remove(aRolesToRemoveFromMember).then(function(oMember){
       cReturnMessage = `**${oMember.displayName}** has been approved!`
       cReturnMessage = Globals.cleanString(cReturnMessage);
       oChannel.send(cReturnMessage);

@@ -8,7 +8,7 @@ exports.Init = async function (client, msg) {
             var params = {
                 id: 1, //global WOEID
             }
-            Globals.TwitterApi.get('trends/place', params, function(err, data, response) {
+            Globals.TwitterApi.cache.get('trends/place', params, function(err, data, response) {
             // If there is no error, proceed
                 if(!err && data.length > 0)
                 {
@@ -18,10 +18,10 @@ exports.Init = async function (client, msg) {
                         let cFirstTrend = aTrends[0].name.replace("#","");
                         let cSecondTrend = aTrends[1].name.replace("#","");
 
-                        let oFirstChannel = Globals.g_Client.channels.get("620732470677078016");
-                        let oSecondChannel = Globals.g_Client.channels.get("457789197303021568");
-                        // let oFirstChannel = Globals.g_Client.channels.get("554769046470656010");
-                        // let oSecondChannel = Globals.g_Client.channels.get("558156350320803851");
+                        let oFirstChannel = Globals.g_Client.channels.cache.get("620732470677078016");
+                        let oSecondChannel = Globals.g_Client.channels.cache.get("457789197303021568");
+                        // let oFirstChannel = Globals.g_Client.channels.cache.get("554769046470656010");
+                        // let oSecondChannel = Globals.g_Client.channels.cache.get("558156350320803851");
                         if(oFirstChannel)
                             oFirstChannel.setName(`${cFirstTrend}-general`)
                         if(oSecondChannel)

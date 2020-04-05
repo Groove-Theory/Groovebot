@@ -26,8 +26,9 @@ const CommandTypeStrings = {
   HIDDEN: {cname: "", order: -100},
   INFORMATION: {cname: "Information", order: 1},
   LIBRARY: {cname: "Library", order: 5},
-  MOD: {cname: "Mod", order: 7},
+  MOD: {cname: "Mod", order: 8},
   RANK: {cname: "Rank", order: 6},
+  VOICE: {cname: "Voice", order: 7},
 };
 exports.CommandTypeStrings = CommandTypeStrings;
 
@@ -145,9 +146,9 @@ function GetChannelByInput(cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oChannel = exports.g_Client.channels.find(c => c.id == cCleanID);
+    oChannel = exports.g_Client.channels.cache.find(c => c.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oChannel = exports.g_Client.channels.find(c => c.name == cCleanID);
+    oChannel = exports.g_Client.channels.cache.find(c => c.name == cCleanID);
 
   return oChannel
 }
@@ -182,9 +183,9 @@ function GetMemberByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oMember = guild.members.find(m => m.id == cCleanID);
+    oMember = guild.members.cache.find(m => m.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oMember = guild.members.find(m => m.name == cCleanID);
+    oMember = guild.members.cache.find(m => m.name == cCleanID);
 
   return oMember
 }
@@ -211,9 +212,9 @@ function GetRoleByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oRole = guild.roles.find(r => r.id == cCleanID);
+    oRole = guild.roles.cache.find(r => r.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oRole = guild.roles.find(r => r.name == cCleanID);
+    oRole = guild.roles.cache.find(r => r.name == cCleanID);
 
   return oRole
 }
@@ -240,10 +241,10 @@ function GetEmojiByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oEmoji = guild.emojis.find(e => e.id == cCleanID);
+    oEmoji = guild.emojis.cache.find(e => e.id == cCleanID);
   else if(cCheckMethod == "NAME")
   {
-    oEmoji = guild.emojis.find(e => e.name == cCleanID);
+    oEmoji = guild.emojis.cache.find(e => e.name == cCleanID);
     if(!oEmoji)
     {
       ;//if(!containsAlphaNumeric(cCleanID))
@@ -265,6 +266,20 @@ function MillisecondsToTimeString(iMilliseconds)
     return `${iDays} Days, ${iHours} Hours, ${iMinutes} Minutes, ${iSeconds} Seconds`
 }
 exports.MillisecondsToTimeString = MillisecondsToTimeString
+
+function MillisecondsToTimeSymbol(iMilliseconds)
+{
+    let iHours = Math.floor(iMilliseconds/3600000)%24;
+    let iMinutes = Math.floor(iMilliseconds/60000)%60;
+    let iSeconds =Math.floor(iMilliseconds/1000)%60
+
+    let cHours = iHours < 10 ? "0" + iHours : iHours;
+    let cMinutes = iMinutes < 10 ? "0" + iMinutes : iMinutes;
+    let cSeconds = iSeconds < 10 ? "0" + iSeconds : iSeconds;
+
+    return `${cHours}:${cMinutes}:${cSeconds}`
+}
+exports.MillisecondsToTimeSymbol = MillisecondsToTimeSymbol
 
 function NumToSuffixedString(iVal)
 {

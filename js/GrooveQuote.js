@@ -109,7 +109,7 @@ exports.MakeQuote = async function (client, msg) {
 
 exports.Init = async function (client, msg) {
     try {
-        var msgChannel = client.channels.get(msg.channel.id);
+        var msgChannel = client.channels.cache.get(msg.channel.id);
         var iID = Globals.g_GrooveID;
 
         let oResult = await Globals.Database.QueryRandom("Quotes", {});

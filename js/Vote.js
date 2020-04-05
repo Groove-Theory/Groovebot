@@ -11,8 +11,8 @@ var cLink = "";
 var iMessageDelayTime = 5000;
 
 var oCodeMaster = null;
-var oGuild = null;//client.guilds.get(Globals.g_GuildID);
-var oSparts = null;//oGuild.roles.get(Globals.g_SparticistRole).members;
+var oGuild = null;//client.guilds.cache.get(Globals.g_GuildID);
+var oSparts = null;//oGuild.roles.cache.get(Globals.g_SparticistRole).members;
 
 var oVoteMessage = null;
 var oResultContent = {"Sent": 0, "Failed": 0}
@@ -184,7 +184,7 @@ function makeID(length) {
 
 exports.VoteSetup = function(client, msg)
 {
-  var bHasPermissions = msg.member.roles.find(r => r.id == Globals.g_CouncilpersonRoleID) || msg.member.roles.find(r => r.id == Globals.g_CodeMasterRoleID)
+  var bHasPermissions = msg.member.roles.cache.find(r => r.id == Globals.g_CouncilpersonRoleID) || msg.member.roles.cache.find(r => r.id == Globals.g_CodeMasterRoleID)
 
   if(bHasPermissions)
   {
@@ -212,9 +212,9 @@ exports.VoteSetup = function(client, msg)
 function VoteSetup_ShowOfficers(client, msg)
 {
   var cMessage = "";
-  oGuild = client.guilds.get(Globals.g_GuildID);
+  oGuild = client.guilds.cache.get(Globals.g_GuildID);
   var oOwner = oGuild.owner;
-  oCodeMaster = oGuild.roles.get(Globals.g_CodeMasterRoleID).members.first();
+  oCodeMaster = oGuild.roles.cache.get(Globals.g_CodeMasterRoleID).members.first();
 
   if(!oCodeMaster)
   {
@@ -254,7 +254,7 @@ function VoteSetup_ShowOfficers(client, msg)
 function VoteSetup_SparticistCount(client, msg)
 {
   var cMessage = "";
-  oSparts = oGuild.roles.get(Globals.g_SparticistRole).members;
+  oSparts = oGuild.roles.cache.get(Globals.g_SparticistRole).members;
   cMessage += "Dank! Ok, so I am detecting ***" + oSparts.size + "*** Spartacists to send votes to. Does this seem like the correct number? You can go to #bot-spam and type in 't!role spartacist' to double check this number. (Y/N)";
 
   msg.channel.send(cMessage);

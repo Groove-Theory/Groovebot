@@ -14,7 +14,7 @@ exports.oHelpText = new EmbeddedHelpText(
 
 exports.Init = async function (client, msg) {
     try {
-        var msgChannel = client.channels.get(msg.channel.id);
+        var msgChannel = client.channels.cache.get(msg.channel.id);
         var oMentionedUsers = msg.mentions.users;
         var cMsg = "";
         if (oMentionedUsers.size > 0) {

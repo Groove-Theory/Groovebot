@@ -9,7 +9,7 @@ exports.Init = function (client, msg) {
     {
         var oGuildMembers = msg.guild.members;
 
-        var oAuthorGuildMember = oGuildMembers.find(m => m.id == oAuthorUser.id);
+        var oAuthorGuildMember = oGuildmembers.cache.find(m => m.id == oAuthorUser.id);
 
 
         if (!oAuthorGuildMember) {
@@ -240,7 +240,7 @@ function ToggleSilenceChannel(client, msg, aMsgDetails) {
     var bAddSilenceChannel = aMsgDetails[3].toLowerCase() == "on";
     var oGuild = msg.guild;
 
-    var oSilenceChannel = client.channels.find(c => c.id == iSilenceChannelID);
+    var oSilenceChannel = client.channels.cache.find(c => c.id == iSilenceChannelID);
 
     if (!oSilenceChannel) {
         SendReplyMessage(client, msg, "Sorry, I can't find this channel")
@@ -485,7 +485,7 @@ function SendReplyMessageInCustomChannel(client, oChannel, cContent) {
 function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) {
     var oOptionType = Globals.OptionTypes[key];
     if (oOptionType && oOptionType.optiontype == "channel") {
-        var oChannel = client.channels.find(c => c.id == oResult[key])
+        var oChannel = client.channels.cache.find(c => c.id == oResult[key])
         if (oChannel)
             cMessage += " *(" + oChannel.name + ")*";
     }
@@ -494,7 +494,7 @@ function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) 
         if (aChannels && aChannels.length > 0) {
             cMessage += " *("
             for (var i = 0; i < aChannels.length; i++) {
-                var oChannel = client.channels.find(c => c.id == oResult[key][i])
+                var oChannel = client.channels.cache.find(c => c.id == oResult[key][i])
                 if (oChannel) {
                     if (i != 0)
                         cMessage += ", "
@@ -509,7 +509,7 @@ function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) 
         if (aRoles && aRoles.length > 0) {
             cMessage += " *("
             for (var i = 0; i < aRoles.length; i++) {
-                var oRole = oGuild.roles.find(r => r.id == oResult[key][i])
+                var oRole = oGuild.roles.cache.find(r => r.id == oResult[key][i])
                 if (oRole) {
                     if (i != 0)
                         cMessage += ", "
@@ -524,7 +524,7 @@ function AddDetailsToShowOptionsMessage(client, oGuild, cMessage, oResult, key) 
         if (aEmojis && aEmojis.length > 0) {
             cMessage += " *("
             for (var i = 0; i < aEmojis.length; i++) {
-                var oEmoji = oGuild.emojis.find(r => r.id == oResult[key][i])
+                var oEmoji = oGuild.emojis.cache.find(r => r.id == oResult[key][i])
                 if (oEmoji) {
                     if (i != 0)
                         cMessage += ", "

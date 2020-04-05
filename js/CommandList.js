@@ -27,6 +27,8 @@ const Portmanteau = require('./Portmanteau.js')
 const Acronym = require('./Acronym.js')
 const Vulgar = require('./Vulgar.js')
 const Simpsons = require('./Simpsons.js')
+const VoiceChat = require('./VoiceChat/VoiceChat.js')
+const MusicBot = require('./VoiceChat/MusicBot.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -388,16 +390,94 @@ exports.InitCommandMap = function(){
       false,
       "FUN"
     ));
+    Globals.aCommandMap.push(new Command(
+      "voice-join",
+      VoiceChat.VoiceJoin,
+      "g!voice-join",
+      "Makes Groovebot join the voice channel that you're in",
+      VoiceChat.oJoinHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "voice-leave",
+      VoiceChat.VoiceLeave,
+      "g!voice-leave",
+      "Makes Groovebot leave the voice channel that you're in (clears any music session)",
+      VoiceChat.oLeaveHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-add",
+      MusicBot.AddToQueue,
+      "g!music-add <youtube url>",
+      "Add a youtube track to the music queue",
+      MusicBot.oAddQueueHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-queue",
+      MusicBot.PrintQueue,
+      "g!music-queue <page?>",
+      "Print the music queue",
+      MusicBot.oPrintQueueHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-now",
+      MusicBot.NowPlaying,
+      "g!music-now",
+      "Get info for the current song in the queue",
+      MusicBot.oNowPlayingHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-play",
+      MusicBot.PlayQueue,
+      "g!music-play",
+      "Play the music queue",
+      MusicBot.oPlayHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-pause",
+      MusicBot.PauseQueue,
+      "g!music-pause",
+      "Pauses Playing the Queue",
+      MusicBot.oPauseHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-resume",
+      MusicBot.ResumeQueue,
+      "g!music-resume",
+      "Resumes Playing the Queue",
+      MusicBot.oPauseHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-history",
+      MusicBot.GetHistory,
+      "g!music-history",
+      "Gets this sessions's music history",
+      MusicBot.oHistoryHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-skip",
+      MusicBot.SkipSong,
+      "g!music-skip",
+      "Skips the current song",
+      MusicBot.oHistoryHelpText,
+      false,
+      "VOICE"
+    ));
   }
-
-
-
-
-  // {
-  //   name: "\"AskOuija:\"",
-  //   value: " Starts a ouija question (must set up in Options). Inputs are only one letter messages. Type \"goodbye\" to end. "
-  // },
-  // {
-  //   name: "\"Hey Groovebot, \"",
-  //   value: " Starts a question for Groovebot (must set up in Options). Inputs are only one word messages (no spaces). Type \"goodbye\" to end. "
-  // }

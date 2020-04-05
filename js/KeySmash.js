@@ -22,7 +22,7 @@ exports.Init = function(client, msg)
 
   var keysmash = smash.join("")
 
-  var msgChannel = client.channels.get(msg.channel.id);
+  var msgChannel = client.channels.cache.get(msg.channel.id);
   msgChannel.send(keysmash);
 
 }

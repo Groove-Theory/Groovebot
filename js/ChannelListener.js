@@ -129,7 +129,7 @@ exports.Init = function (client) {
             // Hotfix for one guild
             // if(member.guild.id == "190543951080456192")
             // {
-            //     member.addRole('457737348218617857')
+            //     member.roles.add('457737348218617857')
             // }
         }
         catch (err) {
