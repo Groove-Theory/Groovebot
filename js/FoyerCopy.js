@@ -14,7 +14,7 @@ exports.OnMessage = function (client, msg, iMainChannelID, iCopyChannelID, bUseC
 
                 let aFileAttachments = Array.from(msg.attachments.values()).map(x => x.url);
                 var bUseImageAttach = aFileAttachments.length == 1 && fileIsImage(aFileAttachments[0])
-                const exampleEmbed = new Discord.RichEmbed()
+                const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle('(New Message)')
                     .setAuthor(msg.author.username, msg.author.avatarURL)

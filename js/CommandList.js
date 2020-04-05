@@ -403,7 +403,7 @@ exports.InitCommandMap = function(){
       "voice-leave",
       VoiceChat.VoiceLeave,
       "g!voice-leave",
-      "Makes Groovebot leave the voice channel that you're in",
+      "Makes Groovebot leave the voice channel that you're in (clears any music session)",
       VoiceChat.oLeaveHelpText,
       false,
       "VOICE"
@@ -411,7 +411,7 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "music-add",
       MusicBot.AddToQueue,
-      "g!music-add",
+      "g!music-add <youtube url>",
       "Add a youtube track to the music queue",
       MusicBot.oAddQueueHelpText,
       false,
@@ -420,7 +420,7 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "music-queue",
       MusicBot.PrintQueue,
-      "g!music-queue",
+      "g!music-queue <page?>",
       "Print the music queue",
       MusicBot.oPrintQueueHelpText,
       false,
@@ -445,11 +445,38 @@ exports.InitCommandMap = function(){
       "VOICE"
     ));
     Globals.aCommandMap.push(new Command(
-      "music-stop",
-      MusicBot.NowPlaStopPlayingQueueying,
-      "g!music-stop",
-      "Stop Playing the Queue",
-      MusicBot.oStopHelpText,
+      "music-pause",
+      MusicBot.PauseQueue,
+      "g!music-pause",
+      "Pauses Playing the Queue",
+      MusicBot.oPauseHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-resume",
+      MusicBot.ResumeQueue,
+      "g!music-resume",
+      "Resumes Playing the Queue",
+      MusicBot.oPauseHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-history",
+      MusicBot.GetHistory,
+      "g!music-history",
+      "Gets this sessions's music history",
+      MusicBot.oHistoryHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-skip",
+      MusicBot.SkipSong,
+      "g!music-skip",
+      "Skips the current song",
+      MusicBot.oHistoryHelpText,
       false,
       "VOICE"
     ));

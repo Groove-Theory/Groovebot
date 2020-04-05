@@ -1,5 +1,6 @@
 const Globals = require('../Globals.js')
 const ErrorHandler = require('../ErrorHandler.js');
+const MusicBot = require('./MusicBot.js');
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
 exports.oJoinHelpText = new EmbeddedHelpText(
@@ -21,14 +22,11 @@ exports.VoiceJoin = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(MemberIsInVoiceChannel(oMember, false))
+      let bPassesCheck = MemberPassesVoiceChannelCheck(oMember, msg.channel, false)
+      if(bPassesCheck)
       {
           oVoiceChannel.join();
           msg.channel.send(":wave: Hello, groobot is in the voice thingy");
-      }
-      else
-      {
-          msg.channel.send("You must be in a voice channel first.");
       }
   }
   catch (err) {
@@ -40,14 +38,12 @@ exports.VoiceLeave = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(MemberIsInVoiceChannel(oMember))
+      let bPassesCheck = MemberPassesVoiceChannelCheck(oMember, msg.channel, false)
+      if(bPassesCheck)
       {
           oVoiceChannel.leave();
+          MusicBot.ClearMusicSession(oVoiceChannel.id)
           msg.channel.send("ok bai");
-      }
-      else
-      {
-          msg.channel.send("You must be in a voice channel first");
       }
   }
   catch (err) {
@@ -82,3 +78,15 @@ function GetVoiceConnection(iMemberVoiceChannelID)
   return aData[0][1];
 }
 exports.GetVoiceConnection = GetVoiceConnection;
+
+function MemberPassesVoiceChannelCheck(oMember, oMessageChannel, bBotCheck)
+{
+  if(!MemberIsInVoiceChannel(oMember, bBotCheck))
+  {
+    if(oMessageChannel)
+      oMessageChannel.send("You and I must be in a voice channel first");
+    return false;
+  }
+  return true;
+}
+exports.MemberPassesVoiceChannelCheck = MemberPassesVoiceChannelCheck

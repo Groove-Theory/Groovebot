@@ -22,7 +22,7 @@ exports.ProcessMessage = function(client, msg) {
         if(aWhatMessagesFound && aWhatMessagesFound.length > 0)
         {
             var iWhatMsgID = msg.id;
-            msg.channel.fetchMessages({ limit: 100 }).then((messages) => {
+            msg.channel.messages.fetch({ limit: 100 }).then((messages) => {
                 console.log(iWhatMsgID);
             var aMessages= Array.from(messages);
             var iWhatIndex = aMessages.findIndex(elem => elem[0] == iWhatMsgID)

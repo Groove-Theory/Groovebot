@@ -12,7 +12,7 @@ function IsPin(react) {
 }
 
 function GetPinCount(msg) {
-    let oStarReacts = msg.reactions.find(r => exports.IsPin(r));
+    let oStarReacts = msg.reactions.cache.find(r => exports.IsPin(r));
     return oStarReacts ? oStarReacts.count : 0;
 }
 
@@ -22,7 +22,7 @@ function PassedPinboardThreshold(msg, iThreshold) {
 
 async function CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs) {
     const image = msg.attachments.size > 0 ? msg.attachments.array()[0].url : '';
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         .setColor("RED")
         .setDescription(msg.content)
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL)
@@ -36,7 +36,7 @@ async function CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs) {
 
 async function EditPinboardMessage(msg, pinner, oPinboardMessage, oArgs) {
     const image = msg.attachments.size > 0 ? msg.attachments.array()[0].url : '';
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         .setColor("RED")
         .setDescription(msg.content)
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL)
@@ -111,7 +111,7 @@ async function EditPinboardMessage(msg, pinner, oPinboardMessage, oArgs) {
 // }
 
 function IsMod(user, guild) {
-    let oMember = guild.members.find(m => m.id == user.id);
+    let oMember = guild.members.cache.find(m => m.id == user.id);
     return oMember && oMember.hasPermission('MANAGE_GUILD')
 }
 

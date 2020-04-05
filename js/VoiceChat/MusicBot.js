@@ -2,6 +2,8 @@ const Globals = require('../Globals.js')
 const ErrorHandler = require('../ErrorHandler.js');
 const VoiceChat = require('./VoiceChat.js');
 const ytdl = require("ytdl-core");
+const MusicList = require('./MusicList.js');
+
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
 exports.oAddQueueHelpText = new EmbeddedHelpText(
@@ -32,12 +34,33 @@ exports.oPlayHelpText = new EmbeddedHelpText(
    "",
    "``g!music-play`` (plays from the top of the queue)"
 )
-exports.oStopHelpText = new EmbeddedHelpText(
-  "Music-Stop",
-  "Stops playing the queue!",
+exports.oPauseHelpText = new EmbeddedHelpText(
+  "Music-Pause",
+  "Pauses playing the queue!",
    "",
    "",
-   "``g!music-stop`` (gets info on the current song in the queue)"
+   "``g!music-pause`` (pauses the music queue)"
+)
+exports.oResumeHelpText = new EmbeddedHelpText(
+  "Music-Resume",
+  "Resumes playing the queue!",
+   "",
+   "",
+   "``g!music-resume`` (resumes the music queue)"
+)
+exports.oHistoryHelpText = new EmbeddedHelpText(
+  "Music-History",
+  "Gets the history from what Groovebot's been playing this session!",
+   "",
+   "",
+   "``g!music-history`` (gets music history)"
+)
+exports.oSkipHelpText = new EmbeddedHelpText(
+  "Music-Skip",
+  "Skips the current song playing",
+   "",
+   "",
+   "``g!music-skip`` (skips the current song)"
 )
 
 exports.AddToQueue = async function (client, msg) {
@@ -53,11 +76,9 @@ exports.AddToQueue = async function (client, msg) {
         msg.channel.send("I need a valid youtube URL");
         return;
       }
-      if(!VoiceChat.MemberIsInVoiceChannel(oMember, true) || !cURL)
-      {
-        msg.channel.send("You and I must be in a voice channel first");
+
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
         return;
-      }
 
       if(!iPosition)
         iPosition = await getMaxPositionOfChannelQueue(oVoiceChannel.id) + 1
@@ -81,6 +102,7 @@ exports.AddToQueue = async function (client, msg) {
       
   }
   catch (err) {
+    msg.channel.send("Uh oh.... I goofed. Try again and see if that works.");
     ErrorHandler.HandleError(client, err);
   }
 }
@@ -92,11 +114,9 @@ exports.PrintQueue = async function (client, msg) {
       iPage = iPage ? iPage : 1;
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
-      {
-        msg.channel.send("You and I must be in a voice channel first");
+      let oMessageChannel = msg.channel;
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
         return;
-      }
       
       var oQueryObject = {
         voiceChannelID: oVoiceChannel.id,
@@ -112,18 +132,10 @@ exports.PrintQueue = async function (client, msg) {
       }
 
       let oCurrentSongData = aResult[0];
-      var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes:
-                            \r\n :timer: QUEUE: (page ${iPage} of ${Math.ceil(aResult.length/10)}  ) \r\n`
-      for(var i = 0; i < 10; i++)
-      {
-        let iIndex = i*iPage;
-        if(iIndex == 0)
-          continue;// We already have now playing
-        if(iIndex >= aResult.length)
-          break;
-        let oData = aResult[iIndex];
-        cReturnString += `**${iIndex+1}) ${oData.cDescription}** (${Globals.MillisecondsToTimeSymbol(oData.iSeconds * 1000)})\r\n`
-      }      
+      var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes:`
+      
+      aResult.shift();
+      MusicList.WriteList(aResult, "Coming Up....", oMessageChannel);  
       msg.channel.send(cReturnString);
   }
   catch (err) {
@@ -133,14 +145,10 @@ exports.PrintQueue = async function (client, msg) {
 
 exports.NowPlaying = async function (client, msg) {
   try {
-      var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
-      {
-        msg.channel.send("You and I must be in a voice channel first");
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
         return;
-      }
       
       let aResult =await getSongQueueData(oVoiceChannel.id)
       if(!aResult || aResult.length == 0)
@@ -164,13 +172,12 @@ exports.PlayQueue = async function (client, msg) {
       var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
-      {
-        msg.channel.send("You and I must be in a voice channel first");
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
         return;
-      }
       
-      PlayNextSong(oMember.voice.channel.id);
+      let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
+      if(!oVoiceConnection.voice.speaking)
+        PlayNextSong(oMember.voice.channel.id);
       
   }
   catch (err) {
@@ -180,7 +187,6 @@ exports.PlayQueue = async function (client, msg) {
 
 async function PlayNextSong (iVoiceChannelID) {
   try { 
-      const streamOptions = { seek: 0, volume: 1 };
       let aResult = await getSongQueueData(iVoiceChannelID)
       if(!aResult || aResult.length == 0)
         return;
@@ -189,26 +195,22 @@ async function PlayNextSong (iVoiceChannelID) {
         return;
       
       let oCurrentSongData = aResult[0];
-      const stream = ytdl(oCurrentSongData.cURL, { filter : 'audioonly' });
-          const dispatcher = oVoiceConnection
-          .play(
-            ytdl(oCurrentSongData.cURL, { // pass the url to .ytdl()
-              quality: 'highestaudio',
-              // download part of the song before playing it
-              // helps reduces stuttering
-              highWaterMark: 1024 * 1024 * 10
-            })
-          )//oVoiceConnection.playStream(stream, streamOptions);
+      if(!oCurrentSongData)
+        return;
 
-      //const dispatcher = oVoiceConnection.playStream(stream, streamOptions);
-
-    //   dispatcher.on("finish", () => {
-    //     OnSongFinished(oCurrentSongData, iVoiceChannelID);
-    //     PlayNextSong();
-    //   })
-    //   .on("error", error => console.error(error));
-      dispatcher.setVolume(1);
-      
+      const dispatcher = oVoiceConnection.play(ytdl(oCurrentSongData.cURL, { filter:'audioonly', quality: 'highestaudio', highWaterMark: 1024 * 1024 * 10 }))
+      .on('start', () => {
+        dispatcher.setVolume(1);
+      })
+      .on('finish', async () => { // this event fires when the song has ended
+        await OnSongFinished(oCurrentSongData, iVoiceChannelID);
+        PlayNextSong(iVoiceChannelID);
+      })
+          
+      dispatcher.on('error', error =>
+      {
+        ErrorHandler.HandleError(Globals.g_Client, error);
+      });      
   }
   catch (err) {
     ErrorHandler.HandleError(Globals.g_Client, err);
@@ -216,22 +218,22 @@ async function PlayNextSong (iVoiceChannelID) {
 }
 exports.PlayNextSong = PlayNextSong;
 
-exports.StopPlayingQueue = async function (client, msg) {
+exports.SkipSong = async function (client, msg) {
   try {
-      var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberIsInVoiceChannel(oMember, true))
-      {
-        msg.channel.send("You and I must be in a voice channel first");
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
         return;
-      }
-      
-      let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
-      if(!oVoiceConnection)
-        return;
-      
-      oVoiceConnection.dispatcher.end();
+
+      let aResult = await getSongQueueData(oVoiceChannel.id)
+      if(!aResult || aResult.length == 0)
+          return;
+
+      let oCurrentSongData = aResult[0];
+
+      await OnSongFinished(oCurrentSongData, oVoiceChannel.id)
+      PlayNextSong(oMember.voice.channel.id);
+      msg.channel.send("Skipping to next song");
       
   }
   catch (err) {
@@ -239,6 +241,66 @@ exports.StopPlayingQueue = async function (client, msg) {
   }
 }
 
+exports.PauseQueue = async function (client, msg) {
+  try {
+      let oMember = msg.member;
+      let oVoiceChannel = oMember.voice.channel;
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+        return;
+      
+      let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
+      if(!oVoiceConnection)
+        return;
+      
+      oVoiceConnection.dispatcher.pause();
+      msg.channel.send("Pausing the thingy");
+      
+  }
+  catch (err) {
+    ErrorHandler.HandleError(client, err);
+  }
+}
+
+exports.ResumeQueue = async function (client, msg) {
+  try {
+      let oMember = msg.member;
+      let oVoiceChannel = oMember.voice.channel;
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+        return;
+      
+      let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
+      if(!oVoiceConnection)
+        return;
+      
+      oVoiceConnection.dispatcher.resume();
+      msg.channel.send("Resuming the thingy");
+  }
+  catch (err) {
+    ErrorHandler.HandleError(client, err);
+  }
+}
+
+exports.GetHistory = async function (client, msg) {
+  try {
+      let oMember = msg.member;
+      let oVoiceChannel = oMember.voice.channel;
+      let oMessageChannel = msg.channel
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+        return;
+
+      let aResult =await getSongQueueData(oVoiceChannel.id, true)
+      if(!aResult || aResult.length == 0)
+      {
+        oMessageChannel.send("Sorry, no played songs")
+        return;
+      }
+
+      MusicList.WriteList(aResult, "History", oMessageChannel);
+  }
+  catch (err) {
+    ErrorHandler.HandleError(client, err);
+  }
+}
 
 
 async function getMaxPositionOfChannelQueue(iVoiceChannelID)
@@ -274,11 +336,11 @@ async function getYoutubeData(url)
   return songInfo;
 }
 
-async function getSongQueueData(iVoiceChannelId)
+async function getSongQueueData(iVoiceChannelId, bPlayed=false)
 {
   var oQueryObject = {
     voiceChannelID: iVoiceChannelId,
-    bPlayed: false,
+    bPlayed: bPlayed,
     production: Globals.Environment.PRODUCTION,
   }
   var oSortObject = { iPosition: 1 }
@@ -286,7 +348,7 @@ async function getSongQueueData(iVoiceChannelId)
   return aResult;
 }
 
-function OnSongFinished(oSongData, iVoiceChannelID)
+async function OnSongFinished(oSongData, iVoiceChannelID)
 {
   var oKeyObject = {
     voiceChannelID: iVoiceChannelID,
@@ -298,5 +360,16 @@ function OnSongFinished(oSongData, iVoiceChannelID)
     bPlayed: true
   };
 
-  Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject);
+  await Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject);
 }
+
+function ClearMusicSession(iVoiceChannelID)
+{
+  var oKeyObject = {
+    voiceChannelID: iVoiceChannelID
+  }
+
+  Globals.Database.Delete("MusicQueue", oKeyObject);
+}
+exports.ClearMusicSession = ClearMusicSession
+

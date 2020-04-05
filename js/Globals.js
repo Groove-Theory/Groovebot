@@ -146,9 +146,9 @@ function GetChannelByInput(cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oChannel = exports.g_Client.channels.find(c => c.id == cCleanID);
+    oChannel = exports.g_Client.channels.cache.find(c => c.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oChannel = exports.g_Client.channels.find(c => c.name == cCleanID);
+    oChannel = exports.g_Client.channels.cache.find(c => c.name == cCleanID);
 
   return oChannel
 }
@@ -183,9 +183,9 @@ function GetMemberByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oMember = guild.members.find(m => m.id == cCleanID);
+    oMember = guild.members.cache.find(m => m.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oMember = guild.members.find(m => m.name == cCleanID);
+    oMember = guild.members.cache.find(m => m.name == cCleanID);
 
   return oMember
 }
@@ -212,9 +212,9 @@ function GetRoleByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oRole = guild.roles.find(r => r.id == cCleanID);
+    oRole = guild.roles.cache.find(r => r.id == cCleanID);
   else if(cCheckMethod == "NAME")
-    oRole = guild.roles.find(r => r.name == cCleanID);
+    oRole = guild.roles.cache.find(r => r.name == cCleanID);
 
   return oRole
 }
@@ -241,10 +241,10 @@ function GetEmojiByInput(guild, cInput)
     cCheckMethod = "NAME";
   }
   if(cCheckMethod == "ID")
-    oEmoji = guild.emojis.find(e => e.id == cCleanID);
+    oEmoji = guild.emojis.cache.find(e => e.id == cCleanID);
   else if(cCheckMethod == "NAME")
   {
-    oEmoji = guild.emojis.find(e => e.name == cCleanID);
+    oEmoji = guild.emojis.cache.find(e => e.name == cCleanID);
     if(!oEmoji)
     {
       ;//if(!containsAlphaNumeric(cCleanID))

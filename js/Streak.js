@@ -48,7 +48,7 @@ async function getStreakCount(cString, oChannel) {
       if (last_id) {
           options.before = last_id;
       }
-      const messages = await oChannel.fetchMessages(options);
+      const messages = await oChannel.messages.fetch(options);
       if(messages.length == 0)
         break;
       var aMessageArray = messages.array();

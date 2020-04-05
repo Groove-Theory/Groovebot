@@ -16,11 +16,11 @@ exports.ProcessReact = ProcessReact;
 
 
 async function HandlePinboardChannelMessage(msg, pinner, oServerOptions, oArgs) {
-    let oPinboardChannel = Globals.g_Client.channels.find(c => c.id == oServerOptions["pinboardchannel"]);
+    let oPinboardChannel = Globals.g_Client.channels.cache.find(c => c.id == oServerOptions["pinboardchannel"]);
     if (!oPinboardChannel) {
         return;
     }
-    let fetchedMessages = await oPinboardChannel.fetchMessages({ limit: 100 });
+    let fetchedMessages = await oPinboardChannel.messages.fetch({ limit: 100 });
     let oPinboardMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith('📌') && m.embeds[0].footer.text.endsWith(msg.id));
     if (!oPinboardMessage && oArgs["bPassedThreshold"]) {
         oPinboardMessage = await PinboardUtils.CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs);

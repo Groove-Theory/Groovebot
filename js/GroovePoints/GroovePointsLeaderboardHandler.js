@@ -60,7 +60,7 @@ async function editLeaderboardMessage(oGuild, oAuthor, oMessage, iDirection)
 async function printLeaderboard(oGuild, oAuthor, oChannel, iPage, oMessage)
 {
     let aData = await getLeaderboardData(oGuild.id, iPage);
-    let oEmbed = new Discord.RichEmbed()
+    let oEmbed = new Discord.MessageEmbed()
                     .setColor('#c0ff28')
                     .setTitle('GroovePoints Leaderboard')
                     .setDescription(`Page ${iPage}/${Math.ceil(aData.length/iRanksPerPage)}`);
@@ -69,7 +69,7 @@ async function printLeaderboard(oGuild, oAuthor, oChannel, iPage, oMessage)
         let oItem = aData[((iPage-1) * iRanksPerPage )+ i];
         if(oItem)
         {
-            let oMember = oGuild.members.find(m => m.id == oItem.userID)
+            let oMember = oGuild.members.cache.find(m => m.id == oItem.userID)
             if(oMember)
                 oEmbed.addField(`${((iPage-1) * iRanksPerPage )+ i +1}) ${oMember.user.username} `, Globals.NumToSuffixedString(oItem.points), false); 
         }

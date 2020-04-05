@@ -3,6 +3,7 @@ const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 const PaginationMessage = require("./Classes/PaginationMessage.js");
 const PaginationButton = require("./Classes/PaginationButton.js");
 const Discord = require('discord.js');
+const ErrorHandler = require('./ErrorHandler.js');
 
 const oHelpText = new EmbeddedHelpText(
    "Help",
@@ -81,7 +82,7 @@ async function getHelpPageInfo(oChannel, bMod, iDirection, oMessage)
 async function printHelpEmbed(oChannel, cCommandKey, bMod, oMessage)
 {
   let aCommands = Globals.aCommandMap.filter(c => c.cCommandType == cCommandKey && c.bModOnly == bMod)
-  let oHelpEmbed = new Discord.RichEmbed()
+  let oHelpEmbed = new Discord.MessageEmbed()
   .setColor('#0356fc')
   .setTitle(`${Globals.CommandTypeStrings[cCommandKey].cname} Commands`)
   .setDescription(`Page ${Globals.CommandTypeStrings[cCommandKey].order}`);

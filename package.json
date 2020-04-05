@@ -6,7 +6,6 @@
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg": "0.0.4",
-    "ffmpeg-binaries": "^3.2.2-3",
     "ffmpeg-static": "^4.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "frinkiac": "^1.0.2",

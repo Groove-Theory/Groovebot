@@ -193,7 +193,7 @@ function hasValidAskGroovebotCommand(cString) {
 function assembleFinalMessage(bAskType, ouijaChannel, iQuestionMessageID, cResult) {
     var promise = new Promise(function(resolve, reject) {
         var oQuestionMsg = null;
-        ouijaChannel.fetchMessages({ limit: 100 }).then(function(messages) {
+        ouijaChannel.messages.fetch({ limit: 100 }).then(function(messages) {
             var bPastFirstMessage = false;
             for (let aMsg of messages) {
                 msg = aMsg[1];

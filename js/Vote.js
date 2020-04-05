@@ -184,7 +184,7 @@ function makeID(length) {
 
 exports.VoteSetup = function(client, msg)
 {
-  var bHasPermissions = msg.member.roles.find(r => r.id == Globals.g_CouncilpersonRoleID) || msg.member.roles.find(r => r.id == Globals.g_CodeMasterRoleID)
+  var bHasPermissions = msg.member.roles.cache.find(r => r.id == Globals.g_CouncilpersonRoleID) || msg.member.roles.cache.find(r => r.id == Globals.g_CodeMasterRoleID)
 
   if(bHasPermissions)
   {
