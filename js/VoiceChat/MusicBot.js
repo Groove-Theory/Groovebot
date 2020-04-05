@@ -77,8 +77,10 @@ exports.AddToQueue = async function (client, msg) {
         return;
       }
 
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
+      {
         return;
+      }
 
       if(!iPosition)
         iPosition = await getMaxPositionOfChannelQueue(oVoiceChannel.id) + 1
@@ -115,7 +117,7 @@ exports.PrintQueue = async function (client, msg) {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
       let oMessageChannel = msg.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       var oQueryObject = {
@@ -147,7 +149,7 @@ exports.NowPlaying = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       let aResult =await getSongQueueData(oVoiceChannel.id)
@@ -172,7 +174,7 @@ exports.PlayQueue = async function (client, msg) {
       var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
@@ -222,7 +224,7 @@ exports.SkipSong = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
 
       let aResult = await getSongQueueData(oVoiceChannel.id)
@@ -245,7 +247,7 @@ exports.PauseQueue = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
@@ -265,7 +267,7 @@ exports.ResumeQueue = async function (client, msg) {
   try {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
@@ -285,7 +287,7 @@ exports.GetHistory = async function (client, msg) {
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
       let oMessageChannel = msg.channel
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, false))
+      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
 
       let aResult =await getSongQueueData(oVoiceChannel.id, true)
