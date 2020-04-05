@@ -96,7 +96,7 @@ exports.MakeQuote = async function (client, msg) {
         const avatar = await loadImage("https://cdn.discordapp.com/avatars/193800300518309888/4fcca7d6ba44f2de226003711e45ef69.jpg?size=40");
         ctx.drawImage(avatar, 10, 10, 40, 40);//ctx.drawImage(avatar, 25, 25, 200, 200);
 
-        const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 
         msg.channel.send("", attachment);
     }

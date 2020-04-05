@@ -65,7 +65,7 @@ async function processImage(cAttachmentURL, oChannel)
         ctx.fillStyle = "#0000FF";
         ctx.fillRect(0, 475, 1000, 50);
 
-        const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 
         oChannel.send("**C U R S E D**", attachment);
     }
