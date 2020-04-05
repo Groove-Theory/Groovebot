@@ -43,9 +43,6 @@ var cLink = null;
 
 exports.MakeQuote = async function (client, msg) {
     try {
-        if (msg.author.id == 299248686565687296)
-            return true;
-
         if(Globals.g_WindowsMachine)
         {
             msg.channel.send("Sorry, cant use this while testing on a Windows Machine")
@@ -93,7 +90,7 @@ exports.MakeQuote = async function (client, msg) {
         ctx.closePath();
         ctx.clip();
 
-        const avatar = await loadImage("https://cdn.discordapp.com/avatars/193800300518309888/4fcca7d6ba44f2de226003711e45ef69.jpg?size=40");
+        const avatar = await loadImage("https://cdn.discordapp.com/avatars/193800300518309888/68330ad15c6caf22a33dd73cce8bc281.jpg?size=1024");
         ctx.drawImage(avatar, 10, 10, 40, 40);//ctx.drawImage(avatar, 25, 25, 200, 200);
 
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
