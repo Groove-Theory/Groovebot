@@ -410,7 +410,7 @@ exports.InitCommandMap = function(){
     ));
     Globals.aCommandMap.push(new Command(
       "music-add",
-      MusicBot.AddToQueue,
+      MusicBot.AddToQueueFromMessage,
       "g!music-add <youtube url>",
       "Add a youtube track to the music queue",
       MusicBot.oAddQueueHelpText,
@@ -477,6 +477,15 @@ exports.InitCommandMap = function(){
       "g!music-skip",
       "Skips the current song",
       MusicBot.oHistoryHelpText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "music-search",
+      MusicBot.FetchYoutubeSearchResults,
+      "g!music-search",
+      "Searches Top 5 search results for youtube vids",
+      MusicBot.oSearchText,
       false,
       "VOICE"
     ));

@@ -3,8 +3,12 @@ const ErrorHandler = require('../ErrorHandler.js');
 const VoiceChat = require('./VoiceChat.js');
 const ytdl = require("ytdl-core");
 const MusicList = require('./MusicList.js');
+const ytsr = require('ytsr');
+const Discord = require('discord.js');
 
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
+
+const iMaxSearchResults = 5;
 
 exports.oAddQueueHelpText = new EmbeddedHelpText(
   "Music-Add",
@@ -62,50 +66,66 @@ exports.oSkipHelpText = new EmbeddedHelpText(
    "",
    "``g!music-skip`` (skips the current song)"
 )
+exports.oSearchText = new EmbeddedHelpText(
+  "Music-Search",
+  `Searches Top ${iMaxSearchResults} search results for youtube vids`,
+   "<search string> the search string to get videos from. Pick one to add to the queue",
+   "",
+   "``g!music-search JPEGMafia`` (gets 5 JPEGMafia video results)"
+)
 
-exports.AddToQueue = async function (client, msg) {
+
+exports.AddToQueueFromMessage = async function (client, msg) {
   try {
       var aMsgContents = msg.content.split(/\s+/);
       let cURL = aMsgContents[1];
-      let iPosition = aMsgContents[2];
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      let oSongData = await getYoutubeData(cURL);
-      if(!oSongData)
-      {
-        msg.channel.send("I need a valid youtube URL");
-        return;
-      }
-
-      if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
-      {
-        return;
-      }
-
-      if(!iPosition)
-        iPosition = await getMaxPositionOfChannelQueue(oVoiceChannel.id) + 1
-      var oKeyObject = {
-        voiceChannelID: oVoiceChannel.id,
-        production: Globals.Environment.PRODUCTION,
-        cURL: cURL
-      }
-      var oInsertObject = {
-        iPosition: iPosition,
-        bPlayed: false,
-        cDescription: oSongData.title,
-        iSeconds: parseInt(oSongData.length_seconds),
-        cUserName: oMember.displayName,
-        cUserId: oMember.id
-      };
-
-      Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject, (function() {
-        msg.channel.send(`__Added Song:__ **${oSongData.title}** *(${Globals.MillisecondsToTimeSymbol(oSongData.length_seconds * 1000)})*`);
-      })());
-      
+      AddSong(oMember, cURL, oVoiceChannel.id, msg.channel)  
   }
   catch (err) {
-    msg.channel.send("Uh oh.... I goofed. Try again and see if that works.");
     ErrorHandler.HandleError(client, err);
+  }
+}
+
+async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
+{
+  try{
+    let oSongData = await getYoutubeData(cURL);
+    if(!oSongData)
+    {
+      if(oMessageChannel)
+        oMessageChannel.send("I need a valid youtube URL");
+      return;
+    }
+
+    if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, oMessageChannel, true))
+      return;
+
+    iPosition = Date.now();//await getMaxPositionOfChannelQueue(oVoiceChannel.id) + 1
+    var oKeyObject = {
+      voiceChannelID: iVoiceChannelID,
+      production: Globals.Environment.PRODUCTION,
+      cURL: cURL
+    }
+    var oInsertObject = {
+      iPosition: iPosition,
+      bPlayed: false,
+      cDescription: oSongData.title,
+      iSeconds: parseInt(oSongData.length_seconds),
+      cUserName: oMember.displayName,
+      cUserId: oMember.id
+    };
+
+    Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject, (function() {
+      if(oMessageChannel)
+        oMessageChannel.send(`__Added Song:__ **${oSongData.title}** *(${Globals.MillisecondsToTimeSymbol(oSongData.length_seconds * 1000)})*`);
+    })());
+  }
+  catch (err) {
+    if(oMessageChannel)
+      oMessageChannel.send("Uh oh.... I goofed. Try again and see if that works.");
+    ErrorHandler.HandleError(Globals.g_Client, err);
   }
 }
 
@@ -135,10 +155,11 @@ exports.PrintQueue = async function (client, msg) {
 
       let oCurrentSongData = aResult[0];
       var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes:`
-      
+      msg.channel.send(cReturnString);
+
       aResult.shift();
       MusicList.WriteList(aResult, "Coming Up....", oMessageChannel);  
-      msg.channel.send(cReturnString);
+      
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);
@@ -187,7 +208,7 @@ exports.PlayQueue = async function (client, msg) {
   }
 }
 
-async function PlayNextSong (iVoiceChannelID) {
+async function PlayNextSong (iVoiceChannelID, iPosition) {
   try { 
       let aResult = await getSongQueueData(iVoiceChannelID)
       if(!aResult || aResult.length == 0)
@@ -196,17 +217,22 @@ async function PlayNextSong (iVoiceChannelID) {
       if(!oVoiceConnection)
         return;
       
-      let oCurrentSongData = aResult[0];
+      let oCurrentSongData;
+      if(iPosition)
+        oCurrentSongData = aResult.find(r => r.iPosition >= iPosition);
+      else
+        oCurrentSongData = aResult[0];
+
       if(!oCurrentSongData)
         return;
 
-      const dispatcher = oVoiceConnection.play(ytdl(oCurrentSongData.cURL, { filter:'audioonly', quality: 'highestaudio', highWaterMark: 1024 * 1024 * 10 }))
+      const dispatcher = oVoiceConnection.play(ytdl(oCurrentSongData.cURL, { filter:'audioonly', quality: 'highestaudio', highWaterMark: 1024 * 1024 * 20 }))
       .on('start', () => {
         dispatcher.setVolume(1);
       })
       .on('finish', async () => { // this event fires when the song has ended
-        await OnSongFinished(oCurrentSongData, iVoiceChannelID);
-        PlayNextSong(iVoiceChannelID);
+        let iDeletedPosition = await OnSongFinished(oCurrentSongData, iVoiceChannelID);
+        PlayNextSong(iVoiceChannelID, iDeletedPosition + 1);
       })
           
       dispatcher.on('error', error =>
@@ -233,8 +259,8 @@ exports.SkipSong = async function (client, msg) {
 
       let oCurrentSongData = aResult[0];
 
-      await OnSongFinished(oCurrentSongData, oVoiceChannel.id)
-      PlayNextSong(oMember.voice.channel.id);
+      let iDeletedPosition = await OnSongFinished(oCurrentSongData, oVoiceChannel.id)
+      PlayNextSong(oMember.voice.channel.id, iDeletedPosition + 1);
       msg.channel.send("Skipping to next song");
       
   }
@@ -363,6 +389,8 @@ async function OnSongFinished(oSongData, iVoiceChannelID)
   };
 
   await Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject);
+
+  return oSongData.iPosition; // Return the position that was just deleted
 }
 
 function ClearMusicSession(iVoiceChannelID)
@@ -375,3 +403,64 @@ function ClearMusicSession(iVoiceChannelID)
 }
 exports.ClearMusicSession = ClearMusicSession
 
+async function FetchYoutubeSearchResults(client, msg, iMaxResults = iMaxSearchResults)
+{
+
+  let oMember = msg.member;
+  let oVoiceChannel = oMember.voice.channel;
+  let oMessageChannel = msg.channel
+  if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
+    return;
+
+  let aMsgContents = msg.content.split(/\s+/);
+  aMsgContents.shift();
+  let cSearchString = aMsgContents.join(" ")
+  
+  let filter;
+  ytsr.getFilters(cSearchString, function(err, filters) {
+    if(err) throw err;
+    filter = filters.get('Type').find(o => o.name === 'Video');
+    ytsr.getFilters(filter.ref, function(err, filters) {
+      if(err) throw err;
+      filter = filters.get('Duration').find(o => o.name.startsWith('Short'));
+      var options = {
+        limit: 5,
+        nextpageRef: filter.ref,
+      }
+      ytsr(null, options, function(err, oSearchResults) {
+        if(err) throw err;
+        DisplaySearchResults(oMember, oMessageChannel, oSearchResults.items, oVoiceChannel.id)
+      });
+    });
+  });
+}
+
+function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceChannelID)
+{
+  let cResultsString = `Here's what I found. Please pick one by typing in the number (1-${iMaxSearchResults})\r\n\r\n`;
+  for(var i = 0; i < aSearchResults.length; i++)
+  {
+    let oResult = aSearchResults[i];
+    cResultsString += `${i+1}) **${oResult.title}** *(${oResult.duration})* \r\n`
+  }
+  oMessageChannel.send(cResultsString);
+  var collector = new Discord.MessageCollector(oMessageChannel, m => m.author.id === oMember.id, { time: 60000 });
+  collector.on('collect', msg => {
+    let iSearchIndex = msg.content;
+    let oResult = aSearchResults.find((r, index) => index == iSearchIndex - 1);
+
+    if (oResult) 
+    {
+      collector.stop();
+      oMessageChannel.send("Ok, adding song....");
+      AddSong(oMember, oResult.link, iVoiceChannelID, oMessageChannel)
+    } 
+    else
+    {
+      oMessageChannel.send("Sorry, didn't work. Try again (if i stop responding, do the search command again)...");
+    }
+  })
+}
+
+
+exports.FetchYoutubeSearchResults = FetchYoutubeSearchResults

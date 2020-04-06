@@ -63,8 +63,8 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
   let aAddRolesOnApprove = oResult["addroleonapprove"];
   let aRemoveRolesOnApprove = oResult["removeroleonapprove"];
   let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
-  let aRolesToAddToMember = aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1)
-  let aRolesToRemoveFromMember = aRemoveRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) > -1)
+  let aRolesToAddToMember = aAddRolesOnApprove ? aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : [];
+  let aRolesToRemoveFromMember = aRemoveRolesOnApprove ? aRemoveRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) > -1) : [];
 
   oMember.roles.add(aRolesToAddToMember).then(function(oMember){
     oMember.roles.remove(aRolesToRemoveFromMember).then(function(oMember){
@@ -96,8 +96,8 @@ async function HandleMemberInvite(oMember) {
   let aAddRolesOnApprove = oResult["addroleoninvite"];
   if(aAddRolesOnApprove)
   {
-    let aMemberCurrentRoles = oMember.roles.map(r => r.id);
-    let aRolesToAddToMember = aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1)
+    let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
+    let aRolesToAddToMember = aAddRolesOnApprove ? aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : [];
     await oMember.addRoles(aRolesToAddToMember);
   }
 }
