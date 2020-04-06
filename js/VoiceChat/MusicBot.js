@@ -437,7 +437,7 @@ async function FetchYoutubeSearchResults(client, msg, iMaxResults = iMaxSearchRe
 
 function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceChannelID)
 {
-  let cResultsString = `Here's what I found. Please pick one by typing in the number (1-${iMaxSearchResults})\r\n\r\n`;
+  let cResultsString = `Here's what I found. Please pick one by typing in the number (1-${iMaxSearchResults}), or type "stop" to cancel. \r\n\r\n`;
   for(var i = 0; i < aSearchResults.length; i++)
   {
     let oResult = aSearchResults[i];
