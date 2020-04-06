@@ -446,6 +446,13 @@ function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceCh
   oMessageChannel.send(cResultsString);
   var collector = new Discord.MessageCollector(oMessageChannel, m => m.author.id === oMember.id, { time: 60000 });
   collector.on('collect', msg => {
+    if(msg.content.toUpperCase() == "STOP")
+    {
+      collector.stop();
+      oMessageChannel.send("Ok, stopping the search thingy");
+      return;
+    }
+
     let iSearchIndex = msg.content;
     let oResult = aSearchResults.find((r, index) => index == iSearchIndex - 1);
 
