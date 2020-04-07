@@ -4,6 +4,7 @@ const PaginationMessage = require("../Classes/PaginationMessage.js");
 const PaginationButton = require("../Classes/PaginationButton.js");
 const Discord = require('discord.js');
 const ErrorHandler = require('../ErrorHandler.js');
+const MusicTrack = require('../Classes/MusicTrack.js');
 
 const iEntriesPerList = 5;
 
@@ -57,9 +58,10 @@ async function printListEmbed(aData, cTitle, oChannel, iPage, oMessage)
     for(let i = 0; i < aPageData.length; i++)
     {
         let oItem = aPageData[i];
-        let cInfoString = `${oItem.cDescription} [Link](${oItem.cURL})`;
+        let oTrack = oItem.constructor.name != "MusicTrack" ? new MusicTrack(oItem) : oItem;
+        let cInfoString = `${oTrack.cDescription} [Link](${oTrack.cURL})`;
         let cNameString = `${(((iPage-1) * iEntriesPerList) + i)+1})`
-        cNameString += (oItem.cUserName && oItem.cDurationString) ? `Added by ${oItem.cUserName}, (${oItem.cDurationString})` : "Result: "
+        cNameString += (oTrack.cUserName && oTrack.cDurationString) ? `Added by ${oTrack.cUserName}, (${oTrack.cDurationString})` : "Result: "
         oHelpEmbed.addField(cNameString, cInfoString, false); 
     }
   }

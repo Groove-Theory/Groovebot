@@ -38,7 +38,7 @@ class MusicTrack {
     }
 
     get cDurationString() {
-        return this._cDurationString ? this.cDurationString : Globals.MillisecondsToTimeSymbol(this._iSeconds * 1000);
+        return this._cDurationString ? this._cDurationString : Globals.MillisecondsToTimeSymbol(this._iSeconds * 1000);
     }
 
     get cUserName() {
