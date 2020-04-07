@@ -484,7 +484,7 @@ exports.InitCommandMap = function(){
       "music-search",
       MusicBot.FetchYoutubeSearchResults,
       "g!music-search",
-      "Searches Top 5 search results for youtube vids",
+      `Searches Top ${MusicBot.iMaxSearchResults} search results for youtube vids`,
       MusicBot.oSearchText,
       false,
       "VOICE"

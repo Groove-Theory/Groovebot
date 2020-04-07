@@ -58,7 +58,8 @@ async function printListEmbed(aData, cTitle, oChannel, iPage, oMessage)
     {
         let oItem = aPageData[i];
         let cInfoString = `${oItem.cDescription} [Link](${oItem.cURL})`;
-        let cNameString = `Added by ${oItem.cUserName}, (${Globals.MillisecondsToTimeSymbol(oItem.iSeconds * 1000)})`;
+        let cNameString = `${(((iPage-1) * iEntriesPerList) + i)+1})`
+        cNameString += (oItem.cUserName && oItem.cDurationString) ? `Added by ${oItem.cUserName}, (${oItem.cDurationString})` : "Result: "
         oHelpEmbed.addField(cNameString, cInfoString, false); 
     }
   }

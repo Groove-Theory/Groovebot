@@ -98,6 +98,6 @@ async function HandleMemberInvite(oMember) {
   {
     let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
     let aRolesToAddToMember = aAddRolesOnApprove ? aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : [];
-    await oMember.addRoles(aRolesToAddToMember);
+    await oMember.roles.add(aRolesToAddToMember);
   }
 }

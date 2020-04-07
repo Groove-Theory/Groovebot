@@ -5,10 +5,12 @@ const ytdl = require("ytdl-core");
 const MusicList = require('./MusicList.js');
 const ytsr = require('ytsr');
 const Discord = require('discord.js');
+const MusicTrack = require('../Classes/MusicTrack.js');
 
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
-const iMaxSearchResults = 5;
+const iMaxSearchResults = 50;
+exports.iMaxSearchResults = iMaxSearchResults;
 
 exports.oAddQueueHelpText = new EmbeddedHelpText(
   "Music-Add",
@@ -71,7 +73,7 @@ exports.oSearchText = new EmbeddedHelpText(
   `Searches Top ${iMaxSearchResults} search results for youtube vids`,
    "<search string> the search string to get videos from. Pick one to add to the queue",
    "",
-   "``g!music-search JPEGMafia`` (gets 5 JPEGMafia video results)"
+   `\`\`g!music-search JPEGMafia\`\` (gets ${iMaxSearchResults} JPEGMafia video results)`
 )
 
 
@@ -424,7 +426,7 @@ async function FetchYoutubeSearchResults(client, msg, iMaxResults = iMaxSearchRe
       if(err) throw err;
       filter = filters.get('Duration').find(o => o.name.startsWith('Short'));
       var options = {
-        limit: 5,
+        limit: iMaxSearchResults,
         nextpageRef: filter.ref,
       }
       ytsr(null, options, function(err, oSearchResults) {
@@ -438,12 +440,19 @@ async function FetchYoutubeSearchResults(client, msg, iMaxResults = iMaxSearchRe
 function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceChannelID)
 {
   let cResultsString = `Here's what I found. Please pick one by typing in the number (1-${iMaxSearchResults}), or type "stop" to cancel. \r\n\r\n`;
+  let aTracks = [];
   for(var i = 0; i < aSearchResults.length; i++)
   {
     let oResult = aSearchResults[i];
-    cResultsString += `${i+1}) **${oResult.title}** *(${oResult.duration})* \r\n`
+    aTracks.push(new MusicTrack({
+      "voiceChannelID":iVoiceChannelID,
+      "cURL":oResult.link,
+      "cDescription":oResult.title,
+      "iSeconds":111
+    }));
   }
-  oMessageChannel.send(cResultsString);
+  MusicList.WriteList(aTracks,"Search Results", oMessageChannel);
+
   var collector = new Discord.MessageCollector(oMessageChannel, m => m.author.id === oMember.id, { time: 60000 });
   collector.on('collect', msg => {
     if(msg.content.toUpperCase() == "STOP")
