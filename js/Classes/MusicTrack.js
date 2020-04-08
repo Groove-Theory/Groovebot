@@ -6,23 +6,11 @@ class MusicTrack {
         obj && Object.assign(this, encapsulatedObj);
     }
 
-    get voiceChannelID() {
-        return this._voiceChannelID;
+    get trackID() {
+        return this._trackID;
     }
-    // set voiceChannelID(x) {
-    //     this._cEmoji = x;
-    // }
-
-    get production() {
-        return this._production;
-    }
-
     get cURL() {
         return this._cURL;
-    }
-
-    get iPosition() {
-        return this._iPosition;
     }
 
     get bPlayed() {
@@ -48,7 +36,6 @@ class MusicTrack {
     get cUserId() {
         return this._cUserId;
     }
-
     // getFullName() {
     //   return `${this.lastName} ${this.firstName}`;
     // }

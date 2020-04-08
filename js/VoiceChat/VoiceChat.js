@@ -26,6 +26,7 @@ exports.VoiceJoin = async function (client, msg) {
       if(bPassesCheck)
       {
           oVoiceChannel.join();
+          InitMusicSession(oVoiceChannel.id, msg.channel.id);
           msg.channel.send(":wave: Hello, groobot is in the voice thingy");
       }
   }
@@ -49,6 +50,19 @@ exports.VoiceLeave = async function (client, msg) {
   catch (err) {
     ErrorHandler.HandleError(client, err);
   }
+}
+
+function InitMusicSession(iVoiceChannelID, iMessageChannelID)
+{
+  var oKeyObject = {
+    voiceChannelID: iVoiceChannelID,
+    production: Globals.Environment.PRODUCTION,
+  }
+  var oInsertObject = {
+    textChannelID : iMessageChannelID
+  };
+
+  Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject);
 }
 
 function MemberIsInVoiceChannel(oMember, bBotCheck)

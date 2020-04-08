@@ -6,6 +6,7 @@ const MusicList = require('./MusicList.js');
 const ytsr = require('ytsr');
 const Discord = require('discord.js');
 const MusicTrack = require('../Classes/MusicTrack.js');
+const MusicSession = require('../Classes/MusicSession.js');
 
 const EmbeddedHelpText = require("../Classes/EmbeddedHelpText.js");
 
@@ -94,6 +95,10 @@ async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
 {
   try{
     let oSongData = await getYoutubeData(cURL);
+
+    if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, oMessageChannel, true))
+      return;
+
     if(!oSongData)
     {
       if(oMessageChannel)
@@ -101,25 +106,21 @@ async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
       return;
     }
 
-    if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, oMessageChannel, true))
-      return;
-
-    iPosition = Date.now();//await getMaxPositionOfChannelQueue(oVoiceChannel.id) + 1
     var oKeyObject = {
       voiceChannelID: iVoiceChannelID,
-      production: Globals.Environment.PRODUCTION,
-      cURL: cURL
+      production: Globals.Environment.PRODUCTION
     }
-    var oInsertObject = {
-      iPosition: iPosition,
+    var oInsertObject = { $push: { tracks: {
+      trackID: Globals.generateUniqueID(),
       bPlayed: false,
       cDescription: oSongData.title,
+      cURL: cURL,
       iSeconds: parseInt(oSongData.length_seconds),
       cUserName: oMember.displayName,
       cUserId: oMember.id
-    };
+    } } };
 
-    Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject, (function() {
+    Globals.Database.UpsertManual("MusicQueue", oKeyObject, oInsertObject, (function() {
       if(oMessageChannel)
         oMessageChannel.send(`__Added Song:__ **${oSongData.title}** *(${Globals.MillisecondsToTimeSymbol(oSongData.length_seconds * 1000)})*`);
     })());
@@ -142,25 +143,23 @@ exports.PrintQueue = async function (client, msg) {
       if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
-      var oQueryObject = {
-        voiceChannelID: oVoiceChannel.id,
-        bPlayed: false,
-        production: Globals.Environment.PRODUCTION,
+      let aResult =await getSongSessionData(oVoiceChannel.id)
+      let oCurrentSongData = aResult.getCurrentTrack()
+      if(oCurrentSongData)
+      {
+        var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes:`
+        msg.channel.send(cReturnString);
       }
-      var oSortObject = { iPosition: 1 }
-      let aResult = await Globals.Database.Query("MusicQueue", oQueryObject, {}, oSortObject);
-      if(!aResult || aResult.length == 0)
+
+      let aUpcomingTracks = aResult.getUpcomingTracks();
+      if(aUpcomingTracks.length == 0)      
       {
         msg.channel.send("Nothing in the queue.... add moar songs!!");
         return;
       }
 
-      let oCurrentSongData = aResult[0];
-      var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes:`
-      msg.channel.send(cReturnString);
 
-      aResult.shift();
-      MusicList.WriteList(aResult, "Coming Up....", oMessageChannel);  
+      MusicList.WriteList(aUpcomingTracks, "Coming Up....", oMessageChannel);  
       
   }
   catch (err) {
@@ -175,14 +174,14 @@ exports.NowPlaying = async function (client, msg) {
       if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
-      let aResult =await getSongQueueData(oVoiceChannel.id)
-      if(!aResult || aResult.length == 0)
+      let aResult =await getSongSessionData(oVoiceChannel.id)
+      if(!aResult.hasTracks())
       {
         msg.channel.send("Nothing in the queue.... add moar songs!!");
         return;
       }
-
-      let oCurrentSongData = aResult[0];
+      let aTracks = aResult.tracks;
+      let oCurrentSongData = aResult.getCurrentTrack()
       var cReturnString = `:notes: **NOW PLAYING: ${oCurrentSongData.cDescription}**, added by ${oCurrentSongData.cUserName} (${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)}) :notes: \r\n${oCurrentSongData.cURL}`
       msg.channel.send(cReturnString);
   }
@@ -193,15 +192,13 @@ exports.NowPlaying = async function (client, msg) {
 
 exports.PlayQueue = async function (client, msg) {
   try {
-
-      var aMsgContents = msg.content.split(/\s+/);
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
       if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
       
       let oVoiceConnection = VoiceChat.GetVoiceConnection(oVoiceChannel.id)
-      if(!oVoiceConnection.voice.speaking)
+      //if(!oVoiceConnection.voice.speaking)
         PlayNextSong(oMember.voice.channel.id);
       
   }
@@ -210,36 +207,43 @@ exports.PlayQueue = async function (client, msg) {
   }
 }
 
-async function PlayNextSong (iVoiceChannelID, iPosition) {
+async function PlayNextSong (iVoiceChannelID, oPrevSong) {
   try { 
-      let aResult = await getSongQueueData(iVoiceChannelID)
-      if(!aResult || aResult.length == 0)
-        return;
       let oVoiceConnection = VoiceChat.GetVoiceConnection(iVoiceChannelID)
       if(!oVoiceConnection)
         return;
-      
-      let oCurrentSongData;
-      if(iPosition)
-        oCurrentSongData = aResult.find(r => r.iPosition >= iPosition);
-      else
-        oCurrentSongData = aResult[0];
 
-      if(!oCurrentSongData)
+      let aResult = await getSongSessionData(iVoiceChannelID)
+      if(!aResult || aResult.length == 0)
         return;
+      
+      var oTextChannel = Globals.g_Client.channels.cache.find(c => c.id == aResult.textChannelID);
+      let oCurrentSongData = aResult.getCurrentTrack(oPrevSong ? oPrevSong.trackID : -1);
+      if(!oCurrentSongData)
+      {
+        oTextChannel.send("No more songs umu. Add more then type in ``g!music-play`` to restart");
+      }
 
-      const dispatcher = oVoiceConnection.play(ytdl(oCurrentSongData.cURL, { filter:'audioonly', quality: 'highestaudio', highWaterMark: 1024 * 1024 * 20 }))
+      const dispatcher = oVoiceConnection.play(ytdl(oCurrentSongData ? oCurrentSongData.cURL : "", { filter:'audioonly', quality: 'highestaudio', highWaterMark: 1024 * 1024 * 20 }))
       .on('start', () => {
-        dispatcher.setVolume(1);
+        if(oCurrentSongData)
+        {
+          dispatcher.setVolume(1);
+          oTextChannel.send(`:musical_note: Now Playing: **${oCurrentSongData.cDescription}**, added by __${oCurrentSongData.cUserName}__ *(${Globals.MillisecondsToTimeSymbol(oCurrentSongData.iSeconds * 1000)})*`)
+        }
       })
       .on('finish', async () => { // this event fires when the song has ended
-        let iDeletedPosition = await OnSongFinished(oCurrentSongData, iVoiceChannelID);
-        PlayNextSong(iVoiceChannelID, iDeletedPosition + 1);
+        if(oCurrentSongData)
+        {
+          let oPrevSong = await OnSongFinished(oCurrentSongData, iVoiceChannelID);
+          PlayNextSong(iVoiceChannelID, oPrevSong);
+        }
       })
           
       dispatcher.on('error', error =>
       {
-        ErrorHandler.HandleError(Globals.g_Client, error);
+        if(oCurrentSongData)
+          ErrorHandler.HandleError(Globals.g_Client, error);
       });      
   }
   catch (err) {
@@ -255,15 +259,17 @@ exports.SkipSong = async function (client, msg) {
       if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
 
-      let aResult = await getSongQueueData(oVoiceChannel.id)
-      if(!aResult || aResult.length == 0)
-          return;
-
-      let oCurrentSongData = aResult[0];
-
-      let iDeletedPosition = await OnSongFinished(oCurrentSongData, oVoiceChannel.id)
-      PlayNextSong(oMember.voice.channel.id, iDeletedPosition + 1);
+      let aResult = await getSongSessionData(oVoiceChannel.id)
+      let oCurrentSongData = aResult.getCurrentTrack();
+      if(!oCurrentSongData)
+      {
+        msg.channel.send("I don't think a song is playing....");
+        return;
+      }
+      let oPrevSong = await OnSongFinished(oCurrentSongData, oVoiceChannel.id)
       msg.channel.send("Skipping to next song");
+      PlayNextSong(oMember.voice.channel.id, oPrevSong);
+
       
   }
   catch (err) {
@@ -318,47 +324,20 @@ exports.GetHistory = async function (client, msg) {
       if(!VoiceChat.MemberPassesVoiceChannelCheck(oMember, msg.channel, true))
         return;
 
-      let aResult =await getSongQueueData(oVoiceChannel.id, true)
-      if(!aResult || aResult.length == 0)
+      let aResult =await getSongSessionData(oVoiceChannel.id)
+      let aPreviousTracks = aResult.getPreviousTracks();
+      if(aPreviousTracks.length == 0)    
       {
         oMessageChannel.send("Sorry, no played songs")
         return;
       }
 
-      MusicList.WriteList(aResult, "History", oMessageChannel);
+      MusicList.WriteList(aPreviousTracks, "History", oMessageChannel);
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);
   }
 }
-
-
-async function getMaxPositionOfChannelQueue(iVoiceChannelID)
-{
-
-  let aResults = await Globals.Database.dbo.collection("MusicQueue").aggregate([
-    {
-      '$match': {
-        'voiceChannelID': iVoiceChannelID
-      }
-    }, {
-      '$group': {
-        '_id': '$voiceChannelID', 
-        'maxPosition': {
-          '$max': '$iPosition'
-        }
-      }
-    }
-    ]).toArray();
-
-    if(aResults && aResults.length > 0)
-    {
-      return aResults[0].maxPosition;
-    }
-    else
-      return 0;
-}
-
 
 async function getYoutubeData(url)
 {
@@ -366,16 +345,14 @@ async function getYoutubeData(url)
   return songInfo;
 }
 
-async function getSongQueueData(iVoiceChannelId, bPlayed=false)
+async function getSongSessionData(iVoiceChannelId)
 {
   var oQueryObject = {
     voiceChannelID: iVoiceChannelId,
-    bPlayed: bPlayed,
     production: Globals.Environment.PRODUCTION,
   }
-  var oSortObject = { iPosition: 1 }
-  let aResult = await Globals.Database.Query("MusicQueue", oQueryObject, {}, oSortObject);
-  return aResult;
+  let aResult = await Globals.Database.Query("MusicQueue", oQueryObject, {}, {});
+  return new MusicSession(aResult);
 }
 
 async function OnSongFinished(oSongData, iVoiceChannelID)
@@ -383,16 +360,17 @@ async function OnSongFinished(oSongData, iVoiceChannelID)
   var oKeyObject = {
     voiceChannelID: iVoiceChannelID,
     production: Globals.Environment.PRODUCTION,
-    cURL: oSongData.cURL,
-    iPosition: oSongData.iPosition
+    "tracks.trackID": oSongData.trackID
   }
   var oInsertObject = {
-    bPlayed: true
+    "tracks.$.bPlayed" : true
   };
 
   await Globals.Database.Upsert("MusicQueue", oKeyObject, oInsertObject);
 
-  return oSongData.iPosition; // Return the position that was just deleted
+  //await Globals.Database.UpsertManual("MusicQueue", oKeyObject, oInsertObject);
+
+  return oSongData; // Return the position that was just deleted
 }
 
 function ClearMusicSession(iVoiceChannelID)
@@ -448,7 +426,7 @@ function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceCh
       "voiceChannelID":iVoiceChannelID,
       "cURL":oResult.link,
       "cDescription":oResult.title,
-      "iSeconds":111
+      "cDurationString":oResult.duration
     }));
   }
   MusicList.WriteList(aTracks,"Search Results", oMessageChannel);

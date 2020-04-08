@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
+const UUID = require('uuid');
 
 const EnvironmentMode = process.env.ENVIRONMENT_MODE;
 const Environment = {
@@ -318,3 +319,9 @@ function cleanString(cStr, oOptions)
   return newStr;
 }
 exports.cleanString = cleanString
+
+function generateUniqueID()
+{
+  return UUID.v4();
+}
+exports.generateUniqueID = generateUniqueID
