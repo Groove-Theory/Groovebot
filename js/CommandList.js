@@ -29,6 +29,7 @@ const Vulgar = require('./Vulgar.js')
 const Simpsons = require('./Simpsons.js')
 const VoiceChat = require('./VoiceChat/VoiceChat.js')
 const MusicBot = require('./VoiceChat/MusicBot.js')
+const Nostalgia = require('./Nostalgia.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -483,9 +484,18 @@ exports.InitCommandMap = function(){
     Globals.aCommandMap.push(new Command(
       "music-search",
       MusicBot.FetchYoutubeSearchResults,
-      "g!music-search",
+      "g!music-search <string>",
       `Searches Top ${MusicBot.iMaxSearchResults} search results for youtube vids`,
       MusicBot.oSearchText,
+      false,
+      "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "nostalgia",
+      Nostalgia.Init,
+      "g!nostalgia",
+      `Get's Groove's old pfp back`,
+      Nostalgia.oHelpText,
       false,
       "VOICE"
     ));
