@@ -90,7 +90,8 @@ exports.MakeQuote = async function (client, msg) {
         ctx.closePath();
         ctx.clip();
 
-        const avatar = await loadImage("https://cdn.discordapp.com/avatars/193800300518309888/68330ad15c6caf22a33dd73cce8bc281.jpg?size=1024");
+        let oGrooveUser = await Globals.g_Client.users.cache.get(Globals.g_GrooveID);
+        const avatar = await loadImage(oGrooveUser.displayAvatarURL({size:1024}));
         ctx.drawImage(avatar, 10, 10, 40, 40);//ctx.drawImage(avatar, 25, 25, 200, 200);
 
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
