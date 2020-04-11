@@ -30,6 +30,7 @@ const Simpsons = require('./Simpsons.js')
 const VoiceChat = require('./VoiceChat/VoiceChat.js')
 const MusicBot = require('./VoiceChat/MusicBot.js')
 const Nostalgia = require('./Nostalgia.js')
+const Youtube = require('./Youtube.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -498,5 +499,14 @@ exports.InitCommandMap = function(){
       Nostalgia.oHelpText,
       false,
       "VOICE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "youtube",
+      Youtube.GetVideo,
+      "g!youtube",
+      `Search for a Youtube Video`,
+      Youtube.oGetVideoText,
+      false,
+      "FUN"
     ));
   }
