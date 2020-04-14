@@ -114,8 +114,8 @@ exports.OptionTypes = {
     "addroleonapprove": {"optiontype": "rolearray"},
     "removeroleonapprove": {"optiontype": "rolearray"},
     "pinboardchannel": {"optiontype": "channel"},
-    "goodgroovepointemojiids": {"optiontype": "emojiarray"},
-    "badgroovepointemojiids": {"optiontype": "emojiarray"},
+    "starboardchannel": {"optiontype": "channel"},
+    "starboardthreshold": {"optiontype": "int"},
 }
 
 

@@ -69,11 +69,11 @@ exports.Init = function (client, msg) {
             case "pinboardchannel":
                 SetPinboardChannel(client, msg, aMsgDetails)
                 break;
-            case "togglegoodgroovepointemoji":
-                SetGoodGroovePointEmoji(client, msg, aMsgDetails)
+            case "starboardchannel":
+                SetStarboardChannel(client, msg, aMsgDetails)
                 break;
-            case "togglebadgroovepointemoji":
-                SetBadGroovePointEmoji(client, msg, aMsgDetails)
+            case "starboardthreshold":
+                SetStarboardThreshold(client, msg, aMsgDetails)
                 break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
@@ -393,79 +393,52 @@ function SetPinboardChannel(client, msg, aMsgDetails) {
         pinboardchannel: iPinboardChannel
     };
 
-    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "CopyOutputChannel successfully updated to " + iPinboardChannel));
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "PinboardChannel successfully updated to " + iPinboardChannel));
 }
 
-
-function SetGoodGroovePointEmoji(client, msg, aMsgDetails) {
-
-    var cEmoji = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
-    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+function SetStarboardChannel(client, msg, aMsgDetails) {
+    if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2])) {
+        SendErrorMessage(client, msg)
+        return;
+    }
+    var iStarboardChannel = aMsgDetails[2]
     var oGuild = msg.guild;
 
-    var oEmoji = Globals.GetEmojiByInput(oGuild, cEmoji);
-
-    if (!oEmoji) {
-        SendReplyMessage(client, msg, "Sorry, I can't find this emoji")
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
     }
-    else {
-        var oKeyObject = {
-            guildID: oGuild.id,
-            production: Globals.Environment.PRODUCTION
-        }
-        var oInsertObject = {};
-        var cMessage = "";
-        if (bOn) {
-            oInsertObject = {
-                $addToSet: { "goodgroovepointemojiids": oEmoji.id }
-            };
-            cMessage = `${oEmoji} will now be a **good** groove point emoji`;
-        }
-        else {
-            oInsertObject = {
-                $pull: { "goodgroovepointemojiids": oEmoji.id }
-            };
-            cMessage = cMessage = `${oEmoji} will NO LONGER be a **good** groove point emoji`;
-        }
+    var oInsertObject = {
+        starboardchannel: iStarboardChannel
+    };
 
-        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
-    }
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "StarboardChannel successfully updated to " + iStarboardChannel));
 }
 
-function SetBadGroovePointEmoji(client, msg, aMsgDetails) {
-
-    var cEmoji = aMsgDetails.filter((val, index) => index > 1 && index < aMsgDetails.length -1).join(" ")
-    var bOn = aMsgDetails[aMsgDetails.length -1].toLowerCase() == "on";
+function SetStarboardThreshold(client, msg, aMsgDetails) {
+    if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2])) {
+        SendErrorMessage(client, msg)
+        return;
+    }
+    var iStarboardThreshold = aMsgDetails[2]
     var oGuild = msg.guild;
 
-    var oEmoji = Globals.GetEmojiByInput(oGuild, cEmoji);
-
-    if (!oEmoji) {
-        SendReplyMessage(client, msg, "Sorry, I can't find this emoji. I can only use custom-emojis")
+    if (!parseInt(iStarboardThreshold) || parseInt(iStarboardThreshold) < 0) {
+        SendReplyMessage(client, msg, "Sorry, threshold has to be greater than 0")
     }
-    else {
-        var oKeyObject = {
-            guildID: oGuild.id,
-            production: Globals.Environment.PRODUCTION
-        }
-        var oInsertObject = {};
-        var cMessage = "";
-        if (bOn) {
-            oInsertObject = {
-                $addToSet: { "badgroovepointemojiids": oEmoji.id }
-            };
-            cMessage = `${oEmoji} will now be a **bad** groove point emoji`;
-        }
-        else {
-            oInsertObject = {
-                $pull: { "badgroovepointemojiids": oEmoji.id }
-            };
-            cMessage = cMessage = `${oEmoji} will NO LONGER be a **bad** groove point emoji`;
-        }
 
-        Globals.Database.UpsertManual("ServerOptions", oKeyObject, oInsertObject, SendReplyMessageInCustomChannel(client, msg.channel, cMessage));
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
     }
+    var oInsertObject = {
+        starboardthreshold: iStarboardThreshold
+    };
+
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "StarboardThreshold successfully updated to " + iStarboardThreshold));
 }
+
+
 
 
 ////////////////////
@@ -597,12 +570,12 @@ exports.Onload = function()
                     value: "Sets the channel for Pinboard"
                 },
                 {
-                    name: "g!options **ToggleGoodGroovePointEmoji** <emoji> <on/off>",
-                    value: "Toggle which emojis(s) are good reaction emojis for Groove Points"
+                    name: "g!options **StarboardChannel** <channelid>",
+                    value: "Sets the channel for Starboard"
                 },
                 {
-                    name: "g!options **ToggleBadGroovePointEmoji** <emoji> <on/off>",
-                    value: "Toggle which emojis(s) are bad reaction emojis for Groove Points"
+                    name: "g!options **StarboardThreshold** <number>",
+                    value: "Toggles how many stars is needed for Starboard (defaults to 5)"
                 }],
             timestamp: new Date(),
             footer:
