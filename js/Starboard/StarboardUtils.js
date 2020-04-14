@@ -37,7 +37,7 @@ async function CreateNewStarboardMessage(msg, oStarboardChannel, oArgs) {
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL({size:1024, format: "png"}))
         .setTimestamp()
         .addField("Go to Message", "[Link](" + msg.url + ")", false)
-        .setFooter(`⭐ ${msg.author.id}| ${msg.id}`)
+        .setFooter(`⭐ ${msg.author.id}|${oArgs["iStarCount"]}| ${msg.id}`)
         .setImage(image);
     let oStarMessage = await oStarboardChannel.send(cTopMessage, embed);
     return oStarMessage;
@@ -53,7 +53,7 @@ async function EditStarboardMessage(msg, oStarboardMessage, oArgs) {
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL({size:1024, format: "png"}))
         .setTimestamp()
         .addField("Go to Message", "[Link](" + msg.url + ")", false)
-        .setFooter(`⭐ ${msg.author.id}| ${msg.id}`)
+        .setFooter(`⭐ ${msg.author.id}|${oArgs["iStarCount"]}| ${msg.id}`)
         .setImage(image);
     oStarboardMessage.edit(cTopMessage, embed);
 
