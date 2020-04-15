@@ -156,7 +156,7 @@ async function HandleOuijaContent(client, oResult, msg, ouijaChannel, iGuildID) 
                         color: 3447003,
                         author:
                         {
-                            icon_url: oQuestionMsg.author.avatarURL
+                            icon_url: oQuestionMsg.author.displayAvatarURL({size:1024, format: "png"})
                         },
                         title: oQuestionMsg.content,
                         description: cOuijaResultString.length > 0 ? cOuijaResultString : "(no answer given)",

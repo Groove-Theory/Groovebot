@@ -17,12 +17,12 @@ exports.OnMessage = function (client, msg, iMainChannelID, iCopyChannelID, bUseC
                 const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle('(New Message)')
-                    .setAuthor(msg.author.username, msg.author.avatarURL)
+                    .setAuthor(msg.author.username, msg.author.displayAvatarURL({size:1024, format: "png"}))
                     .setDescription(msg.content)
                     .attachFiles(bUseImageAttach ? [] : aFileAttachments)
                     .setTimestamp()
                     .setImage(bUseImageAttach ? aFileAttachments[0] : "")
-                    .setFooter( msg.author.username, msg.author.avatarURL);
+                    .setFooter( msg.author.username, msg.author.displayAvatarURL({size:1024, format: "png"}));
 
                 copyChannel.send(exampleEmbed);
             }
@@ -48,7 +48,7 @@ exports.OnMessageUpdate = function (client, oldMessage, newMessage, iMainChannel
                             author:
                             {
                                 name: newMessage.author.username,
-                                icon_url: newMessage.author.avatarURL
+                                icon_url: newMessage.author.displayAvatarURL({size:1024, format: "png"})
                             },
                             title: "(Message Edited)",
                             description: "__**Old Message:**__ \r\n" + oldMessage.content + "\r\n\r\n" +
@@ -56,7 +56,7 @@ exports.OnMessageUpdate = function (client, oldMessage, newMessage, iMainChannel
                             timestamp: new Date(),
                             footer:
                             {
-                                icon_url: newMessage.author.avatarURL,
+                                icon_url: newMessage.author.displayAvatarURL({size:1024, format: "png"}),
                                 text: newMessage.author.username
                             }
                         }
@@ -86,7 +86,7 @@ exports.OnMessageDelete = function (client, msg, iMainChannelID, iCopyChannelID,
                             timestamp: new Date(),
                             footer:
                             {
-                                icon_url: client.user.avatarURL
+                                icon_url: client.user.displayAvatarURL({size:1024, format: "png"})
                             }
                         }
                     });

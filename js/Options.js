@@ -520,7 +520,7 @@ exports.Onload = function()
             author:
             {
                 name: Globals.g_Client.user.username,
-                icon_url: Globals.g_Client.user.avatarURL
+                icon_url: Globals.g_Client.user.displayAvatarURL({size:1024, format: "png"})
             },
             title: "Options List",
             description: "Here's a list of options that you can set on your server (case insensitive)",
@@ -580,7 +580,7 @@ exports.Onload = function()
             timestamp: new Date(),
             footer:
             {
-                icon_url: Globals.g_Client.user.avatarURL,
+                icon_url: Globals.g_Client.user.displayAvatarURL({size:1024, format: "png"}),
                 text: "Groovebot help"
             }
 

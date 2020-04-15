@@ -174,7 +174,7 @@ exports.Init = function (client) {
         if(oServerOptions["pinboardchannel"])
             PinboardRemoveHandler.ProcessReactRemoveAll(message, oServerOptions)
         if(oServerOptions["starboardchannel"])
-            StarboardRemoveHandler.ProcessReact(reaction, oServerOptions)
+            StarboardRemoveHandler.ProcessReactRemoveAll(message, oServerOptions)
     });
 }
 

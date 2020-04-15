@@ -84,7 +84,8 @@ exports.AddToQueueFromMessage = async function (client, msg) {
       let cURL = aMsgContents[1];
       let oMember = msg.member;
       let oVoiceChannel = oMember.voice.channel;
-      AddSong(oMember, cURL, oVoiceChannel.id, msg.channel)  
+      AddSong(oMember, cURL, oVoiceChannel.id, msg.channel)
+
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);
@@ -106,12 +107,13 @@ async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
       return;
     }
 
+    var iNewTrackID = Globals.generateUniqueID();
     var oKeyObject = {
       voiceChannelID: iVoiceChannelID,
       production: Globals.Environment.PRODUCTION
     }
     var oInsertObject = { $push: { tracks: {
-      trackID: Globals.generateUniqueID(),
+      trackID: iNewTrackID,
       bPlayed: false,
       cDescription: oSongData.title,
       cURL: cURL,
@@ -123,6 +125,33 @@ async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
     Globals.Database.UpsertManual("MusicQueue", oKeyObject, oInsertObject, (function() {
       if(oMessageChannel)
         oMessageChannel.send(`__Added Song:__ **${oSongData.title}** *(${Globals.MillisecondsToTimeSymbol(oSongData.length_seconds * 1000)})*`);
+        
+        function AutoPlay(iTries){ 
+          console.log("I'm in autoplay");
+          iTries = iTries ? iTries : 0;
+          getSongSessionData(iVoiceChannelID).then(aResult =>{
+            let oCurrentSongData = aResult.getCurrentTrack(); 
+            if(oCurrentSongData && oCurrentSongData.trackID == iNewTrackID) // If this is the only song in the queue we just inserted, play it
+            {
+              PlayNextSong(iVoiceChannelID);
+              return true;
+            }
+            else if (iTries < 3 && (!aResult || !aResult.tracks || aResult.tracks.length == 0 || !oCurrentSongData)) // This can't happen, which means the DB retrieval hasn't updated yet, try again in a bit
+            {
+              setTimeout(function(){ AutoPlay(++iTries); }, 3000);
+              return false;
+            }
+            else if(iTries >= 3)
+            {
+              if(oMessageChannel)
+                oMessageChannel.send("I can't auto-play the queue. Type in ``g!music-play`` to manually start the queue");
+              return false;
+            }
+            else // Case where we're already playing
+              return true;
+          })
+        }
+        AutoPlay();
     })());
   }
   catch (err) {

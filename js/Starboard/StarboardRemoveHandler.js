@@ -19,7 +19,7 @@ async function ProcessReactRemoveAll(message, oServerOptions) {
         bPassedThreshold: false,
         iStarCount: 0
     }
-    HandleStarboardChannelMessage(message, null, oServerOptions, oArgs);
+    HandleStarboardChannelMessage(message, oServerOptions, oArgs);
 }
 exports.ProcessReactRemoveAll = ProcessReactRemoveAll;
 
