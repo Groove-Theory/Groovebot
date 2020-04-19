@@ -15,64 +15,48 @@ let aVowels = ["a", "e", "i", "o", "u"];
 exports.Init = async function (client, msg) {
   try {
     let aMsgContents = msg.content.split(/\s+/);
-    let cFirstWord = aMsgContents[1];
-    let cSecondWord = aMsgContents[2];
-    if(!cFirstWord || !cSecondWord)
+    aMsgContents.shift();
+    if(aMsgContents.length == 0)
     {
-        msg.channel.send("Fam, I need to words.....");
+        msg.channel.send("Fam, I need words.....");
         return;
     }
-    let cNewWord = "";
-    if(Math.random() > 0.5)
-        cNewWord = combineWords(cFirstWord, cSecondWord);
-    else
-        cNewWord = combineWords(cSecondWord, cFirstWord);
-
+    let cNewWord = combineWordArray(aMsgContents.map(w => w.toLowerCase()));
+    let cWordEqation = aMsgContents.join(" + ");
     cNewWord = Globals.cleanString(cNewWord);
     if(cNewWord)
-        msg.channel.send(`${cFirstWord} + ${cSecondWord} = **${Globals.capitalizeString(cNewWord)}**`);
+        msg.channel.send(`${cWordEqation} = **${Globals.capitalizeString(cNewWord)}**`);
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);
   }
 }
 
+function combineWordArray(aWords)
+{
+    let aNewWord = "";
+    for(var i = 0; i < aWords.length - 1; i++)
+    {
+        var firstWord = i == 0 ? aWords[0] : aNewWord;
+        aNewWord = combineWords(firstWord, aWords[i+1]); 
+    }
+    return aNewWord;
+}
+
 function combineWords(cFrontWord, cBackWord)
 {
     let cFrontPart = getRandomPartOfWord(cFrontWord, true);
     let cBackPart = getRandomPartOfWord(cBackWord, false);
-
-    let cCombinedWord = "";
-    if(aVowels.indexOf(cFrontPart[cFrontPart.length - 1]) > -1 && aVowels.indexOf(cBackPart[0]) > -1)
-        cCombinedWord = vowelCollisionHandle(cFrontPart, cBackPart)
-    else
-        cCombinedWord = cFrontPart + cBackPart;
+    cCombinedWord = cFrontPart + cBackPart;
     return cCombinedWord;
-}
-
-function vowelCollisionHandle(cFrontPart, cBackPart)
-{
-    if(Math.random() > 0.5)
-    {
-        return cFrontPart.substring(0, cFrontPart.length - 1) + cBackPart
-    }
-    else
-    {
-        return cFrontPart + cBackPart.substring(1);
-    }
 }
 
 function getRandomPartOfWord(cStr, bFront)
 {
-    let aSyllables = vowelSplit(cStr)
-    let iRandomIndex = Globals.getRandomInt(0, aSyllables.length- 1)
-    if(bFront)
-        return aSyllables.map((syllable, index) => index <= iRandomIndex ? syllable : "").join("")
-    else
-        return aSyllables.map((syllable, index) => index >= iRandomIndex ? syllable : "").join("")
-}
-
-function vowelSplit(cStr)
-{
-    return cStr.split(/(?![aeiouAEIOU]+)/g);
+  var aIndexes = cStr.split("").map((e, index) =>  aVowels.indexOf(e) > -1 ? index : null).filter(e => e > 0)
+  var splitIndex = aIndexes[aIndexes.length * Math.random() | 0]
+  if(bFront)
+    return cStr.substring(0, splitIndex)
+  else
+    return cStr.substring(splitIndex)
 }
