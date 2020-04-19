@@ -48,7 +48,6 @@ client.on('ready', async () => {
       SpotifyHandler.InitSpotifyHandler();
       YoutubeHandler.InitYoutubeHandler();
       TwitterHandler.InitTwitterHandler();
-
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
         Globals.aCompliments = compliment_obj.Compliments;
@@ -63,6 +62,8 @@ client.on('ready', async () => {
     }
   }
   catch (err) {
+    var oGrooveUser = client.users.cache.get(Globals.g_GrooveID);
+    oGrooveUser.send("Something bad happened : \r\n" + err.stack ? err.stack : err);
     ErrorHandler.HandleError(client, err)
   }
 });
