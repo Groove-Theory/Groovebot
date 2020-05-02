@@ -41,9 +41,10 @@ async function getHelpPageInfo(aData, oChannel, cTitle, iDirection, oMessage)
     return printListEmbed(aData, cTitle, oChannel, 1, oMessage)
 }
 
-async function printListEmbed(aData, cTitle, oChannel, iPage, oMessage)
+async function printListEmbed(aData, cTitle, oChannel, iPage, oMessage, cInfoText)
 {
   let aPageData = aData.filter((data, index) => index >= ((iPage-1) * iEntriesPerList) && index < ((iPage) * iEntriesPerList))
+  cInfoText = cInfoText ? cInfoText : "Here ya go!";
   let oHelpEmbed = new Discord.MessageEmbed()
   .setColor('#0356fc')
   .setTitle(cTitle)
@@ -66,7 +67,7 @@ async function printListEmbed(aData, cTitle, oChannel, iPage, oMessage)
     }
   }
   if(oMessage)
-    return await oMessage.edit(oHelpEmbed)
+    return await oMessage.edit(cInfoText, oHelpEmbed)
   else
-    return await oChannel.send(oHelpEmbed);
+    return await oChannel.send(cInfoText, oHelpEmbed);
 }

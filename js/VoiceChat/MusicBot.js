@@ -133,8 +133,13 @@ async function AddSong(oMember, cURL, iVoiceChannelID, oMessageChannel)
             let oCurrentSongData = aResult.getCurrentTrack(); 
             if(oCurrentSongData && oCurrentSongData.trackID == iNewTrackID) // If this is the only song in the queue we just inserted, play it
             {
-              PlayNextSong(iVoiceChannelID);
-              return true;
+              try{
+                PlayNextSong(iVoiceChannelID);
+                return true;
+              }
+              catch(e){
+                setTimeout(function(){ AutoPlay(++iTries); }, 3000);
+              }
             }
             else if (iTries < 3 && (!aResult || !aResult.tracks || aResult.tracks.length == 0 || !oCurrentSongData)) // This can't happen, which means the DB retrieval hasn't updated yet, try again in a bit
             {
@@ -458,7 +463,7 @@ function DisplaySearchResults(oMember, oMessageChannel, aSearchResults, iVoiceCh
       "cDurationString":oResult.duration
     }));
   }
-  MusicList.WriteList(aTracks,"Search Results", oMessageChannel);
+  MusicList.WriteList(aTracks,"Search Results", oMessageChannel, "Type in the number to the left of the list item to pick that song. \r\n Type ``stop`` to cancel the search. \r\n You can also click the left/right buttons to search through the list.");
 
   var collector = new Discord.MessageCollector(oMessageChannel, m => m.author.id === oMember.id, { time: 60000 });
   collector.on('collect', msg => {
