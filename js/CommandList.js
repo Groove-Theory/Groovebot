@@ -31,6 +31,7 @@ const VoiceChat = require('./VoiceChat/VoiceChat.js')
 const MusicBot = require('./VoiceChat/MusicBot.js')
 const Nostalgia = require('./Nostalgia.js')
 const Youtube = require('./Youtube.js')
+const Horoscope = require('./Horoscope.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -506,6 +507,15 @@ exports.InitCommandMap = function(){
       "g!youtube",
       `Search for a Youtube Video`,
       Youtube.oGetVideoText,
+      false,
+      "FUN"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "horoscope",
+      Horoscope.Init,
+      "g!horoscope",
+      `Get your horoscope!`,
+      Horoscope.oHelpText,
       false,
       "FUN"
     ));
