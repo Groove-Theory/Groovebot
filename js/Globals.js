@@ -53,7 +53,7 @@ exports.g_CouncilpersonRoleID = "563871903203196943"
 
 exports.g_OuijaChannelID = "558156350320803851"
 
-exports.g_VentriloquistInputChannelID = "595634269599039539"
+exports.g_VentriloquistInputChannelID = "711460241069309953"
 exports.g_VentriloquistOutputChannelID = "570056315989262346"
 
 ///////////////////PRODUCTION VARS////////////////////////////////////////
