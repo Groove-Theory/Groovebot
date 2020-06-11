@@ -70,7 +70,7 @@ if (exports.Environment.PRODUCTION)
 
   exports.g_OuijaChannelID = "559786059572183060"
 
-  exports.g_VentriloquistInputChannelID = "561403085419839505"
+  exports.g_VentriloquistInputChannelID = "711460241069309953"
   exports.g_VentriloquistOutputChannelID = "526082151062568960"
 
 }
