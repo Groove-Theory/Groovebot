@@ -75,6 +75,12 @@ exports.Init = function (client, msg) {
             case "starboardthreshold":
                 SetStarboardThreshold(client, msg, aMsgDetails)
                 break;
+            case "messageonapprovestring":
+                SetMessageOnApproveString(client, msg, aMsgDetails)
+                break;
+            case "messageonapprovechannel":
+                SetMessageOnApproveChannel(client, msg, aMsgDetails)
+                break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
                 break;
@@ -438,7 +444,39 @@ function SetStarboardThreshold(client, msg, aMsgDetails) {
     Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "StarboardThreshold successfully updated to " + iStarboardThreshold));
 }
 
+function SetMessageOnApproveString(client, msg, aMsgDetails) {
+    let cString = aMsgDetails.filter((e, index) => index >=2).join(" ");
+    var oGuild = msg.guild;
 
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
+    }
+    var oInsertObject = {
+        messageonapprovestring: cString
+    };
+
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "MessageOnApproveString successfully updated to " + cString));
+}
+
+function SetMessageOnApproveChannel(client, msg, aMsgDetails) {
+    if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2])) {
+        SendErrorMessage(client, msg)
+        return;
+    }
+    var iMessageChannel = aMsgDetails[2]
+    var oGuild = msg.guild;
+
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
+    }
+    var oInsertObject = {
+        messageonapprovechannel: iMessageChannel
+    };
+
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "MessageOnApproveChannel successfully updated to " + iMessageChannel));
+}
 
 
 ////////////////////
@@ -576,6 +614,14 @@ exports.Onload = function()
                 {
                     name: "g!options **StarboardThreshold** <number>",
                     value: "Toggles how many stars is needed for Starboard (defaults to 5)"
+                },
+                {
+                    name: "g!options **MessageOnApproveString** <number>",
+                    value: "Sets the welcome message after approval. Use ``" + Globals.UserTagReplace + "`` as string for the user mention"
+                },
+                {
+                    name: "g!options **MessageOnApproveChannel** <number>",
+                    value: "Sets the channel for the Welcome Message after approve"
                 }],
             timestamp: new Date(),
             footer:

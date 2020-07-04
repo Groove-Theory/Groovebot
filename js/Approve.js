@@ -36,7 +36,6 @@ async function ParseApprove(client, msg) {
 
     ApproveMember(client, oGuild, oChannel, oMember);
 
-
   }
   catch (err) {
     ErrorHandler.HandleError(client, err);
@@ -74,9 +73,22 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
     })
   })
 
-  
+  HandleWelcomeMessage(oMember, oResult)
 }
 
+function HandleWelcomeMessage(oMember, oOptions)
+{
+    if(!oOptions["messageonapprovestring"] || !oOptions["messageonapprovechannel"] )
+        return;
+
+    let oChannel = Globals.g_Client.channels.cache.get(oOptions["messageonapprovechannel"]);
+    if(!oChannel)
+        return;
+
+    let cMessage = oOptions["messageonapprovestring"];
+    cMessage = cMessage.replace(Globals.UserTagReplace, "<@" + oMember.id + ">");
+    oChannel.send(cMessage);
+}
 
 async function HandleMemberInvite(oMember) {
 

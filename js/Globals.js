@@ -116,9 +116,11 @@ exports.OptionTypes = {
     "pinboardchannel": {"optiontype": "channel"},
     "starboardchannel": {"optiontype": "channel"},
     "starboardthreshold": {"optiontype": "int"},
+    "messageonapprovestring": {"optiontype": "string"},
+    "messageonapprovechannel": {"optiontype": "int"},
 }
 
-
+exports.UserTagReplace = "$[USER]$"
 
 function SendSource(client, msg)
 {
