@@ -66,14 +66,16 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
   let aRolesToRemoveFromMember = aRemoveRolesOnApprove ? aRemoveRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) > -1) : [];
 
   oMember.roles.add(aRolesToAddToMember).then(function(oMember){
-    oMember.roles.remove(aRolesToRemoveFromMember).then(function(oMember){
+    oMember.roles.remove(aRolesToRemoveFromMember).then(async function(oMember){
       cReturnMessage = `**${oMember.displayName}** has been approved!`
       cReturnMessage = Globals.cleanString(cReturnMessage);
       oChannel.send(cReturnMessage);
+
+      HandleWelcomeMessage(oMember, oResult)
+      await ApplyRememberedRoles(oMember);
     })
   })
 
-  HandleWelcomeMessage(oMember, oResult)
 }
 
 function HandleWelcomeMessage(oMember, oOptions)
@@ -112,4 +114,54 @@ async function HandleMemberInvite(oMember) {
     let aRolesToAddToMember = aAddRolesOnApprove ? aAddRolesOnApprove.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : [];
     await oMember.roles.add(aRolesToAddToMember);
   }
+}
+
+async function LogMemberRoles(client, oMember)
+{
+
+    let aRoles = Array.from(oMember.roles.cache.keys());
+    if(aRoles)
+    {
+        cRoles = JSON.stringify(aRoles);
+ 
+        let oKeyObject = {
+            guildid: oMember.guild.id,
+            userid: oMember.id,
+            production: Globals.Environment.PRODUCTION
+        }
+        let oInsertObject = {
+            cRoles : cRoles
+        };
+
+        Globals.Database.Upsert("RoleRememberData", oKeyObject, oInsertObject);
+    }
+}
+exports.LogMemberRoles = LogMemberRoles;
+
+async function ApplyRememberedRoles(oMember)
+{
+    let oQueryObject = {
+        guildid: oMember.guild.id,
+        userid: oMember.id,
+        production: Globals.Environment.PRODUCTION
+    }
+
+    let aResult = await Globals.Database.Query("RoleRememberData", oQueryObject);
+    var oResult = aResult.length > 0 ? aResult[0] : null;
+    if (!oResult) { return;}
+
+    let cRoleData = aResult[0]["cRoles"]
+    let aRoles = JSON.parse(cRoleData);
+
+    if(aRoles)
+    {
+        let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
+        aRoles = aMemberCurrentRoles ? aRoles.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : aRoles;
+        let aGuildRoles = oMember.guild.roles.cache.map(r => r.id);
+        aRoles = aGuildRoles ? aRoles.filter(r => aGuildRoles.indexOf(r) > -1) : aRoles;
+        await oMember.roles.add(aRoles);
+    }
+
+
+  Globals.Database.Delete("RoleRememberData", oQueryObject);
 }
