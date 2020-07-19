@@ -176,6 +176,12 @@ exports.Init = function (client) {
         if(oServerOptions["starboardchannel"])
             StarboardRemoveHandler.ProcessReactRemoveAll(message, oServerOptions)
     });
+
+    client.on('guildMemberRemove', async(oMember) => {
+
+        Approve.LogMemberRoles(client,oMember)
+    });
+    
 }
 
 async function getServerOptions(oGuild) {
