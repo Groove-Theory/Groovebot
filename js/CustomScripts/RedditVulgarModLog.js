@@ -15,7 +15,7 @@ exports.Init = async function (client, msg) {
         let poll = setInterval(
             async function(){
                 var aLogs = await oSubreddit.get_moderation_log({count: 30, limit: 30, type:"banuser,removelink,spamcomment,removecomment,muteuser"});
-                aLogs = aLogs.map(l => l.mod != "AutoModerator");
+                aLogs = aLogs.filter(l => l.mod != "AutoModerator");
                 HandleModLogStream(aLogs, oVulgarChannel)
             },
             60000
