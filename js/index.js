@@ -10,7 +10,7 @@ const YoutubeHandler = require('./APIHandlers/YoutubeHandler.js')
 const TwitterHandler = require('./APIHandlers/TwitterHandler.js')
 const RedditHandler = require('./APIHandlers/RedditHandler.js')
 const fs = require('fs');
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const token = process.env.DISCORD_BOT_SECRET;
 const CustomScriptsMain = require('./CustomScripts/CustomScriptsMain.js')
 /*

@@ -21,6 +21,10 @@ async function HandlePinboardChannelMessage(msg, pinner, oServerOptions, oArgs) 
         return;
     }
     let fetchedMessages = await oPinboardChannel.messages.fetch({ limit: 100 });
+    let iOldestMessageTimestamp = fetchedMessages.last().createdTimestamp;
+    if(msg.createdTimestamp < iOldestMessageTimestamp)
+        return; // It's too old, you had your chance.
+        
     let oPinboardMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith('📌') && m.embeds[0].footer.text.endsWith(msg.id));
     if (!oPinboardMessage && oArgs["bPassedThreshold"]) {
         oPinboardMessage = await PinboardUtils.CreateNewPinboardMessage(msg, pinner, oPinboardChannel, oArgs);

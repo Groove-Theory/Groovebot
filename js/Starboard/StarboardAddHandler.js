@@ -21,6 +21,10 @@ async function HandleStarboardChannelMessage(msg, oServerOptions, oArgs) {
         return;
     }
     let fetchedMessages = await oStarboardChannel.messages.fetch({ limit: 100 });
+    let iOldestMessageTimestamp = fetchedMessages.last().createdTimestamp;
+    if(msg.createdTimestamp < iOldestMessageTimestamp)
+        return; // It's too old, you had your chance.
+
     let oStarboardMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith('⭐') && m.embeds[0].footer.text.endsWith(msg.id));
     if (!oStarboardMessage && oArgs["bPassedThreshold"]) {
         oStarboardMessage = await StarboardUtils.CreateNewStarboardMessage(msg, oStarboardChannel, oArgs);

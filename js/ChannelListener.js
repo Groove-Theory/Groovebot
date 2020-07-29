@@ -150,6 +150,10 @@ exports.Init = function (client) {
     });
 
     client.on('messageReactionAdd', async(reaction, user) => {
+
+        if (reaction.message.partial) await reaction.message.fetch();
+        if (reaction.partial) await reaction.fetch();
+  
         let oGuild = reaction.message.guild;
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
@@ -160,6 +164,9 @@ exports.Init = function (client) {
     });
 
     client.on('messageReactionRemove', async(reaction, user) => {
+        if (reaction.message.partial) await reaction.message.fetch();
+        if (reaction.partial) await reaction.fetch();
+
         let oGuild = reaction.message.guild;
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
@@ -169,6 +176,10 @@ exports.Init = function (client) {
     });
 
     client.on('messageReactionRemoveAll', async(message) => {
+
+        if (reaction.message.partial) await reaction.message.fetch();
+        if (reaction.partial) await reaction.fetch();
+
         let oGuild = message.guild;
         let oServerOptions = await getServerOptions(oGuild)
         if(oServerOptions["pinboardchannel"])
