@@ -1,6 +1,7 @@
 const Globals = require('../Globals.js')
 const ErrorHandler = require('../ErrorHandler.js')
 const TwitterTrendsNameChange = require('./TwitterTrendsNameChange.js')
+const RedditModMailLog = require('./RedditModMailLog.js')
 
 exports.Init = async function(client) {
     try
@@ -15,5 +16,6 @@ exports.Init = async function(client) {
 
 function InitJobs()
 {
-    TwitterTrendsNameChange.Init();
+    //TwitterTrendsNameChange.Init();
+    RedditModMailLog.Init();
 }
