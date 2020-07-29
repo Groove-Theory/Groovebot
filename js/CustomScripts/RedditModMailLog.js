@@ -10,18 +10,12 @@ exports.Init = async function (client, msg) {
         let oModMailChannel = Globals.g_Client.channels.cache.get(iModMailChannelID);
         console.log("reddit begin...");
         var oSubreddit = await Globals.redditAPI.getSubreddit('COMPLETEANARCHY');
-        // var y = await subreddit.get_moderation_log();
-        // console.log(y);
 
-        // var poll = setInterval(
-        //     InitModMail.bind(null, oSubreddit, oModMailChannel),
-        //     2000
-        // );
-    const stream = new ModMailStream(Globals.redditAPI, { subreddit: "COMPLETEANARCHY", results: 5, limit:5, pollTime: 10000 });
+        const stream = new ModMailStream(Globals.redditAPI, { subreddit: "COMPLETEANARCHY", results: 5, limit:5, pollTime: 10000 });
 
-    stream.on("item", mailmessage => {
-        HandleModMailStream(mailmessage, oModMailChannel)
-    })
+        stream.on("item", mailmessage => {
+            HandleModMailStream(mailmessage, oModMailChannel)
+        })
 
     }
     catch (err) {
