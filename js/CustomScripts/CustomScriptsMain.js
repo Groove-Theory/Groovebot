@@ -19,5 +19,5 @@ function InitJobs()
 {
     //TwitterTrendsNameChange.Init();
     RedditModMailLog.Init();
-    RedditVulgarModLog.Init();
+    //RedditVulgarModLog.Init();
 }
