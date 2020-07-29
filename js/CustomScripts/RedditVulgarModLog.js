@@ -4,7 +4,7 @@ const snoowrap = require('snoowrap');
 const Discord = require('discord.js');
 const { ModMailStream, Poll } = require("snoostorm");
 
-
+const aLoggableActions = ["banuser","removelink","spamcomment","removecomment","muteuser"]
 
 const iVulgarChannelID = Globals.Environment.PRODUCTION ? "737897387565121567" : "737819633691656274"
 exports.Init = async function (client, msg) {
@@ -14,8 +14,8 @@ exports.Init = async function (client, msg) {
 
         let poll = setInterval(
             async function(){
-                var aLogs = await oSubreddit.get_moderation_log({count: 30, limit: 30, type:"banuser,removelink,spamcomment,removecomment,muteuser"});
-                aLogs = aLogs.filter(l => l.mod != "AutoModerator");
+                var aLogs = await oSubreddit.get_moderation_log({count: 50, limit: 50});
+                aLogs = aLogs.filter(l => l.mod != "AutoModerator").filter(l => aLoggableActions.indexOf(l.action) > -1);
                 HandleModLogStream(aLogs, oVulgarChannel)
             },
             60000
