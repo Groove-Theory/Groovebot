@@ -177,8 +177,7 @@ exports.Init = function (client) {
 
     client.on('messageReactionRemoveAll', async(message) => {
 
-        if (reaction.message.partial) await reaction.message.fetch();
-        if (reaction.partial) await reaction.fetch();
+        if (message.partial) await message.fetch();
 
         let oGuild = message.guild;
         let oServerOptions = await getServerOptions(oGuild)
