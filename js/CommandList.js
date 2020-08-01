@@ -32,6 +32,7 @@ const MusicBot = require('./VoiceChat/MusicBot.js')
 const Nostalgia = require('./Nostalgia.js')
 const Youtube = require('./Youtube.js')
 const Horoscope = require('./Horoscope.js')
+const GrooveTweetCommand = require('./GrooveTweets/GrooveTweetCommand.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -519,4 +520,15 @@ exports.InitCommandMap = function(){
       false,
       "FUN"
     ));
+    Globals.aCommandMap.push(new Command(
+      "tweet",
+      GrooveTweetCommand.Init,
+      "g!tweet <searchstring?>",
+      `Get a Groove Tweet!`,
+      Horoscope.oHelpText,
+      false,
+      "GROOVE"
+    ));
+
+    
   }
