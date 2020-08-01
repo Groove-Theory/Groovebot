@@ -525,7 +525,7 @@ exports.InitCommandMap = function(){
       GrooveTweetCommand.Init,
       "g!tweet <searchstring?>",
       `Get a Groove Tweet!`,
-      Horoscope.oHelpText,
+      GrooveTweetCommand.oHelpText,
       false,
       "GROOVE"
     ));
