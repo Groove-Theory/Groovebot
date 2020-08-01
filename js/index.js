@@ -9,18 +9,11 @@ const SpotifyHandler = require('./APIHandlers/SpotifyHandler.js')
 const YoutubeHandler = require('./APIHandlers/YoutubeHandler.js')
 const TwitterHandler = require('./APIHandlers/TwitterHandler.js')
 const RedditHandler = require('./APIHandlers/RedditHandler.js')
+const GrooveTweetHandler = require('./GrooveTweets/GrooveTweetsHandler.js')
 const fs = require('fs');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const token = process.env.DISCORD_BOT_SECRET;
 const CustomScriptsMain = require('./CustomScripts/CustomScriptsMain.js')
-/*
-const ErrorHandler = require('./ErrorHandler.js');
-
-ErrorHandler.HandleError(client, err);
-
-        var x = null;
-        var y = x.f;
-*/
 
 process.on('uncaughtException', function (err) {
   console.log("here");
@@ -49,7 +42,8 @@ client.on('ready', async () => {
       SpotifyHandler.InitSpotifyHandler();
       YoutubeHandler.InitYoutubeHandler();
       TwitterHandler.InitTwitterHandler();
-      RedditHandler.InitRedditHandler();
+      RedditHandler.InitRedditHandler();      
+      GrooveTweetHandler.loadTweetCache();
 
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
