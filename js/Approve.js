@@ -161,12 +161,11 @@ async function ApplyRememberedRoles(oMember, oOptions)
         aRoles = aGuildRoles ? aRoles.filter(r => aGuildRoles.indexOf(r) > -1 ) : aRoles;
         aRoles = oOptions["removeroleonapprove"] ? aRoles.filter(r => oOptions["removeroleonapprove"].indexOf(r) == -1) : aRoles;
 
-        let iLowestGBRole = oMember.guild.members.cache
-                            .find(m => m.id = Globals.g_Client.user.id)
-                            .roles.cache.filter(r => r.position > 0)
-                            .reduce((prev, curr) => prev.position < curr.position ? prev.position : curr.position);
-
-        aRoles = iLowestGBRole ? aRoles.filter(r => r.position > iLowestGBRole) : aRoles;
+        let iHighestGBRole = Math.max(...oMember.guild.members.cache
+                            .find(m => m.user.id == Globals.g_Client.user.id)
+                            .roles.cache.map(r => r.position))
+        let aGuildRolesAssignable = oMember.guild.roles.cache.filter(r => r.position < (iHighestGBRole ? iHighestGBRole : 0)).map(r => r.id);
+        aRoles = aGuildRolesAssignable ? aRoles.filter(r => aGuildRolesAssignable.indexOf(r) > -1 ) : aRoles;
 
         if(aRoles)
             await oMember.roles.add(aRoles);
