@@ -1,4 +1,5 @@
 const Globals = require('./Globals.js');
+const ServerOptions = require('./Classes/ServerOptions.js');
 const ErrorHandler = require('./ErrorHandler.js')
 const EmbeddedHelpText = require("./Classes/EmbeddedHelpText.js");
 
@@ -432,6 +433,12 @@ exports.ToggleUserRank = async function(client, msg)
     try
     {
         var oMember = msg.member;
+        var bMemberIsApproved = await checkUserIsApproved(oMember, msg.guild.id);
+        if(!bMemberIsApproved)
+        {
+            SendReplyMessage(client, msg, "Sorry you haven't been approved yet. No ranks for you!");
+            return;
+        }
 
         var aMsgContents = msg.content.split(/\s+/);
         var cRankName = aMsgContents.filter(function(elem, index){ return index > 0 }).join(" ");
@@ -488,6 +495,18 @@ exports.ToggleUserRank = async function(client, msg)
         SendReplyMessage(client, msg, "Sorry, I'm not able to handle that rank...");
         ErrorHandler.HandleError(client, err)
     }
+}
+
+async function checkUserIsApproved(member, iGuildID)
+{
+    let oOptions = new ServerOptions(iGuildID);
+    await oOptions.Query();
+
+    if(!oOptions.RolesAddedOnApprove || oOptions.RolesAddedOnApprove.length == 0)
+        return true;
+
+    let aMemberRoles = member.roles.cache.map(r => r.id);
+    return oOptions.RolesAddedOnApprove.every(val => aMemberRoles.includes(val));
 }
 
 function checkIfMod(member)

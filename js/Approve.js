@@ -72,7 +72,7 @@ async function ApproveMember(client, oGuild, oChannel, oMember) {
       oChannel.send(cReturnMessage);
 
       HandleWelcomeMessage(oMember, oResult)
-      await ApplyRememberedRoles(oMember);
+      await ApplyRememberedRoles(oMember, oResult);
     })
   })
 
@@ -138,7 +138,7 @@ async function LogMemberRoles(client, oMember)
 }
 exports.LogMemberRoles = LogMemberRoles;
 
-async function ApplyRememberedRoles(oMember)
+async function ApplyRememberedRoles(oMember, oOptions)
 {
     let oQueryObject = {
         guildid: oMember.guild.id,
@@ -158,10 +158,21 @@ async function ApplyRememberedRoles(oMember)
         let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
         aRoles = aMemberCurrentRoles ? aRoles.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : aRoles;
         let aGuildRoles = oMember.guild.roles.cache.map(r => r.id);
-        aRoles = aGuildRoles ? aRoles.filter(r => aGuildRoles.indexOf(r) > -1) : aRoles;
-        await oMember.roles.add(aRoles);
+        aRoles = aGuildRoles ? aRoles.filter(r => aGuildRoles.indexOf(r) > -1 ) : aRoles;
+        aRoles = oOptions["removeroleonapprove"] ? aRoles.filter(r => oOptions["removeroleonapprove"].indexOf(r) == -1) : aRoles;
+
+        let iLowestGBRole = oMember.guild.members.cache
+                            .find(m => m.id = Globals.g_Client.user.id)
+                            .roles.cache.filter(r => r.position > 0)
+                            .reduce((prev, curr) => prev.position < curr.position ? prev.position : curr.position);
+
+        aRoles = iLowestGBRole ? aRoles.filter(r => r.position > iLowestGBRole) : aRoles;
+
+        if(aRoles)
+            await oMember.roles.add(aRoles);
     }
 
 
   Globals.Database.Delete("RoleRememberData", oQueryObject);
 }
+
