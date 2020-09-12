@@ -33,6 +33,7 @@ const Nostalgia = require('./Nostalgia.js')
 const Youtube = require('./Youtube.js')
 const Horoscope = require('./Horoscope.js')
 const GrooveTweetCommand = require('./GrooveTweets/GrooveTweetCommand.js')
+const LinkedTalkChannelHandler = require('./LinkedTalkChannels/LinkedTalkChannelHandler.js')
 const Command = require("./Classes/Command.js");
 
 exports.InitCommandMap = function(){
@@ -528,6 +529,15 @@ exports.InitCommandMap = function(){
       GrooveTweetCommand.oHelpText,
       false,
       "GROOVE"
+    ));
+    Globals.aCommandMap.push(new Command(
+      "talk",
+      LinkedTalkChannelHandler.Talk,
+      "g!talk <message>",
+      `Talk with Groovebot in a linked-channel`,
+      LinkedTalkChannelHandler.oHelpText,
+      false,
+      "FUN"
     ));
 
     
