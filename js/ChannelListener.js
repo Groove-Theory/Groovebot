@@ -13,6 +13,7 @@ const StarboardAddHandler = require('./Starboard/StarboardAddHandler.js')
 const StarboardRemoveHandler= require('./Starboard/StarboardRemoveHandler.js')
 const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
 const GroovePointsEmojiHandler = require('./GroovePoints/GroovePointsEmojiHandler.js')
+const HaikuListener = require("./HaikuListener.js");
 
 exports.Init = function (client) {
     client.on('message', async msg => {
@@ -51,7 +52,7 @@ exports.Init = function (client) {
                 CommandListener.ProcessMessage(client, msg);
                 Ventriloquist.ProcessMessage(client, msg);
                 GroovePointsMessageHandler.ProcessMessage(client, msg);
-                //WhatRepeat.ProcessMessage(client, msg);
+                HaikuListener.ProcessMessage(client, msg);
             }
         }
         catch (err) {
