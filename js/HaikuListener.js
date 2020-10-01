@@ -1,12 +1,14 @@
 const Globals = require('./Globals.js')
 const ErrorHandler = require('./ErrorHandler.js');
-const syllable = require('syllable');
+const Syllable1 = require('syllable');
+const Syllable2 = require('syllables');
 const Discord = require('discord.js');
 
 exports.ProcessMessage = function(client, msg) {
     try
     {
-        if(syllable(msg.content) == 17)
+
+        if(syllableCount(msg.content) == 17)
             writeHaiku(msg);           
     }
     catch (err) {
@@ -34,7 +36,7 @@ function parseHaiku(cContent)
     for(let word of aWords)
     {
         aLineBuild.push(word);
-        if(syllable(aLineBuild.join(" ")) == aSyllableGoals[0])
+        if(syllableCount(aLineBuild.join(" ")) == aSyllableGoals[0])
         {
             aHaikuLines.push(aLineBuild.join(" "));
             aSyllableGoals.shift();
@@ -45,9 +47,9 @@ function parseHaiku(cContent)
         aHaikuLines.push(aLineBuild.join(" "));
     
 
-    if(syllable(aHaikuLines[0]) === 5 &&
-        syllable(aHaikuLines[1]) === 7 &&
-        syllable(aHaikuLines[2]) === 5 )
+    if(syllableCount(aHaikuLines[0]) === 5 &&
+        syllableCount(aHaikuLines[1]) === 7 &&
+        syllableCount(aHaikuLines[2]) === 5 )
     {
         return aHaikuLines
     }
@@ -66,4 +68,13 @@ function createHaikuEmbed(oMessage, aHaikuLines)
         .attachFiles(attachment)
         .setThumbnail('attachment://Haiku.png')
     return embed;
+}
+
+function syllableCount(cContent)
+{
+    let sy1 = Syllable1(cContent);
+    let sy2 = Syllable2(cContent);
+    if(sy1 === sy2)
+        return sy1
+    return false;
 }
