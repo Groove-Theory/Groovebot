@@ -157,7 +157,7 @@ async function ApplyRememberedRoles(oMember, oOptions)
     {
         let aMemberCurrentRoles = oMember.roles._roles.map(r => r.id);
         aRoles = aMemberCurrentRoles ? aRoles.filter(r => aMemberCurrentRoles.indexOf(r) == -1) : aRoles;
-        let aGuildRoles = oMember.guild.roles.cache.map(r => r.id);
+        let aGuildRoles = oMember.guild.roles.cache.filter(r=> r.managed != true).map(r => r.id);
         aRoles = aGuildRoles ? aRoles.filter(r => aGuildRoles.indexOf(r) > -1 ) : aRoles;
         aRoles = oOptions["removeroleonapprove"] ? aRoles.filter(r => oOptions["removeroleonapprove"].indexOf(r) == -1) : aRoles;
 
