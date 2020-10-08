@@ -4,11 +4,14 @@ const Syllable1 = require('syllable');
 const Syllable2 = require('syllables');
 const Discord = require('discord.js');
 
+const randomPercentageThreshold = 0.05 //Turn this into an option?!??
 exports.ProcessMessage = function(client, msg) {
     try
     {
-
-        if(syllableCount(msg.content) == 17)
+        if(msg.content.search(/[0-9]/g) > -1)
+            return; // don't do anything with strings with numbers
+        
+        if( (randomPercentageThreshold > Math.random()) &&  syllableCount(msg.content) == 17)
             writeHaiku(msg);           
     }
     catch (err) {
