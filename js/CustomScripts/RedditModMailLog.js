@@ -32,14 +32,14 @@ async function HandleModMailStream(mailmessage, oModMailChannel)
 }
 
 function CreateModMailEmbedMessage(mailmessage, oModMailChannel) {
-  
     let cTopMessage = `MessageID = ${mailmessage.id}`
     const embed = new Discord.MessageEmbed()
         .setColor("GREEN")
         .setTitle(`**__Title__**: ${mailmessage.subject}`)
-        .setDescription(`**__Message__**: \r\n ${mailmessage.body}`)
+        .setDescription(`**__Message__**: \r\n ${mailmessage.body.slice(0,1500)}`)
         .setAuthor(`From: ${mailmessage.author.name}`)
-        .addField("Link to User:", `[/u/${mailmessage.author.name}](https://www.reddit.com/user/${mailmessage.author.name})`, false)
+        .addField("Link to Sender:", `[/u/${mailmessage.author.name}](https://www.reddit.com/user/${mailmessage.author.name})`, false)
+        .addField("Link to Recipient:", `[/u/${mailmessage.dest}](https://www.reddit.com/user/${mailmessage.dest})`, false)
         .setTimestamp();
     oModMailChannel.send(cTopMessage, embed);
 }
