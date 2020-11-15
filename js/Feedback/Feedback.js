@@ -51,7 +51,8 @@ async function StartWizard(client, msg)
 
 async function DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions, cErrorString = "")
 {
-    let oAuthorGuildsMap = msg.author.client.guilds.cache;
+    let oClientGuilds = msg.author.client.guilds.cache;
+    let oAuthorGuildsMap = oClientGuilds.filter(guild => guild.members.cache.has(msg.author.id))
     let aAuthorGuilds = Array.from( oAuthorGuildsMap.values() );
     let cGuildString = aAuthorGuilds.map((channel, index) => `${index + 1}) ${channel.name}`).join('\r\n');
     await msg.channel.send(
