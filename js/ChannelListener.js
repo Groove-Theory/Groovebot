@@ -14,32 +14,35 @@ const StarboardRemoveHandler= require('./Starboard/StarboardRemoveHandler.js')
 const GroovePointsMessageHandler = require('./GroovePoints/GroovePointsMessageHandler.js')
 const GroovePointsEmojiHandler = require('./GroovePoints/GroovePointsEmojiHandler.js')
 const HaikuListener = require("./HaikuListener.js");
+const Feedback = require("./Feedback/Feedback.js");
 
 exports.Init = function (client) {
     client.on('message', async msg => {
         try {
             var iMsgChannelID = msg.channel.id;
-            var oGuild = msg.guild;
-            if (!oGuild)
-                return;
+            if (msg.guild !== null) {
+                var oGuild = msg.guild;
+                if (!oGuild)
+                    return;
 
-            var oQueryObject = {
-                guildID: oGuild.id,
-                production: Globals.Environment.PRODUCTION
-            }
+                var oQueryObject = {
+                    guildID: oGuild.id,
+                    production: Globals.Environment.PRODUCTION
+                }
 
-            let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
-            var oResult = aResult.length > 0 ? aResult[0] : null;
-            if (!oResult) {
-                Options.CheckServerOptionsExist(client, oGuild)
-                msg.channel.send("Sorry just had a bit of a hiccup, can you try again please?")
-                return;
-            }
+                let aResult = await Globals.Database.Query("ServerOptions", oQueryObject);
+                var oResult = aResult.length > 0 ? aResult[0] : null;
+                if (!oResult) {
+                    Options.CheckServerOptionsExist(client, oGuild)
+                    msg.channel.send("Sorry just had a bit of a hiccup, can you try again please?")
+                    return;
+                }
 
-            var aSilenceChannelIDs = oResult["silencechannels"];
-            var bSilenced = SilenceChannel.ProcessMessage(client, msg, aSilenceChannelIDs);
+                //TODO: Get rid of this or implement this right
+                //var aSilenceChannelIDs = oResult["silencechannels"];
+                //var bSilenced = SilenceChannel.ProcessMessage(client, msg, aSilenceChannelIDs);
 
-            if (!bSilenced) {
+            
                 var iCopyInputChannelID = oResult["copyinputchannel"];
                 var iCopyOutputChannelID = oResult["copyoutputchannel"];
                 var bToggleChannelCopy = oResult["togglechannelcopy"];
@@ -53,6 +56,11 @@ exports.Init = function (client) {
                 Ventriloquist.ProcessMessage(client, msg);
                 GroovePointsMessageHandler.ProcessMessage(client, msg);
                 HaikuListener.ProcessMessage(client, msg);
+
+            }
+            else
+            {
+                Feedback.ReadMessage(client, msg);
             }
         }
         catch (err) {

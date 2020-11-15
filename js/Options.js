@@ -81,6 +81,9 @@ exports.Init = function (client, msg) {
             case "messageonapprovechannel":
                 SetMessageOnApproveChannel(client, msg, aMsgDetails)
                 break;
+            case "feedbackchannel":
+                SetFeedbackChannel(client, msg, aMsgDetails);
+                break;
             default:
                 msg.channel.send("Sorry, but '" + cCommand + "' is not a valid option");
                 break;
@@ -478,6 +481,25 @@ function SetMessageOnApproveChannel(client, msg, aMsgDetails) {
     Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "MessageOnApproveChannel successfully updated to " + iMessageChannel));
 }
 
+function SetFeedbackChannel(client, msg, aMsgDetails) {
+    if (aMsgDetails.length != 3 || !aMsgDetails[2] || !parseInt(aMsgDetails[2])) {
+        SendErrorMessage(client, msg)
+        return;
+    }
+    var iFeedbackChannel = aMsgDetails[2]
+    var oGuild = msg.guild;
+
+    var oKeyObject = {
+        guildID: oGuild.id,
+        production: Globals.Environment.PRODUCTION
+    }
+    var oInsertObject = {
+        feedbackchannel: iFeedbackChannel
+    };
+
+    Globals.Database.Upsert("ServerOptions", oKeyObject, oInsertObject, SendReplyMessage(client, msg, "FeedbackChannel successfully updated to " + iFeedbackChannel));
+}
+
 
 ////////////////////
 
@@ -622,6 +644,10 @@ exports.Onload = function()
                 {
                     name: "g!options **MessageOnApproveChannel** <number>",
                     value: "Sets the channel for the Welcome Message after approve"
+                },
+                {
+                    name: "g!options **FeedbackChannel** <channelid>",
+                    value: "Sets the channel for server feedback"
                 }],
             timestamp: new Date(),
             footer:
