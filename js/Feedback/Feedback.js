@@ -12,33 +12,42 @@ exports.oHelpText = new EmbeddedHelpText(
    "``g!feedback`` (This will start a wizard to give feedback)"
 )
 
+let reactfilter = () => {return true;}
+
 exports.ReadMessage = async function (client, msg) {
     if(msg.content === Globals.cCommandPrefix + "feedback")
+    {
+        reactfilter = (reaction, user) => { 
+            return user.id === msg.author.id
+        };
         StartWizard(client, msg);
+    }
     
 }
 
 async function StartWizard(client, msg)
 {
     let oFeedbackMessageOptions = {author: msg.author};
-    await msg.channel.send(
+    let oWizardMessage = await msg.channel.send(
     {
         embed:
         {
             color: 3447003,
             title: "Hi, did you want to send a feedback message to a server we're both in?? (Y/N)\r\n",
-            description: "",
+            description: `🇾 = "Yes I want to send a feedback message" \r\n 🇳 = "No I don't wanna do this anymore"`,
         }
     })
-
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
-    collector.on('collect', newmsg => {
+    var collector = new Discord.ReactionCollector(oWizardMessage,  reactfilter, {max:100, time:120000});
+    await oWizardMessage.react("🇾")
+    await oWizardMessage.react("🇳")
+    //var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
+    collector.on('collect', reaction => {
         try {
-            if (newmsg.content.toUpperCase() == "N") {
+            if (reaction.emoji.name == "🇳") {
                 collector.stop();
-                newmsg.channel.send("Ok, whatever then... :sob:");
+                msg.channel.send("Ok, whatever then... :sob:");
             }
-            else if (newmsg.content == "Y") {
+            else if (reaction.emoji.name == "🇾") {
                 collector.stop();
                 DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions);
             }
@@ -54,70 +63,94 @@ async function DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions
     let oClientGuilds = msg.author.client.guilds.cache;
     let oAuthorGuildsMap = oClientGuilds.filter(guild => guild.members.cache.has(msg.author.id))
     let aAuthorGuilds = Array.from( oAuthorGuildsMap.values() );
-    let cGuildString = aAuthorGuilds.map((channel, index) => `${index + 1}) ${channel.name}`).join('\r\n');
-    await msg.channel.send(
+    if(aAuthorGuilds.length === 1)
     {
-        embed:
+        oFeedbackMessageOptions.guild = oChosenGuild;
+        DetermineAnonymity(client, msg, oFeedbackMessageOptions)
+    }
+    else
+    {
+        let cGuildString = aAuthorGuilds.map((channel, index) => `${index + 1}) ${channel.name}`).join('\r\n');
+        let oWizardMessage = await msg.channel.send(
         {
-            color: 3447003,
-            title: cErrorString + "\r\n\r\n" + "Ok then. Pick which server you wish to send the message to from the list below (or type 'EXIT' to stop).\r\n\r\n Just type in the corresponding number to the left of the channel name",
-            description: cGuildString,
-        }
-    })
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
-    collector.on('collect', newmsg => {
-        try {
-            if (newmsg.content.toUpperCase() == "EXIT") {
-                collector.stop();
-                newmsg.channel.send("Ok, whatever then... :sob:");
+            embed:
+            {
+                color: 3447003,
+                title: cErrorString + "\r\n\r\n" + "Ok then. Pick which server you wish to send the message to from the list below (or press 🚫 to stop).\r\n\r\n Just type in the corresponding number to the left of the channel name",
+                description: cGuildString,
             }
-            else if (parseInt(newmsg.content) != NaN) {
-                collector.stop();
-                let iIndex = parseInt(newmsg.content) - 1;
-                let oChosenGuild = aAuthorGuilds[iIndex];
-                if(oChosenGuild)
-                {
-                    oFeedbackMessageOptions.guild = oChosenGuild;
-                    DetermineAnonymity(client, msg, oFeedbackMessageOptions)
-                }
-                else
-                {
-                    let cError = "Sorry I couldn't find a guild from your input. Please try again"
-                    DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions, cError)
+        })
+        await oWizardMessage.react("🚫");
+        var reactioncollector = new Discord.ReactionCollector(oWizardMessage,  reactfilter, {max:100, time:120000});
+        var messagecollector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
+        reactioncollector.on('collect', reaction => {
+            try {
+                if (reaction.emoji.name == "🚫") {
+                    reactioncollector.stop(); messagecollector.stop();
+                    msg.channel.send("Ok, whatever then... :sob:");
                 }
             }
-        }
-        catch (err) {
-            ErrorHandler.HandleError(client, err);
-        }
-    }); 
+            catch (err) {
+                ErrorHandler.HandleError(client, err);
+            }
+        }); 
+        messagecollector.on('collect', newmsg => {
+            try {
+                if (newmsg.content.toUpperCase() == "EXIT") {
+                    reactioncollector.stop(); messagecollector.stop();
+                    msg.channel.send("Ok, whatever then... :sob:");
+                }
+                else if (parseInt(newmsg.content) != NaN) {
+                    reactioncollector.stop(); messagecollector.stop();
+                    let iIndex = parseInt(newmsg.content) - 1;
+                    let oChosenGuild = aAuthorGuilds[iIndex];
+                    if(oChosenGuild)
+                    {
+                        oFeedbackMessageOptions.guild = oChosenGuild;
+                        DetermineAnonymity(client, msg, oFeedbackMessageOptions)
+                    }
+                    else
+                    {
+                        let cError = "Sorry I couldn't find a guild from your input. Please try again"
+                        DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions, cError)
+                    }
+                }
+            }
+            catch (err) {
+                ErrorHandler.HandleError(client, err);
+            }
+        }); 
+    }
 }
 
 async function DetermineAnonymity(client, msg, oFeedbackMessageOptions, cErrorString = "")
 {
-    await msg.channel.send(
+    let oWizardMessage = await msg.channel.send(
     {
         embed:
         {
             color: 3447003,
             title: "Would you like your message to be anonymous? (Y/N)\r\n",
-            description: "If 'N', the mods will see your identity. If 'Y', your secret is safe with Groovebot!! (Type 'EXIT' to stop)",
+            description: `🕵️ = "Yes I want to send anonymously (my secret is safe with Groovebot) \r\n ☺️ = "No, I DONT want to send anonymous; I want the mods to see that it's me \r\n 🚫 = "I'm done I want to stop"`
         }
     })
 
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
-    collector.on('collect', newmsg => {
+    var collector = new Discord.ReactionCollector(oWizardMessage,  reactfilter, {max:100, time:120000});
+    await oWizardMessage.react("🕵️")
+    await oWizardMessage.react("☺️")
+    await oWizardMessage.react("🚫")    
+    collector.on('collect', reaction => {
         try {
-            if (newmsg.content.toUpperCase() == "EXIT") {
+            if (reaction.emoji.name == "🚫") {
                 collector.stop();
-                newmsg.channel.send("Ok, whatever then... :sob:");
+                msg.channel.send("Ok, whatever then... :sob:");
             }
-            if (newmsg.content.toUpperCase() == "N") {
+            else if (reaction.emoji.name == "☺️") {
                 collector.stop();
                 oFeedbackMessageOptions.anonymous = false;
                 DetermineTextToSend(client, msg, oFeedbackMessageOptions);
             }
-            else if (newmsg.content == "Y") {
+            else if (reaction.emoji.name == "🕵️") {
                 collector.stop();
                 oFeedbackMessageOptions.anonymous = true;
                 DetermineTextToSend(client, msg, oFeedbackMessageOptions);
@@ -131,25 +164,38 @@ async function DetermineAnonymity(client, msg, oFeedbackMessageOptions, cErrorSt
 
 async function DetermineTextToSend(client, msg, oFeedbackMessageOptions, cErrorString)
 {
-    await msg.channel.send(
+    let oWizardMessage = await msg.channel.send(
     {
         embed:
         {
             color: 3447003,
-            title: "Ok, cool. Now, please type in the message you wish to send to the mods. Keep it to one message\r\n",
+            title: "Ok, cool. Now, please type in the message you wish to send to the mods. Keep it to one message (You can also attach an image or file with your message too)\r\n",
             description: "(Type 'EXIT' to stop)",
         }
     })
 
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
-    collector.on('collect', newmsg => {
+    var reactioncollector = new Discord.ReactionCollector(oWizardMessage,  reactfilter, {max:100, time:120000});
+    var messagecollector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
+    await oWizardMessage.react("🚫");
+    reactioncollector.on('collect', reaction => {
+        try {
+            if (reaction.emoji.name == "🚫") {
+                reactioncollector.stop(); messagecollector.stop();
+                msg.channel.send("Ok, whatever then... :sob:");
+            }
+        }
+        catch (err) {
+            ErrorHandler.HandleError(client, err);
+        }
+    }); 
+    messagecollector.on('collect', newmsg => {
         try {
             if (newmsg.content.toUpperCase() == "EXIT") {
-                collector.stop();
+                reactioncollector.stop(); messagecollector.stop();
                 newmsg.channel.send("Ok, whatever then... :sob:");
             }
             else {
-                collector.stop();
+                reactioncollector.stop(); messagecollector.stop();
                 oFeedbackMessageOptions.message = newmsg;
                 ConfirmMessageToSend(client, msg, oFeedbackMessageOptions);
             }
@@ -163,24 +209,27 @@ async function DetermineTextToSend(client, msg, oFeedbackMessageOptions, cErrorS
 async function ConfirmMessageToSend(client, msg, oFeedbackMessageOptions)
 {
     let oMessageToSendPreview = await BuildMessage(oFeedbackMessageOptions, msg.channel);
-    await msg.channel.send(
+    let oWizardMessage = await msg.channel.send(
     {
         embed:
         {
             color: 3447003,
             title: "Ok Last Step. Above is the message I will send to the mods based on your options. \r\n",
-            description: "(Type 'Y' if you want me to send the message to the mods. Type 'N' if you want me to stop)",
+            description: `📧 = "Yes I want to send the above message to the mods" \r\n 🚫 = "No I don't want to send the message and I want to leave"`
         }
     })
 
-    var collector = new Discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id,{time: 120000});
-    collector.on('collect', async newmsg => {
+    var collector = new Discord.ReactionCollector(oWizardMessage,  reactfilter, {max:100, time:120000});
+    await oWizardMessage.react("📧")
+    await oWizardMessage.react("🚫")  
+      
+    collector.on('collect', async reaction => {
         try {
-            if (newmsg.content.toUpperCase() == "N") {
+            if (reaction.emoji.name == "🚫") {
                 collector.stop();
-                newmsg.channel.send("Ok, whatever then... :sob:");
+                msg.channel.send("Ok, whatever then... :sob:");
             }
-            else if (newmsg.content.toUpperCase() == "Y") {
+            else if (reaction.emoji.name == "📧") {
                 collector.stop();
                 let bSuccess = await SendMessageToMods(client, oFeedbackMessageOptions);
                 if(bSuccess)
