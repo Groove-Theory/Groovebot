@@ -65,7 +65,7 @@ async function DetermineServerToSendMessage(client, msg, oFeedbackMessageOptions
     let aAuthorGuilds = Array.from( oAuthorGuildsMap.values() );
     if(aAuthorGuilds.length === 1)
     {
-        oFeedbackMessageOptions.guild = oChosenGuild;
+        oFeedbackMessageOptions.guild = aAuthorGuilds[0];
         DetermineAnonymity(client, msg, oFeedbackMessageOptions)
     }
     else
