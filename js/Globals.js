@@ -118,6 +118,7 @@ exports.OptionTypes = {
     "starboardthreshold": {"optiontype": "int"},
     "messageonapprovestring": {"optiontype": "string"},
     "messageonapprovechannel": {"optiontype": "int"},
+    "feedbackchannel": {"optiontype": "channel"},
 }
 
 exports.UserTagReplace = "$[USER]$"
