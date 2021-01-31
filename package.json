@@ -34,6 +34,7 @@
     "syllables": "^1.0.0",
     "translate-google": "^1.3.5",
     "twitter": "^1.7.1",
+    "twitter-autohook": "^1.7.2",
     "uuid": "^7.0.3",
     "word-definition": "^2.1.6",
     "youtube-api": "^2.0.10",

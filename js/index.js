@@ -41,7 +41,6 @@ client.on('ready', async () => {
       ChannelListener.Init(client);
       SpotifyHandler.InitSpotifyHandler();
       YoutubeHandler.InitYoutubeHandler();
-      TwitterHandler.InitTwitterHandler();
       RedditHandler.InitRedditHandler();      
       GrooveTweetHandler.loadTweetCache();
 
@@ -50,6 +49,8 @@ client.on('ready', async () => {
         Globals.aCompliments = compliment_obj.Compliments;
 
       CommandList.InitCommandMap();
+
+      await TwitterHandler.InitTwitterHandler();
       CustomScriptsMain.Init();
       if(Globals.Environment.PRODUCTION || Globals.Environment.STAGE)
       {
