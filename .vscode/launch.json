@@ -10,7 +10,7 @@
             "request": "launch",
             "name": "Windows Launch",
             "program": "${workspaceFolder}/js/index.js",
-            "envFile": "${workspaceRoot}/.env",
+            "envFile": "${workspaceRoot}/.env"
         },
         //Linux testing Configuration
         {
@@ -19,7 +19,7 @@
             "name": "Linux Launch",
             "program": "${workspaceFolder}/js/index.js",
             "runtimeExecutable": "/usr/local/bin/node",
-            "envFile": "${workspaceRoot}/.env",
+            "envFile": "${workspaceRoot}/.env"
         }
     ]
 }
