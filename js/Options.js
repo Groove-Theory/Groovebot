@@ -1,8 +1,11 @@
 const Globals = require('./Globals.js')
+const Discord = require('discord.js');
+const PaginationMessage = require("./Classes/PaginationMessage.js");
+const PaginationButton = require("./Classes/PaginationButton.js");
 let oHelpText = {};
 
 
-exports.Init = function (client, msg) {
+exports.Init = async function (client, msg) {
 
     var oAuthorUser = msg.author;
     if (oAuthorUser.id != Globals.g_GrooveID) // Groove override
@@ -29,9 +32,15 @@ exports.Init = function (client, msg) {
     var aMsgDetails = msg.content.split(" ").filter(function (el) {
         return el != null && el.length > 0;
     });
-    console.log(aMsgDetails);
+
     if (aMsgDetails.length == 1) {
-        msg.channel.send({embed: oHelpText.oEmbedText});
+        let oListMessage = await printOptionsList(msg.channel, 1);
+        let oPagMessage = new PaginationMessage();
+        oPagMessage.addButton(new PaginationButton("◀", function(){editOptionsList(oListMessage, -1)}, 1));
+        oPagMessage.addButton(new PaginationButton('▶', function(){editOptionsList(oListMessage, 1)}, 2));
+        oPagMessage.oMessage = oListMessage
+        await oPagMessage.Init();
+        //msg.channel.send({embed: oHelpText.oEmbedText});
     }
     else {
         var cCommand = aMsgDetails[1];
@@ -89,6 +98,52 @@ exports.Init = function (client, msg) {
                 break;
         }
     }
+}
+
+async function editOptionsList(oMessage, iDirection)
+{
+  let oEmbed = oMessage.embeds[0];
+  if(oEmbed)
+  {
+    let aPageData = oEmbed.description ? oEmbed.description.substring(5).split("/") : null
+    if(aPageData)
+    {
+      let iCurrentPage = parseInt(aPageData[0]);
+      let iTotalPages = parseInt(aPageData[1]);
+      if(!Number.isInteger(iCurrentPage) || !Number.isInteger(iCurrentPage))
+        return;
+      if(iCurrentPage >= iTotalPages && iDirection == 1)
+        return;
+      if(iCurrentPage <= 1 && iDirection == -1)
+        return
+
+      await printOptionsList(oMessage.channel, iCurrentPage + iDirection, oMessage)
+    }
+  }
+}
+
+async function printOptionsList(oChannel, iPage, oMessage)
+{
+    let iRanksPerPage = 5;
+    iPage = Math.max(1, iPage);
+    let aFields = oHelpText.oEmbedText.fields.slice((iPage-1)*iRanksPerPage, (iPage)*iRanksPerPage);
+
+    let oEmbed = new Discord.MessageEmbed()
+                    .setColor('#c0ff28')
+                    .setTitle('Options List')
+                    .setDescription(`Page ${iPage}/${Math.ceil(oHelpText.oEmbedText.fields.length/iRanksPerPage)}`);
+    for(let i = 0; i < iRanksPerPage; i++)
+    {
+        let oItem = aFields[i];
+        if(oItem)
+            oEmbed.addField(oItem.name, oItem.value);
+    }
+
+
+    if(oMessage)
+      return await oMessage.edit(oEmbed)
+    else
+      return await oChannel.send(oEmbed);
 }
 
 exports.CheckServerOptionsExist = function (client, oGuild) {
@@ -658,6 +713,7 @@ exports.Onload = function()
 
         }
     }
+    oHelpText.oEmbedText.fields.sort((a,b) => {return a.name > b.name ? 1 : -1;});
     exports.oHelpText = oHelpText;
 }
 exports.oHelpText = oHelpText;
