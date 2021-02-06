@@ -1,5 +1,6 @@
 const Globals = require('./Globals.js')
 const Dictionary = require('./Dictionary.js')
+const RateLimit = require('./RateLimit.js')
 const ErrorHandler = require('./ErrorHandler.js')
 
 exports.ProcessMessage = async function(client, msg) {
@@ -17,6 +18,11 @@ exports.ProcessMessage = async function(client, msg) {
 
         if(cMsgCommand.startsWith(cCommandPrefix))
         {
+            if(!RateLimit.HandleUserCommand(msg.author))
+            {
+                RateLimitErrorMessage(msg.channel, msg.author);
+                return;
+            }
             let cCommand = cMsgCommand.substr(cMsgCommand.indexOf(cCommandPrefix) + cCommandPrefix.length);
             let oCommandObj = Globals.aCommandMap.find(c => c.cCommand == cCommand)
 
@@ -36,4 +42,9 @@ exports.ProcessMessage = async function(client, msg) {
     {
         ErrorHandler.HandleError(client, err)
     }
+}
+
+function RateLimitErrorMessage(oChannel, oUser){
+    let seconds = RateLimit.GetUserTimeoutSeconds(oUser);
+    oChannel.send(`Chill the fuck out for like ${seconds} seconds, <@${oUser.id}>`);
 }
