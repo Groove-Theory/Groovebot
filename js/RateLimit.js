@@ -39,7 +39,6 @@ exports.IsUserBelowThreshold = IsUserBelowThreshold;
 function HandleUserCommand(oUser)
 {
     AddToUserScore(oUser);
-    console.log(RateLimitCache);
     return IsUserBelowThreshold(oUser);
 }
 exports.HandleUserCommand = HandleUserCommand;
