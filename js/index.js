@@ -10,6 +10,7 @@ const YoutubeHandler = require('./APIHandlers/YoutubeHandler.js')
 const TwitterHandler = require('./APIHandlers/TwitterHandler.js')
 const RedditHandler = require('./APIHandlers/RedditHandler.js')
 const GrooveTweetHandler = require('./GrooveTweets/GrooveTweetsHandler.js')
+const RateLimit = require('./RateLimit.js')
 const fs = require('fs');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const token = process.env.DISCORD_BOT_SECRET;
@@ -43,6 +44,7 @@ client.on('ready', async () => {
       YoutubeHandler.InitYoutubeHandler();
       RedditHandler.InitRedditHandler();      
       GrooveTweetHandler.loadTweetCache();
+      RateLimit.Init()
 
       var compliment_obj = JSON.parse(fs.readFileSync('./JSONFiles/Compliments.json', 'utf8'));
       if (compliment_obj)
