@@ -25,10 +25,11 @@ exports.Init = async function (client, msg) {
 
     let pChannel = Globals.g_Client.channels.cache.get(iPodcastChannelID);
     var embed = new Discord.MessageEmbed()
-        .setColor("#426262")
+        .setColor("#D65930")
         .setTitle(`New Podcast Topic!`)
-        .setDescription(cString)
+        .setDescription("__***" + cString + "***__")
         .setAuthor(msg.author.tag, msg.author.displayAvatarURL({size:1024, format: "png"}))
+        .setFooter(`Remember to use (g!podcast <topic>) to give us something to talk about`)
     
     pChannel.send("", embed)
 
