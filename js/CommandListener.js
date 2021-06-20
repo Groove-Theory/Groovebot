@@ -2,6 +2,7 @@ const Globals = require('./Globals.js')
 const Dictionary = require('./Dictionary.js')
 const RateLimit = require('./RateLimit.js')
 const ErrorHandler = require('./ErrorHandler.js')
+const Podcast = require('./Podcast.js')
 
 exports.ProcessMessage = async function(client, msg) {
     try
@@ -28,6 +29,10 @@ exports.ProcessMessage = async function(client, msg) {
 
             if(oCommandObj)
                 oCommandObj.fFunc(client, msg)
+            else if(cMsgCommand.startsWith(cCommandPrefix + "podcast")) // Only works for one channel
+            {
+                Podcast.Init(client, msg);
+            }
             else
             {
                 msgChannel.send("The fuck is that shit?");
@@ -37,6 +42,7 @@ exports.ProcessMessage = async function(client, msg) {
         {
                 Dictionary.Init(client, msg);
         }
+
     }
     catch(err)
     {
