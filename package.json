@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "dependencies": {
-    "@discordjs/opus": "^0.1.0",
+    "@discordjs/opus": "^0.8.0",
     "aztro-js": "^0.1.5",
     "canvas": "^2.6.0",
     "discord.js": "^12.5.1",
