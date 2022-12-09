@@ -38,7 +38,7 @@
     "twitter-autohook": "^1.7.2",
     "uuid": "^7.0.3",
     "word-definition": "^2.1.6",
-    "youtube-api": "^2.0.10",
+    "youtube-api": "^3.0.1",
     "ytdl-core": "^2.0.1",
     "ytsr": "^0.1.12"
   },
